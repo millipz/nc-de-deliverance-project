@@ -7,12 +7,12 @@ By the end of the project, you should have:
 - written a number of applications in Python that interact with AWS and database infrastructure and manipulate data as required
 - remodelled data into a data warehouse hosted in AWS
 - demonstrated that your project is well monitored and that you can measure its performance
-- deployed at least some of the project using a scripted solution.
+- deployed at least some of the project using scripting or automation.
 
 Your solution should demonstrate your knowledge of Python, SQL, database modelling, AWS, good operational practices and Agile working.
 
 ## The Minimum Viable Product (MVP)
-The project is open ended and could include any number of features, but at a minimum you should seek to deliver the following:
+The project is open ended and could include any number of features, but **at a minimum** you should seek to deliver the following:
 - Two S3 buckets (one for ingested data and one for processed data). Both buckets should be structured and well-organised so that data is easy to find.
 - A Python application that ingests all tables from the `totesys` database (details below). The data should be saved in files in the "ingestion" S3 bucket in a suitable format. The application must:
   - operate automatically on a schedule
@@ -26,14 +26,13 @@ The project is open ended and could include any number of features, but at a min
 
 All Python code should be thoroughly tested.
 
-As much as possible of the project should be deployed via a scripted solution. The deployment scripts can be written as `bash` or Python code.
+As much as possible of the project should be deployed automatically using CI/CD techniques. The deployment scripts can be written as `bash` scripts, Python code or Terraform.
 
 You should be able to demonstrate that a change to the source database will be reflected in the data warehouse within 30 minutes at most.
 
 ### Enhancing Your Product
 The MVP can be enhanced in a number of ways.
 
-1. You can use GitHub Actions to deploy and update the infrastructure automatically when you commit code.
 1. You can maintain a _schema registry_ or _data catalogue_, which contains the schema of the data you ingest from the database. Using this, you can check that incoming data has the required structure. If there is any anomaly (eg the database has been changed in some way), you can perform a failure action, such as redirecting the data to some sort of default destination (sometimes called a _dead letter queue_).
 1. Refactor your code to use the [SQLAlchemy](https://www.sqlalchemy.org/) library to interact with the database in an object-oriented way.
 
@@ -59,7 +58,7 @@ In addition, you will be given credentials for a data warehouse hosted in the No
  - ["Purchases" schema](https://dbdiagram.io/d/637b3e8bc9abfc61117419ee)
  - ["Payments" schema](https://dbdiagram.io/d/637b41a5c9abfc6111741ae8)
 
-The overall structure of the resulting data warehouse is shown [here](https://dbdiagram.io/d/637b4c6dc9abfc6111741e65).
+The overall structure of the resulting data warehouse is shown [here](https://dbdiagram.io/d/63a19c5399cb1f3b55a27eca).
 
 ### Required Components
 You need to create:
@@ -105,3 +104,4 @@ The structure of your "processed" S3 data should reflect these tables.
 
 Note that data types in some columns may have to be changed...
 
+Note that all Python code must be PEP8 compliant, and tested for security vulnerabilities with the `safety` and `bandit` packages. Test coverage should exceed 90%.
