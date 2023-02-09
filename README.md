@@ -14,6 +14,8 @@ By the end of the project, you should have:
 Your solution should showcase your knowledge of Python, SQL, database modelling, AWS, good operational practices and Agile working.
 
 ## The Minimum Viable Product (MVP)
+The intention is to create a data platform that extracts data from an operational database (and potentially other sources), archives it in a data lake, and makes it availabale in a remodelled OLAP data warehouse.
+
 The project is open ended and could include any number of features, but **at a minimum** you should seek to deliver the following:
 - Two S3 buckets (one for ingested data and one for processed data). Both buckets should be structured and well-organised so that data is easy to find.
 - A Python application that continually ingests all tables from the `totesys` database (details below). The data should be saved in files in the "ingestion" S3 bucket in a suitable format. The application must:
