@@ -89,7 +89,7 @@ However, for your minimum viable product you need only populate the following:
 |dim_currency|
 |dim_counterparty|
 
-This should be sufficient for a single star schema: [https://dbdiagram.io/d/637a423fc9abfc611173f637]()
+This should be sufficient for a single [star schema](https://dbdiagram.io/d/637a423fc9abfc611173f637).
 
 The structure of your "processed" S3 data should reflect these tables.
 
