@@ -3,6 +3,7 @@
 **Read this document carefully - it contains (almost) all you need to know about the project!**
 
 ## Objective
+
 The project phase is intended to allow you to showcase some of the skills and knowledge you have acquired over the past few weeks. You will create applications that will Extract, Transform and Load data from a prepared source into a data lake and warehouse hosted in AWS. Your solution should be reliable, resilient and (as far as possible) deployed and managed in code.
 
 By the end of the project, you should have:
@@ -14,6 +15,7 @@ By the end of the project, you should have:
 Your solution should showcase your knowledge of Python, SQL, database modelling, AWS, good operational practices and Agile working.
 
 ## The Minimum Viable Product (MVP)
+
 The intention is to create a data platform that extracts data from an operational database (and potentially other sources), archives it in a data lake, and makes it availabale in a remodelled OLAP data warehouse.
 
 The project is open ended and could include any number of features, but **at a minimum** you should seek to deliver the following:
@@ -37,6 +39,7 @@ As much as possible of the project should be deployed automatically using infras
 You should be able to demonstrate that a change to the source database will be reflected in the data warehouse within 30 minutes at most.
 
 ## The Data
+
 The primary data source for the project is a moderately complex (but not very large) database called `totesys` which is meant to simulate the back end data of a commercial application. Data is inserted and updated into this database several times a day. (The data itself is entirely fake and meaningless, as a brief inspection will confirm.)
 
 Each project team will be given read-only access credentials to this database. The full ERD for the database is detailed [here](https://dbdiagram.io/d/6332fecf7b3d2034ffcaaa92).
@@ -103,6 +106,7 @@ This aspect of the project should not be tackled until the final week of the cou
 
 
 ## Possible Extensions
+
 If you have time, you can enhance the MVP. The initial focus for any enhancement should be to ensure that all of the tables in the data warehouse are being updated. You could add other desirable features, such as a _schema registry_ or _data catalogue_ which contains the schema of the data you ingest from the database. Using this, you could check that incoming data has the required structure. If there is any anomaly (eg the database has been changed in some way), you can perform a failure action, such as redirecting the data to some sort of default destination (sometimes called a _dead letter queue_).
 
 There are a number of ways to extend the scope of the project. 
@@ -112,10 +116,11 @@ There are a number of ways to extend the scope of the project.
 
 ## Technical Details
 
-To host your solution, each team will be given access to a special AWS sandbox that will stay open for 120 hours and will allow you to work throughout the week without interruption. However, at the end of the 120 hours the sandbox will expire. __You will need to rebuild all your infrastructure again the following week.__ Therefore, it is in your own interest that you are able to script the creation of the resources so that they can be rebuilt as quickly and efficiently as possible.
+To host your solution, each team will need to host your infrastructure in a single AWS account. You can use one of your Northcoders accounts and give each member of your team credentials to access this however these accounts are not permanent. Therefore, it is in your own interest that you are able to script the creation of the resources so that they can be rebuilt as quickly and efficiently as possible.
 
 
 ### Required Components
+
 You need to create:
 1. A job scheduler to run the ingestion job. AWS Eventbridge is the recommended way to do this. Since data has to be visible in the data warehouse within 30 minutes from being written to the database, you need to schedule a your job to check for changes much more frequently.
 1. An S3 bucket which will act as a "landing zone" for ingested data.
