@@ -7,25 +7,25 @@
 The project phase is intended to allow you to showcase some of the skills and knowledge you have acquired over the past few weeks. You will create applications that will Extract, Transform and Load data from a prepared source into a data lake and warehouse hosted in AWS. Your solution should be reliable, resilient and (as far as possible) deployed and managed in code.
 
 By the end of the project, you should have:
-- written a number of applications in Python that interact with AWS and database infrastructure and manipulate data as required
+- written some applications in Python that interact with AWS and database infrastructure and manipulate data as required
 - remodelled data into a data warehouse hosted in AWS
-- demonstrated that your project is well monitored and that you can measure its performance
-- deployed at least some of the project using scripting or automation.
+- demonstrated that your project is well-monitored and that you can measure its performance
+- deployed at least part of the project using scripting or automation.
 
 Your solution should showcase your knowledge of Python, SQL, database modelling, AWS, good operational practices and Agile working.
 
 ## The Minimum Viable Product (MVP)
 
-The intention is to create a data platform that extracts data from an operational database (and potentially other sources), archives it in a data lake, and makes it availabale in a remodelled OLAP data warehouse.
+The intention is to create a data platform that extracts data from an operational database (and potentially other sources), archives it in a data lake, and makes it available in a remodelled OLAP data warehouse.
 
-The project is open ended and could include any number of features, but **at a minimum** you should seek to deliver the following:
-- Two S3 buckets (one for ingested data and one for processed data). Both buckets should be structured and well-organised so that data is easy to find.
+The project is open-ended and could include any number of features, but **at a minimum**, you should seek to deliver the following:
+- Two S3 buckets (one for ingested data and one for processed data). Both buckets should be structured and well-organised so that data is easy to find. Data should be **immutable** - i.e. once you have written data to S3, it should not be amended or over-written. You should create new data files containing additions or amendments.
 - A Python application that continually ingests all tables from the `totesys` database (details below). The data should be saved in files in the "ingestion" S3 bucket in a suitable format. The application must:
   - operate automatically on a schedule
   - log progress to Cloudwatch
   - trigger email alerts in the event of failures
   - follow good security practices (for example, preventing SQL injection and maintaining password security)
-- A Python application that remodels __at least some__ of the data into a predefined schema suitable for a data warehouse and stores the data in `parquet` format in the "processed" S3 bucket. The application must:
+- A Python application that remodels __at least some__ of the data into a predefined schema suitable for a data warehouse and stores the data in Parquet format in the "processed" S3 bucket. The application must:
   - trigger automatically when it detects the completion of an ingested data job
   - be adequately logged and monitored
   - populate the dimension and fact tables of a single "star" schema in the warehouse (see details below) 
@@ -40,7 +40,7 @@ You should be able to demonstrate that a change to the source database will be r
 
 ## The Data
 
-The primary data source for the project is a moderately complex (but not very large) database called `totesys` which is meant to simulate the back end data of a commercial application. Data is inserted and updated into this database several times a day. (The data itself is entirely fake and meaningless, as a brief inspection will confirm.)
+The primary data source for the project is a moderately complex (but not very large) database called `totesys` which is meant to simulate the back-end data of a commercial application. Data is inserted and updated into this database several times a day. (The data itself is entirely fake and meaningless, as a brief inspection will confirm.)
 
 Each project team will be given read-only access credentials to this database. The full ERD for the database is detailed [here](https://dbdiagram.io/d/6332fecf7b3d2034ffcaaa92).
 
@@ -81,7 +81,7 @@ The list of tables in the complete warehouse is:
 |dim_currency|
 |dim_counterparty|
 
-However, for your minimum viable product you need only populate the following:
+However, for your minimum viable product, you need only populate the following:
 |tablename|
 |---------|
 |fact_sales_order|
@@ -92,39 +92,40 @@ However, for your minimum viable product you need only populate the following:
 |dim_currency|
 |dim_counterparty|
 
-This should be sufficient for a single [star schema](https://dbdiagram.io/d/637a423fc9abfc611173f637).
+This should be sufficient for a single [star-schema](https://dbdiagram.io/d/637a423fc9abfc611173f637).
 
 The structure of your "processed" S3 data should reflect these tables.
 
 Note that data types in some columns may have to be changed to conform to the warehouse data model.
 
 ## The Dashboard
-
-In order to demonstrate use of the warehouse, you will be required to display some of the data on an [AWS Quicksight](https://aws.amazon.com/quicksight/) dashboard. **You are not required to know how to construct a Quicksight dashboard** - Northcoders tutors will help with this part. However, you will be required to supply the SQL queries that are used to retrieve the data you wish to display.
+To demonstrate the use of the warehouse, you will be required to display some of the data on an [AWS Quicksight](https://aws.amazon.com/quicksight/) dashboard. **You are not required to know how to construct a Quicksight dashboard** - Northcoders tutors will help with this part. However, you will be required to supply the SQL queries that are used to retrieve the data you wish to display.
 
 This aspect of the project should not be tackled until the final week of the course, more details will be given then. The major focus of your efforts should be to get the data into the data warehouse.
 
 
 ## Possible Extensions
 
-If you have time, you can enhance the MVP. The initial focus for any enhancement should be to ensure that all of the tables in the data warehouse are being updated. You could add other desirable features, such as a _schema registry_ or _data catalogue_ which contains the schema of the data you ingest from the database. Using this, you could check that incoming data has the required structure. If there is any anomaly (eg the database has been changed in some way), you can perform a failure action, such as redirecting the data to some sort of default destination (sometimes called a _dead letter queue_).
+If you have time, you can enhance the MVP. The initial focus for any enhancement should be to ensure that all of the tables in the data warehouse are being updated. You could add other desirable features, such as a _schema registry_ or _data catalogue_ which contains the schema of the data you ingest from the database. Using this, you could check that incoming data has the required structure. If there is any anomaly (eg the database has been changed in some way), you can perform a failure action, such as redirecting the data to some sort of default destination (sometimes called a _dead letter queue_). 
 
-There are a number of ways to extend the scope of the project. 
+Another simple addition (which might make your presentation more visually appealing) could be a Jupyter Notebook that performs some kind of analysis of the data. (As previously noted, the data is random nonsense, so you won't find any real insights, but it would be good to demonstrate your knowledge of the tools.)
+
+There are several ways to extend the scope of the project. 
 1. Ingest data from a file source - eg another S3 bucket. We can provide JSON files in a remote S3 bucket that can be fetched at intervals.
 1. Ingest data from an external API - eg you could retrieve relevant daily foreign exchange rates from `https://freeforexapi.com/Home/Api`. You can use the `requests` library to make the request and then save the results in S3.
 
 
 ## Technical Details
 
-To host your solution, each team will need to host your infrastructure in a single AWS account. You can use one of your Northcoders accounts and give each member of your team credentials to access this however these accounts are not permanent. Therefore, it is in your own interest that you are able to script the creation of the resources so that they can be rebuilt as quickly and efficiently as possible.
+To host your solution, each team will need to host your infrastructure in a single AWS account. You can use one of your Northcoders accounts and give each member of your team credentials to access this however these accounts are not permanent. It is likely that you will need several attempts to deploy the infrastructure correctly, so it is in your interest that you can script the creation of the resources so that they can be rebuilt as quickly and efficiently as possible.
 
 
 ### Required Components
 
 You need to create:
-1. A job scheduler to run the ingestion job. AWS Eventbridge is the recommended way to do this. Since data has to be visible in the data warehouse within 30 minutes from being written to the database, you need to schedule a your job to check for changes much more frequently.
-1. An S3 bucket which will act as a "landing zone" for ingested data.
-1. A Python application to check for the changes to the database tables and ingest any new or updated data. It is strongly recommended that you use AWS Lambda as your computing solution. It is possible to use EC2, but it will be much harder to create event-driven jobs, and harder to log events in Cloudwatch. The data should be saved in the "ingestion" S3 bucket in a suitable format. Status and error messages should be logged to Cloudwatch.
+1. A job scheduler to run the ingestion job. AWS Eventbridge is the recommended way to do this. Since data has to be visible in the data warehouse within 30 minutes of being written to the database, you need to schedule your job to check for changes much more frequently.
+1. An S3 bucket that will act as a "landing zone" for ingested data.
+1. A Python application to check for changes to the database tables and ingest any new or updated data. It is strongly recommended that you use AWS Lambda as your computing solution. It is possible to use EC2, but it will be much harder to create event-driven jobs, and harder to log events in Cloudwatch. The data should be saved in the "ingestion" S3 bucket in a suitable format. Status and error messages should be logged to Cloudwatch.
 1. A Cloudwatch alert should be generated in the event of a major error - this should be sent to email.
 1. A second S3 bucket for "processed" data.
 1. A Python application to transform data landing in the "ingestion" S3 bucket and place the results in the "processed" S3 bucket. The data should be transformed to conform to the warehouse schema (see above). The job should be triggered by either an S3 event triggered when data lands in the ingestion bucket, or on a schedule. Again, status and errors should be logged to Cloudwatch, and an alert triggered if a serious error occurs.
@@ -133,7 +134,7 @@ You need to create:
 
 ## Finally...
 
-This is a fairly realistic simulation of a typical data engineering project. In the real world, such a project would be untertaken over the course of a number of weeks by a team of experienced data engineers. _It is highly unlikely that you will have time to complete a fully-functioning, "production-ready" solution._ However, you will have an opportunity to tackle lots of the typical problems faced in a real project, and put your skills in Python, data and DevOps to good use. As always, the journey is more important than the destination. 
+This is a fairly realistic simulation of a typical data engineering project. In the real world, such a project would be undertaken over several weeks by a team of experienced data engineers. _It is highly unlikely that you will have time to complete a fully-functioning, "production-ready" solution._ However, you will have an opportunity to tackle lots of the typical problems faced in a real project, and put your skills in Python, data and DevOps to good use. As always, the journey is more important than the destination. 
 
 Above all, don't rush: it will be better to deliver a high-quality MVP than a more complex but poorly-engineered platform. 
 
