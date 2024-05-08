@@ -98,6 +98,17 @@ The structure of your "processed" S3 data should reflect these tables.
 
 Note that data types in some columns may have to be changed to conform to the warehouse data model.
 
+### History
+Your warehouse should contain a full history of all updates to _facts_. For example, if a sales order is 
+created in `totesys` and then later updated (perhaps the `units_sold` field is changed), you should have _two_ 
+records in the `fact_sales_order` table. It should be possible to see both the original and changed number
+of `units_sold`. It should be possible to query either the current state of the sale, or get a full history
+of how it has evolved (including deletion if applicable).
+
+It is _not_ necessary to do this for dimensions (which should not change very much anyway). The warehouse 
+should just have the latest version of the dimension values. However, you might want to keep a full
+record of changes to dimensions in the S3 buckets.
+
 ## The Dashboard
 To demonstrate the use of the warehouse, you will be required to display some of the data on an [AWS Quicksight](https://aws.amazon.com/quicksight/) dashboard. **You are not required to know how to construct a Quicksight dashboard** - Northcoders tutors will help with this part. However, you will be required to supply the SQL queries that are used to retrieve the data you wish to display.
 
