@@ -34,7 +34,7 @@ The project is open-ended and could include any number of features, but **at a m
 
 All Python code should be thoroughly tested, PEP8 compliant, and tested for security vulnerabilities with the `safety` and `bandit` packages. Test coverage should exceed 90%.
 
-As far as possible, the project should be deployed automatically using infrastucture-as-code and CI/CD techniques. The deployment scripts can be written as `bash` scripts, Python code, or Terraform.
+As far as possible, the project should be deployed automatically using infrastucture-as-code and CI/CD techniques.  
 
 You should be able to demonstrate that a change to the source database will be reflected in the data warehouse within 30 minutes at most.
 
@@ -144,6 +144,7 @@ You need to create:
 1. A Python application to transform data landing in the "ingestion" S3 bucket and place the results in the "processed" S3 bucket. The data should be transformed to conform to the warehouse schema (see above). The job should be triggered by either an S3 event triggered when data lands in the ingestion bucket, or on a schedule. Again, status and errors should be logged to Cloudwatch, and an alert triggered if a serious error occurs.
 1. A Python application that will periodically schedule an update of the data warehouse from the data in S3. Again, status and errors should be logged to Cloudwatch, and an alert triggered if a serious error occurs.
 1. **In the final week of the course**, you will be asked to provide some SQL to perform a complex query on the data warehouse.
+Deployment must be automated. It is strongly recommended that you use Terraform.
 
 ## Finally...
 
