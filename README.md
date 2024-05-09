@@ -114,6 +114,8 @@ To demonstrate the use of the warehouse, you will be required to display some of
 
 This aspect of the project should not be tackled until the final week of the course, more details will be given then. The major focus of your efforts should be to get the data into the data warehouse.
 
+![img](./mvp.png)
+
 
 ## Possible Extensions
 
