@@ -38,6 +38,8 @@ As far as possible, the project should be deployed automatically using infrastuc
 
 You should be able to demonstrate that a change to the source database will be reflected in the data warehouse within 30 minutes at most.
 
+<img src="images/mvp.png" alt="Example Image" width="350" height="250">
+
 ## The Data
 
 The primary data source for the project is a moderately complex (but not very large) database called `totesys` which is meant to simulate the back-end data of a commercial application. Data is inserted and updated into this database several times a day. (The data itself is entirely fake and meaningless, as a brief inspection will confirm.)
@@ -52,45 +54,45 @@ In addition, you will be given credentials for a data warehouse hosted in the No
 The overall structure of the resulting data warehouse is shown [here](https://dbdiagram.io/d/63a19c5399cb1f3b55a27eca).
 
 The tables to be ingested from `totesys` are:
-|tablename|
-|----------|
-|counterparty|
-|currency|
-|department|
-|design|
-|staff|
-|sales_order|
-|address|
-|payment|
-|purchase_order|
-|payment_type|
-|transaction|
+| tablename      |
+| -------------- |
+| counterparty   |
+| currency       |
+| department     |
+| design         |
+| staff          |
+| sales_order    |
+| address        |
+| payment        |
+| purchase_order |
+| payment_type   |
+| transaction    |
 
 The list of tables in the complete warehouse is:
-|tablename|
-|---------|
-|fact_sales_order|
-|fact_purchase_orders|
-|fact_payment|
-|dim_transaction|
-|dim_staff|
-|dim_payment_type|
-|dim_location|
-|dim_design|
-|dim_date|
-|dim_currency|
-|dim_counterparty|
+| tablename            |
+| -------------------- |
+| fact_sales_order     |
+| fact_purchase_orders |
+| fact_payment         |
+| dim_transaction      |
+| dim_staff            |
+| dim_payment_type     |
+| dim_location         |
+| dim_design           |
+| dim_date             |
+| dim_currency         |
+| dim_counterparty     |
 
 However, for your minimum viable product, you need only populate the following:
-|tablename|
-|---------|
-|fact_sales_order|
-|dim_staff|
-|dim_location|
-|dim_design|
-|dim_date|
-|dim_currency|
-|dim_counterparty|
+| tablename        |
+| ---------------- |
+| fact_sales_order |
+| dim_staff        |
+| dim_location     |
+| dim_design       |
+| dim_date         |
+| dim_currency     |
+| dim_counterparty |
 
 This should be sufficient for a single [star-schema](https://dbdiagram.io/d/637a423fc9abfc611173f637).
 
