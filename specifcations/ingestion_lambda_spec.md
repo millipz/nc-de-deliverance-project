@@ -24,6 +24,7 @@ A Python application to check for changes to the database tables and ingest any 
 ## Functions
 
 - Retrieve timestamps from parameter store
+
         '''
         Return a dictionary with timestamps showing most recent entry from the OLTP database that has been processed
         by the ingestion lambda.
@@ -41,6 +42,7 @@ A Python application to check for changes to the database tables and ingest any 
         '''
 
 - Write timestamps to parameter store
+
         '''
 
         Writes the updated dictionary of table_name : timestamp key value pairs to parameter store
@@ -56,6 +58,7 @@ A Python application to check for changes to the database tables and ingest any 
         '''
 
 - Collect data from one database table
+
         '''
 
         Returns all data from a table newer than most recent timestamp
@@ -91,19 +94,41 @@ A Python application to check for changes to the database tables and ingest any 
         '''
 
 - Write ingested data to S3 bucket per table
+
         '''
 
         Write file to S3 bucket as Json lines format
 
         Args:
             table_name (string)
-            timestamp (timestamp)
+            most_recent_timestamp (timestamp) : timestamp of most recent records in data
+            table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
+            sequential_id (int) : integer stored in parameter store retrieved earlier in application flow
+            
+
+        Raises:
+            FileExistsError: S3 object already exists with the same name
+            ConnectionError : connection issue to S3 bucket
+
+        Returns:
+            None
+        '''
+
+- Read sequential_id
+
+        '''
+
+        From parameter store retrieves table_name : sequential_id key value pair
+
+        Args:
+            table_name (string)
+            
 
         Raises:
             KeyError: table_name does not exist
             ConnectionError : connection issue to parameter store
 
-
         Returns:
-            table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
+            sequential_id(int)
+
         '''
