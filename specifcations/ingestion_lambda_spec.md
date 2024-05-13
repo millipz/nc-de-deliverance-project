@@ -132,3 +132,38 @@ A Python application to check for changes to the database tables and ingest any 
             sequential_id(int)
 
         '''
+
+- Write sequential_id
+
+        '''
+
+        To parameter store write table_name : sequential_id key value pair
+        -- checks sequential_id is one greater than previous sequential_id
+
+        Args:
+            table_name (string)
+            sequential_id(int)
+            
+
+        Raises:
+            KeyError: table_name does not exist
+            ConnectionError : connection issue to parameter store
+
+        Returns:
+            None
+        '''
+
+ - Lambda application flow
+ - Log start of lambda run
+ For each table
+    - Log entry at start of each run
+    - Retrieve timestamps from parameter store
+    - Collect data from one database table
+    - Gathers latest timestamp
+    - Read sequential_id
+    - Write ingested data to S3 bucket per table
+    - Write sequential_id
+    - Log update of table
+    - Log completion/errors
+
+ 
