@@ -4,12 +4,13 @@
 #
 #################################################################################
 
-PROJECT_NAME = de-team-deliverance
+PROJECT_NAME = de-password-manager
 REGION = eu-west-2
 PYTHON_INTERPRETER = python
 WD=$(shell pwd)
 PYTHONPATH=${WD}
 SHELL := /bin/bash
+PROFILE = default
 PIP:=pip
 
 ## Create python interpreter environment.
@@ -35,6 +36,8 @@ endef
 
 ## Build the environment requirements
 requirements: create-environment
+	$(call execute_in_env, $(PIP) install pip-tools)
+	$(call execute_in_env, pip-compile requirements.in)
 	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
 
 ################################################################################################################
@@ -57,7 +60,6 @@ coverage:
 
 ## Set up dev requirements (bandit, safety, black)
 dev-setup: bandit safety black coverage
-	$(call execute_in_env, $(PIP) install -r ./dev-requirements.txt)
 
 # Build / Run
 
@@ -68,7 +70,7 @@ security-test:
 
 ## Run the black code check
 run-black:
-	$(call execute_in_env, black  ./src/*.py ./test/*.py)
+	$(call execute_in_env, black  ./src/*.py ./tests/*.py)
 
 ## Run the unit tests
 unit-test:
@@ -76,7 +78,7 @@ unit-test:
 
 ## Run the coverage check
 check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} coverage run --omit 'venv/*' -m pytest && coverage report -m)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src tests/)
 
 ## Run all checks
 run-checks: security-test run-black unit-test check-coverage
