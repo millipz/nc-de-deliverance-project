@@ -23,6 +23,8 @@
 
 0. **Project repo with makefile, CI/CD actions, suitable .gitignore etc.**
 
+### Module 1 - Extraction
+
 1. **Terraform Setup**
 
    - **AWS Credentials stored in .env file locally**
@@ -47,6 +49,8 @@
    - **Processes:** None
    - **Other Notes** Should be a replica of OLTP data with full history
 
+### Module 2 - Transformation
+
 4. **A Python application to check for changes to the database tables and ingest any new or updated data**
 
    - **Use:** Lambda
@@ -62,7 +66,7 @@
      3. Add an object per table to ingestion s3 bucket, storing the data in ... json lines format?
      4. Record success/failure, quantity of data ingested, timestamp. Log to CloudWatch
      5. On failure, wait a few mins and retry. On multiple failures, send an alert via Cloudwatch and tigger an email to administrators. Should we set up a new account for this?
-     6. Add functionality to allow 
+     6. Add functionality to allow
    - **Other Notes**
      - How to store the latest record ingested? This may go in AWS Parameter Store?
      - How to check for historic records that have been updated?
@@ -76,6 +80,8 @@
    - **Inputs:** Receives data processed and ready for use in parquet format
    - **Processes:** None
    - **Other Notes** Data should match warehouse schema
+
+### Loading
 
 6. **A Python application to transform data landing in the "ingestion" S3 bucket and place the results in the "processed" S3 bucket**
 
@@ -117,8 +123,8 @@
      5. Record success/failure, quantity of data processed. Log to CloudWatch
      6. On failure, wait a few mins and retry. On multiple failures, send an alert via Cloudwatch and tigger an email to administrators.
    - **Other Notes**
-      - How to store the latest object processed? This may go in AWS Parameter Store?
-      - Should we check for duplicate data in the warehouse? Could we enforce this with unique IDs to ensure duplicates are not possible?
+     - How to store the latest object processed? This may go in AWS Parameter Store?
+     - Should we check for duplicate data in the warehouse? Could we enforce this with unique IDs to ensure duplicates are not possible?
 
 8. **In the final week of the course**, you will be asked to provide some SQL to perform a complex query on the data warehouse.
 
