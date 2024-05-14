@@ -1,3 +1,4 @@
+<!-- TODO PLace holder for read me this will need to adapt our custom changes or approaches to the project requirements -->
 # The Data Engineering Project
 
 **Read this document carefully - it contains (almost) all you need to know about the project!**
