@@ -1,6 +1,7 @@
 # S3 Data Storage Specification
 
 ## Ingestion Bucket: `nc_totesys_ingest`
+
 - **Purpose**: Stores raw data extracted from the `totesys` database.
 - **Data Format**: JSON lines.
 - **File Naming Convention**: `{tablename}_sequentialID_{timestamp}.json` (e.g., `sales_order_20240510T120000.json`)
@@ -10,6 +11,7 @@
 - **Data Versioning and Immutability**: Versioning enabled to track and manage historical data versions.
 
 ## Processed Bucket: `nc_totesys_processed`
+
 - **Purpose**: Stores data transformed and formatted for loading into the data warehouse.
 - **Data Format**: Parquet.
 - **File Naming Convention**: `{tablename}_sequentialID_processed_{timestamp}.parquet`
@@ -23,6 +25,7 @@
 ## Fact Tables
 
 ### Fact Sales Order
+
 - `sales_record_id`: SERIAL (Primary Key, Auto-increment)
 - `sales_order_id`: INT
 - `created_date`: DATE
@@ -42,6 +45,7 @@
 ## Dimension Tables
 
 ### Dim Staff
+
 - `staff_id`: INT (Primary Key)
 - `first_name`: VARCHAR
 - `last_name`: VARCHAR
@@ -50,17 +54,20 @@
 - `email_address`: EMAIL
 
 ### Dim Currency
+
 - `currency_id`: INT (Primary Key)
 - `currency_code`: VARCHAR(3)
 - `currency_name`: VARCHAR
 
 ### Dim Design
+
 - `design_id`: INT (Primary Key)
 - `design_name`: VARCHAR
 - `file_location`: VARCHAR
 - `file_name`: VARCHAR
 
 ### Dim Location
+
 - `location_id`: INT (Primary Key)
 - `address_line_1`: VARCHAR
 - `address_line_2`: VARCHAR
@@ -71,6 +78,7 @@
 - `phone`: VARCHAR
 
 ### Dim Counterparty
+
 - `counterparty_id`: INT (Primary Key)
 - `counterparty_legal_name`: VARCHAR
 - `counterparty_legal_address_line_1`: VARCHAR
@@ -82,6 +90,7 @@
 - `counterparty_legal_phone_number`: VARCHAR
 
 ### Dim Date
+
 - `date_id`: DATE (Primary Key)
 - `year`: INT
 - `month`: INT
