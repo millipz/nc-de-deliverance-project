@@ -1,8 +1,8 @@
 from db.connection import db
 
 with open("db/schema.sql", 'r') as schema:
+    print("initialising database schema...")
     schema_string = schema.read()
-    print(schema_string)
 try:
     db.run(schema_string)
 except Exception as e:

@@ -25,8 +25,8 @@ resource "aws_db_instance" "totesys_test_db" {
   storage_type           = "gp2"
   engine_version         = "14.9"
   db_name                = "totesys_sample_data"
-  username               = "postgres"
-  password               = "password"
+  username               = var.db_username
+  password               = var.db_password
   skip_final_snapshot    = true
   publicly_accessible    = true
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
