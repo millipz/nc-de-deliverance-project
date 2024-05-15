@@ -22,7 +22,6 @@ class TestRetrieveTimestamps(unittest.TestCase):
             retrieve_timestamps("non_existent_table")
 
     def test_successful_retrieval(self):
-        # Store multiple timestamps with different values in Parameter Store
         self.ssm_client.put_parameter(
             Name="example_table", Value="2024-05-14T12:00:00", Type="String"
         )
