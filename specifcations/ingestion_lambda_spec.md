@@ -27,12 +27,14 @@ A Python application to check for changes to the database tables and ingest any 
 
 - Retrieve timestamps from parameter store
 
+
         '''
         Return a dictionary with timestamps showing most recent entry from the OLTP database that has been processed
         by the ingestion lambda.
         -- awaiting looking at data in database to confirm how created and updated timestamps are processed
 
         Args:
+            table_name (str): table name to get timestamp for
             table_name (str): table name to get timestamp for
 
         Raises:
@@ -41,9 +43,11 @@ A Python application to check for changes to the database tables and ingest any 
 
         Returns:
             timestamp (datetime timestamp) : stored timestamp of most recent ingested data for given table
+            timestamp (datetime timestamp) : stored timestamp of most recent ingested data for given table
         '''
 
 - Write timestamps to parameter store
+
 
         '''
 
@@ -60,6 +64,7 @@ A Python application to check for changes to the database tables and ingest any 
         '''
 
 - Collect data from one database table
+
 
         '''
 
@@ -80,7 +85,9 @@ A Python application to check for changes to the database tables and ingest any 
 
 - Gathers latest timestamp
   '''
+  '''
 
+        Collect data from one database table() returns the most recent timestamp
         Collect data from one database table() returns the most recent timestamp
 
         Args:
@@ -91,11 +98,13 @@ A Python application to check for changes to the database tables and ingest any 
 
 
 
+
         Returns:
             most_recent_timestamp (timestamp) : from list returns most recent timestamp from created_at/updated_at values
         '''
 
 - Write ingested data to S3 bucket per table
+
 
         '''
 
@@ -125,11 +134,53 @@ A Python application to check for changes to the database tables and ingest any 
         Args:
             table_name (string)
 
+            most_recent_timestamp (timestamp) : timestamp of most recent records in data
+            table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
+            sequential_id (int) : integer stored in parameter store retrieved earlier in application flow
+
+
+        Raises:
+            FileExistsError: S3 object already exists with the same name
+            ConnectionError : connection issue to S3 bucket
+
+        Returns:
+            None
+        '''
+
+- Read sequential_id
+
+        '''
+
+        From parameter store retrieves table_name : sequential_id key value pair
+
+        Args:
+            table_name (string)
+
 
         Raises:
             KeyError: table_name does not exist
             ConnectionError : connection issue to parameter store
 
+        Returns:
+            sequential_id(int)
+
+        '''
+
+- Write sequential_id
+
+        '''
+
+        To parameter store write table_name : sequential_id key value pair
+        -- checks sequential_id is one greater than previous sequential_id
+
+        Args:
+            table_name (string)
+            sequential_id(int)
+
+
+        Raises:
+            KeyError: table_name does not exist
+            ConnectionError : connection issue to parameter store
         Returns:
             sequential_id(int)
 
