@@ -30,11 +30,11 @@ Upon PR submission assign the code review the team member who is working solo fo
 
 -  How easy it is to modify, integrate, or extend with the existing codebase in the future.
 
-### 4. Documentation
+### 5. Documentation
 
 - Ensure all functions are documented using [docs-and-comments](docs-and-comments.md) as reference.
 
-### 5. Testing
+### 6. Testing
 
 - All Python code should be thoroughly tested.
 - Test coverage should exceed 90%.
@@ -42,7 +42,7 @@ Upon PR submission assign the code review the team member who is working solo fo
 - Do they cover different scenarios effectively?
 - Are mocking frameworks used to isolate dependencies during testing?
 
-### 6. Frame feedback as requests, not commands
+### 7. Frame feedback as requests, not commands
 
 - Avoid imperative language; instead, invite discussion and collaboration.
 - Use phrases like 'Could you consider...' or 'Would it be possible to...' when suggesting changes.
