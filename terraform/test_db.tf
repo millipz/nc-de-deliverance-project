@@ -35,6 +35,7 @@ resource "aws_db_instance" "totesys_test_db" {
 resource "local_sensitive_file" "db_credentials" {
   content  = <<EOF
 TEST_DB_ENDPOINT="${aws_db_instance.totesys_test_db.endpoint}"
+TEST_DB_NAME="${aws_db_instance.totesys_test_db.db_name}"
 TEST_DB_USERNAME="${aws_db_instance.totesys_test_db.username}"
 TEST_DB_PASSWORD="${aws_db_instance.totesys_test_db.password}"
 EOF
