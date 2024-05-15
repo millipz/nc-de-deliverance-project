@@ -32,3 +32,11 @@ resource "aws_db_instance" "totesys_test_db" {
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
 }
 
+resource "local_sensitive_file" "db_credentials" {
+  content  = <<EOF
+TEST_DB_ENDPOINT="${aws_db_instance.totesys_test_db.endpoint}"
+TEST_DB_USERNAME="${aws_db_instance.totesys_test_db.username}"
+TEST_DB_PASSWORD="${aws_db_instance.totesys_test_db.password}"
+EOF
+  filename = "${path.module}/../.secrets/db_credentials.env"
+}

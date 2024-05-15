@@ -18,3 +18,4 @@ venv/
 *.tfstate*
 .env
 requirements.txt
+.secrets
