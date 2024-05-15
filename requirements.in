@@ -1,2 +1,5 @@
 boto3
 pytest
+flake8
+coverage
+black
