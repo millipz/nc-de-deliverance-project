@@ -5,8 +5,8 @@
 - **Data Format**: JSON lines.
 - **File Naming Convention**: `{tablename}_sequentialID_{timestamp}.json` (e.g., `sales_order_20240510T120000.json`)
 - **Storage Structure**:
-  - Data is stored in partitioned folders based on the date of ingestion: `year={yyyy}/month={mm}/day={dd}/`
-  - Example Path: `s3://nc_totesys_ingest/year=2024/month=05/day=10/sales_order_20240510T120000.json`
+  - Data is stored in partitioned folders based on the date of ingestion: `yyy-mm-dd/`
+  - Example Path: `s3://nc_totesys_ingest/2024-05-10/sales_order_20240510T120000.json`
 - **Data Versioning and Immutability**: Versioning enabled to track and manage historical data versions.
 
 ## Processed Bucket: `nc_totesys_processed`
@@ -14,8 +14,8 @@
 - **Data Format**: Parquet.
 - **File Naming Convention**: `{tablename}_sequentialID_processed_{timestamp}.parquet`
 - **Storage Structure**:
-  - Data is stored in partitioned folders based on dimensions key for the data warehouse, typically date: `year={yyyy}/month={mm}/day={dd}/`
-  - Example Path: `s3://nc_totesys_processed/year=2024/month=05/day=10/fact_sales_order_20240510T123000.parquet`
+  - Data is stored in partitioned folders based on dimensions key for the data warehouse, typically date: `yyyy-mm-dd/`
+  - Example Path: `s3://nc_totesys_processed/2024-05-10/fact_sales_order_20240510T123000.parquet`
 - **Data Lifecycle**: Older data may be transitioned to colder storage (e.g., Amazon S3 Glacier) based on age and access patterns.
 
 # Data Warehouse Schema Specification
