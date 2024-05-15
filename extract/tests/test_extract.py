@@ -4,6 +4,7 @@ import os
 from moto import mock_aws
 from extract.src.extract import retrieve_timestamps
 
+
 @mock_aws
 class TestRetrieveTimestamps(unittest.TestCase):
 
@@ -18,25 +19,23 @@ class TestRetrieveTimestamps(unittest.TestCase):
 
     def test_table_name_does_not_exist(self):
         with self.assertRaises(KeyError):
-            retrieve_timestamps('non_existent_table')
+            retrieve_timestamps("non_existent_table")
 
     def test_successful_retrieval(self):
         # Store multiple timestamps with different values in Parameter Store
         self.ssm_client.put_parameter(
-            Name='example_table',
-            Value='2024-05-14T12:00:00',
-            Type='String'
+            Name="example_table", Value="2024-05-14T12:00:00", Type="String"
         )
 
         self.ssm_client.put_parameter(
-            Name='example_table',
-            Value='2024-05-15T13:00:00',
-            Type='String',
-            Overwrite=True
-        )    
+            Name="example_table",
+            Value="2024-05-15T13:00:00",
+            Type="String",
+            Overwrite=True,
+        )
 
         # Retrieve the latest timestamp
-        timestamp = retrieve_timestamps('example_table')
+        timestamp = retrieve_timestamps("example_table")
         self.assertEqual(timestamp, "2024-05-15T13:00:00")
 
     # TODO: Add a test for connection issues
