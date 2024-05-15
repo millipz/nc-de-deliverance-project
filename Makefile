@@ -65,6 +65,14 @@ flake8:
 ## Set up dev requirements (bandit, safety, black, flake8)
 dev-setup: bandit safety black coverage flake8
 
+# Test Database
+recreate-test-db:
+	cd ${PYTHONPATH}/terraform && terraform apply -var-file="secret.tfvars" -replace='aws_db_instance.totesys_test_db' -auto-approve
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_schema.py)
+
+seed-test-db:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_seed.py)
+
 # Build / Run
 
 ## Run the security test (bandit + safety)
@@ -82,7 +90,7 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -vv)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -vv --testdox)
 
 ## Run the coverage check
 check-coverage:
