@@ -1,4 +1,7 @@
 boto3
 pytest
+pytest-testdox
+pytest-cov
+moto
 pg8000
 python-dotenv

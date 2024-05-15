@@ -101,14 +101,17 @@ security-test:
 	$(call execute_in_env, safety check -r ./requirements.txt)
 	$(call execute_in_env, bandit -lll */*.py *c/*/*.py)
 
-## Run the flake8 code check
-run-flake8:
-	$(call execute_in_env, flake8)
-	$(call execute_in_env, flake8)
-
 ## Run the black code formatter
 run-black:
-	$(call execute_in_env, black ./src/*.py ./tests/*.py)
+	$(call execute_in_env, find . -type f -name "*.py" \
+		! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" \
+		! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
+		-exec sed -i 's/[[:space:]]\+$$//' {} \; \
+		-exec black {} \;)
+
+## Run the flake8 code check
+run-flake8:
+	$(call execute_in_env, flake8 --config .flake8)
 
 ## Run the unit tests
 unit-test:
@@ -116,8 +119,8 @@ unit-test:
 
 ## Run the coverage check
 check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src tests/)
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src tests/)
+	$(call source venv/bin/activate && find . -path "*/src/*.py" -o -path "*/tests/*.py" -exec pytest --cov=src --cov=tests {} +; PYTHONPATH=${PYTHONPATH})
+
 
 ## Run all checks
-run-checks: security-test run-flake8 run-black unit-test check-coverage
+run-checks: security-test run-black run-flake8 unit-test check-coverage
