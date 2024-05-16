@@ -64,8 +64,8 @@ def insert_counterparty_data(counterparty):
         legal_address_id,
         commercial_contact,
         delivery_contact,
-        created_at, l
-        ast_updated
+        created_at,
+        last_updated
     )
     VALUES """
 
