@@ -20,3 +20,4 @@ venv/
 requirements.txt
 .secrets
 terraform/secret.tfvars
+requirements.txt
