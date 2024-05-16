@@ -41,7 +41,7 @@ def write_timestamp(timestamp: datetime, table_name: str, ssm_client):
     Args:
         timestamp (timestamp) : timestamp of latest extracted data
         table_name (str) : table name to store timestamp for
-        client (boto3 SSM Client) : client passed in to avoid recreating for each invocation
+        client (boto3 SSM Client) : avoid recreating for each invocation
 
     Raises:
         ConnectionError : connection issue to parameter store
@@ -52,7 +52,7 @@ def write_timestamp(timestamp: datetime, table_name: str, ssm_client):
     try:
         ssm_client.put_parameter(
             Name=f"{table_name}_latest_extracted",
-            Description=f"Latest timestamp of data ingested from Totesys database for {table_name} table",
+            Description=f"Latest timestamp ingested data for {table_name}",
             Value=timestamp.isoformat(),
             Overwrite=True,
         )
@@ -75,12 +75,14 @@ def collect_table_data(table_name: str, timestamp: datetime, db_conn):
 
 
     Returns:
-        table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
+        table_data (list) : list of dictionaries all data in table,
+        one dictionary per row keys will be column headings
     """
 
     """
 
-        Collect data from one database table() returns the most recent timestamp
+        Collect data from one database table()
+            returns the most recent timestamp
 
         Args:
             table_data (list) : list of dictionaries
@@ -91,7 +93,8 @@ def collect_table_data(table_name: str, timestamp: datetime, db_conn):
 
 
         Returns:
-            most_recent_timestamp (timestamp) : from list returns most recent timestamp from created_at/updated_at values
+            most_recent_timestamp (timestamp):
+                from list returns most recent timestamp
         """
 
     """
@@ -100,9 +103,12 @@ def collect_table_data(table_name: str, timestamp: datetime, db_conn):
 
         Args:
             table_name (string)
-            most_recent_timestamp (timestamp) : timestamp of most recent records in data
-            table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
-            sequential_id (int) : integer stored in parameter store retrieved earlier in application flow
+            most_recent_timestamp (timestamp) :
+                timestamp of most recent records in data
+            table_data (list) : list of dictionaries all data in table,
+                one dictionary per row keys will be column headings
+            sequential_id (int) : integer stored in parameter store
+                retrieved earlier in application flow
 
 
         Raises:
@@ -115,7 +121,8 @@ def collect_table_data(table_name: str, timestamp: datetime, db_conn):
 
     """
 
-        From parameter store retrieves table_name : sequential_id key value pair
+        From parameter store retrieves table_name :
+            sequential_id key value pair
 
         Args:
             table_name (string)
