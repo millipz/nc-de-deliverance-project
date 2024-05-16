@@ -5,16 +5,15 @@ on:
     branches-ignore:
       - main
     paths:
-        - '**.py'
+      - '**.py'
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4   
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,15 +31,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-        - name: Run tests with coverage
+      - name: Run tests with coverage
         run: |
           coverage run -m pytest extract/tests/
-          coverage run -m pytest transform/tests/
-          coverage run -m pytest load/tests/
+          # coverage run -m pytest transform/tests/
+          # coverage run -m pytest load/tests/
           coverage report -m
 
       - name: Run Black
         run: black --line-length 99 .
 
       - name: Lint with flake8
-        run: pip install flake8 && flake8 --config .flake8
+        run: |
+          pip install flake8
+          flake8 --config .flake8

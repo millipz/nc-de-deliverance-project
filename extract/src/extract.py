@@ -85,11 +85,6 @@ def collect_table_data(
     """
     pass
 
-    """
-
-        Collect data from one database table()
-            returns the most recent timestamp
-
 
 def find_latest_timestamp(
     table_data: list[dict],
@@ -101,7 +96,8 @@ def find_latest_timestamp(
 
     Args:
         table_data (list) : list of dictionaries representing rows of the table
-        columns (list[str], optional keyword) : columns to search for timestamps. Defauts to ["last_updated"]
+        columns (list[str], optional keyword) :
+            columns to search for timestamps. Defauts to ["last_updated"]
 
         Returns:
             most_recent_timestamp (timestamp):
@@ -146,7 +142,11 @@ def write_table_data_to_s3(
     encoded_data = json.dumps(table_data, indent=4, sort_keys=True, default=str).encode(
         "utf-8"
     )
-    key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime("%H%M%S%f")}.jsonl"
+    key = (
+        f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_"
+        f"{datetime.now().strftime('%H%M%S%f')}.jsonl"
+    )
+
     s3_client.put_object(Body=encoded_data, Bucket=bucket_name, Key=key)
 
 
@@ -166,11 +166,11 @@ def get_seq_id(table_name: str, ssm_client) -> int:
         sequential_id(int)
 
     """
+    pass
 
 
 def write_seq_id(seq_id: int, table_name: str, ssm_client) -> None:
     """
-
     To parameter store write table_name : sequential_id key value pair
     -- checks sequential_id is one greater than previous sequential_id
 
@@ -186,3 +186,4 @@ def write_seq_id(seq_id: int, table_name: str, ssm_client) -> None:
     Returns:
         None
     """
+    pass
