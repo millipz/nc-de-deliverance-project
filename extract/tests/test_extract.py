@@ -155,7 +155,8 @@ class TestWriteTableDataToS3:
     def test_key_is_as_expected(self):
         table_name = "staff"
         sequential_id = 101
-        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime("%H%M%S%f")}.jsonl"
+        date_format = "%H%M%S%f"
+        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime(date_format)}.jsonl"
         assert expected_key == "2024-01-01/staff_00000101_000000000000.jsonl"
 
     @freeze_time("2024-01-01")
