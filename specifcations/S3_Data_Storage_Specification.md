@@ -6,7 +6,7 @@
 - **File Naming Convention**: `{tablename}_sequentialID_{timestamp}.json` (e.g., `sales_order_20240510T120000.json`)
 - **Storage Structure**:
   - Data is stored in partitioned folders based on the date of ingestion: `yyyy-mm-dd/`
-  - Example Path: `s3://nc_totesys_ingest/2024-05-10/sales_order_20240510T120000.json`
+  - Example Path: `s3://nc-totesys-ingest/2024-05-10/sales_order_20240510T120000.json`
 - **Data Versioning and Immutability**: Versioning enabled to track and manage historical data versions.
 
 ## Processed Bucket: `nc-totesys-processed`
@@ -14,8 +14,8 @@
 - **Data Format**: Parquet.
 - **File Naming Convention**: `{tablename}_sequentialID_processed_{timestamp}.parquet`
 - **Storage Structure**:
-  - Data is stored in partitioned folders based on dimensions key for the data warehouse, typically date: `yyyy-mm-dd/`
-  - Example Path: `s3://nc_totesys_processed/2024-05-10/fact_sales_order_20240510T123000.parquet`
+  - Data is stored in partitioned folders based on dimension key for the data warehouse, typically date: `yyyy-mm-dd/`
+  - Example Path: `s3://nc-totesys-processed/2024-05-10/fact_sales_order_20240510T123000.parquet`
 - **Data Lifecycle**: Older data may be transitioned to colder storage (e.g., Amazon S3 Glacier) based on age and access patterns.
 
 # Data Warehouse Schema Specification
@@ -47,7 +47,7 @@
 - `last_name`: VARCHAR
 - `department_name`: VARCHAR
 - `location`: VARCHAR
-- `email_address`: EMAIL
+- `email_address`: VARCHAR
 
 ### Dim Currency
 - `currency_id`: INT (Primary Key)
