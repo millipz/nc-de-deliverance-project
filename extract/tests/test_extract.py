@@ -45,13 +45,13 @@ class TestGetTimestamp:
 
     def test_successful_retrieval(self, ssm_client):
         ssm_client.put_parameter(
-            Name="example_table_latest_extracted",
+            Name="example_table_latest_extracted_timestamp",
             Value="2024-05-16T10:40:30.962473",
             Type="String",
         )
 
         ssm_client.put_parameter(
-            Name="example_table_latest_extracted",
+            Name="example_table_latest_extracted_timestamp",
             Value="2024-05-16T10:50:30.123456",
             Type="String",
             Overwrite=True,
@@ -155,8 +155,8 @@ class TestWriteTableDataToS3:
     def test_key_is_as_expected(self):
         table_name = "staff"
         sequential_id = 101
-        date_format = "%H%M%S%f"
-        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime(date_format)}.jsonl"
+        time_format = "%H%M%S%f"
+        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime(time_format)}.jsonl"
         assert expected_key == "2024-01-01/staff_00000101_000000000000.jsonl"
 
     @freeze_time("2024-01-01")
@@ -164,7 +164,8 @@ class TestWriteTableDataToS3:
         bucket_name = "ingestion_bucket"
         table_name = "staff"
         sequential_id = 101
-        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime("%H%M%S%f")}.jsonl"
+        time_format = "%H%M%S%f"
+        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime(time_format)}.jsonl"
 
         s3_client.create_bucket(
             Bucket=bucket_name,
