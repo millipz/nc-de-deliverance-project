@@ -1,8 +1,8 @@
 boto3
 pytest
-flake8
-coverage
-black
+pytest-testdox
+pytest-cov
+moto
 pg8000
 python-dotenv
 

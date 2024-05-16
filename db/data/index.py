@@ -10,7 +10,7 @@ from db.data.sales_order import sales_order
 from db.data.staff import staff
 from db.data.transaction import transaction
 
-index = ({
+index = {
     "address": address,
     "counterparty": counterparty,
     "currency": currency,
@@ -21,5 +21,5 @@ index = ({
     "purchase_order": purchase_order,
     "sales_order": sales_order,
     "staff": staff,
-    "transaction": transaction
-})
+    "transaction": transaction,
+}
