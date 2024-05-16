@@ -8,3 +8,4 @@ python-dotenv
 flake8
 coverage
 black
+freezegun

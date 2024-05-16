@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, date
+import json
 
 
 def get_timestamp(table_name: str, ssm_client) -> datetime:
@@ -102,9 +103,20 @@ def find_latest_timestamp(
     Returns:
         most_recent_timestamp (timestamp) : from list returns most recent timestamp from created_at/updated_at values
     """
+    timestamps = []
+    for dic in table_data:
+        for col in columns:
+            timestamps.append(dic[col])
+    return max(timestamps)
 
 
-def write_table_data_to_s3(table_name: str, table_data: list[dict], s3_client) -> None:
+def write_table_data_to_s3(
+    table_name: str,
+    table_data: list[dict],
+    bucket_name: str,
+    sequential_id: int,
+    s3_client,
+) -> None:
     """
     Write file to S3 bucket as Json lines format
 
@@ -121,6 +133,11 @@ def write_table_data_to_s3(table_name: str, table_data: list[dict], s3_client) -
     Returns:
         None
     """
+    encoded_data = json.dumps(table_data, indent=4, sort_keys=True, default=str).encode(
+        "utf-8"
+    )
+    key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime("%H%M%S%f")}.jsonl"
+    s3_client.put_object(Body=encoded_data, Bucket=bucket_name, Key=key)
 
 
 def get_seq_id(table_name: str, ssm_client) -> int:
