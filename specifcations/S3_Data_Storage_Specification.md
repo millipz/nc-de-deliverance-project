@@ -1,16 +1,16 @@
 # S3 Data Storage Specification
 
-## Ingestion Bucket: `nc_totesys_ingest`
+## Ingestion Bucket: `nc-totesys-ingest`
 
 - **Purpose**: Stores raw data extracted from the `totesys` database.
 - **Data Format**: JSON lines.
 - **File Naming Convention**: `{tablename}_sequentialID_{timestamp}.json` (e.g., `sales_order_20240510T120000.json`)
 - **Storage Structure**:
-  - Data is stored in partitioned folders based on the date of ingestion: `yyy-mm-dd/`
+  - Data is stored in partitioned folders based on the date of ingestion: `yyyy-mm-dd/`
   - Example Path: `s3://nc_totesys_ingest/2024-05-10/sales_order_20240510T120000.json`
 - **Data Versioning and Immutability**: Versioning enabled to track and manage historical data versions.
 
-## Processed Bucket: `nc_totesys_processed`
+## Processed Bucket: `nc-totesys-processed`
 
 - **Purpose**: Stores data transformed and formatted for loading into the data warehouse.
 - **Data Format**: Parquet.
