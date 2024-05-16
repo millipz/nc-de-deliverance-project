@@ -25,16 +25,6 @@ create-environment:
 		$(PIP) install -q virtualenv virtualenvwrapper; \
 		virtualenv venv --python=$(PYTHON_INTERPRETER); \
 	)
-	@echo ">>> About to create environment: $(PROJECT_NAME)..."
-	@echo ">>> check python3 version"
-	( \
-		$(PYTHON_INTERPRETER) --version; \
-	)
-	@echo ">>> Setting up VirtualEnv."
-	( \
-		$(PIP) install -q virtualenv virtualenvwrapper; \
-		virtualenv venv --python=$(PYTHON_INTERPRETER); \
-	)
 
 # Define utility variable to help calling Python from the virtual environment
 ACTIVATE_ENV := source venv/bin/activate
@@ -42,14 +32,10 @@ ACTIVATE_ENV := source venv/bin/activate
 # Execute python related functionalities from within the project's environment
 define execute_in_env
 	$(ACTIVATE_ENV) && $1
-	$(ACTIVATE_ENV) && $1
 endef
 
 ## Build the environment requirements
 requirements: create-environment
-	$(call execute_in_env, $(PIP) install pip-tools)
-	$(call execute_in_env, pip-compile requirements.in)
-	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
 	$(call execute_in_env, $(PIP) install pip-tools)
 	$(call execute_in_env, pip-compile requirements.in)
 	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
@@ -59,26 +45,21 @@ requirements: create-environment
 ## Install bandit
 bandit:
 	$(call execute_in_env, $(PIP) install bandit)
-	$(call execute_in_env, $(PIP) install bandit)
 
 ## Install safety
 safety:
-	$(call execute_in_env, $(PIP) install safety)
 	$(call execute_in_env, $(PIP) install safety)
 
 ## Install black
 black:
 	$(call execute_in_env, $(PIP) install black)
-	$(call execute_in_env, $(PIP) install black)
 
 ## Install coverage
 coverage:
 	$(call execute_in_env, $(PIP) install coverage)
-	$(call execute_in_env, $(PIP) install coverage)
 
 ## Install flake8
 flake8:
-	$(call execute_in_env, $(PIP) install flake8)
 	$(call execute_in_env, $(PIP) install flake8)
 
 ## Set up dev requirements (bandit, safety, black, flake8)
@@ -96,8 +77,6 @@ seed-test-db:
 
 ## Run the security test (bandit + safety)
 security-test:
-	$(call execute_in_env, safety check -r ./requirements.txt)
-	$(call execute_in_env, bandit -lll */*.py *c/*/*.py)
 	$(call execute_in_env, safety check -r ./requirements.txt)
 	$(call execute_in_env, bandit -lll */*.py *c/*/*.py)
 
