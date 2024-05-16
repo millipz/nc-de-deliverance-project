@@ -34,11 +34,13 @@ jobs:
 
         - name: Run tests with coverage
         run: |
-          coverage run -m pytest test/
+          coverage run -m pytest extract/tests/
+          coverage run -m pytest transform/tests/
+          coverage run -m pytest load/tests/
           coverage report -m
 
       - name: Run Black
-        run: black --line-length 79 .
+        run: black --line-length 99 .
 
       - name: Lint with flake8
-        run: pip install flake8 && flake8
+        run: pip install flake8 && flake8 --config .flake8
