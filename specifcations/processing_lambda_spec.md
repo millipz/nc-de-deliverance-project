@@ -2,109 +2,48 @@
 
 A Python Lambda application to:
 
-- Collect new data from the ingestion bucket (json lines format) when triggered.
-- Process it into into the star schema format as specified by the client's data analysts.
-- Write the new data in parquet format to an object in the processed bucket.
+- Collect new data from the ingestion bucket (JSON lines format) when triggered.
+- Process it into the star schema format as specified by the client's data analysts.
+- Write the new data in Parquet format to an object in the processed bucket.
 
 ## Overview
 
 - **Use:** Lambda
 - **Terraform Objects**
 
-  - **Lambda function** to run proccessing
-  - **Trigger** based on object landing in ingestion bucket
-  - **Permissions**... like lots of them
+  - **Lambda function** to run processing.
+  - **Permissions**... like lots of them.
 
-- **Inputs:** Event triggered when ingest bucket receives a new object
+- **Inputs:** Lambda function triggered by ingestion lambda function once successfully completed. Input JSON payload in the form:
+
+    ```json
+    {"packets": [
+        {"table": <table_name>, "id": <sequential_id>}
+        {...}
+    ]}
+    ```
+
 - **Processes:**
-  1. Gather data from new object in s3 ingestion bucket
-  2. Record the latest object id ingested for reference
-  3. If object ids are not sequential, log a warning to cloudwatch
-  4. Proccess the data in Python to conform to warehouse schema
-  5. Write processed data to a parquet file and save to s3 processed bucket
-  6. Record success/failure, quantity of data processed, timestamp. Log to CloudWatch
-  7. On failure, wait a few mins and retry. On multiple failures, send an alert via Cloudwatch and tigger an email to administrators.
+  1. Gather data from new object in s3 ingestion bucket.
+  1. Check object IDs against payload.
+  1. Record success/failure, timestamp. Log to CloudWatch.
+  1. If object ids are not sequential, log a warning to CloudWatch.
+  1. Record to the parameter store the latest object id ingested.
+  1. Proccess the data in Python to conform to warehouse schema.
+  1. Write processed data to a Parquet file and save to s3 processed bucket.
+  1. Record success/failure, quantity of data processed, timestamp. Log to CloudWatch.
+  1. On failure, wait a few mins and retry. On multiple failures, send an alert via CloudWatch and trigger an email to administrators.
 - **Other Notes**
   - How to store the latest object processed? This may go in AWS Parameter Store?
-  - Should we benchmark this lambda and try to optimize it?
+  - Should we benchmark this lambda and try to optimise it?
 
 ## Functions
-
-- Retrieve timestamps from parameter store
-
-        '''
-        Return a dictionary with timestamps showing most recent entry from the OLTP database that has been processed
-        by the ingestion lambda.
-        -- awaiting looking at data in database to confirm how created and updated timestamps are processed
-
-        Args:
-            table_name (str): table name to get timestamp for
-
-        Raises:
-            KeyError: table_name does not exist
-            ConnectionError : connection issue to parameter store
-
-        Returns:
-            timestamp (datetime timestamp) : stored timestamp of most recent ingested data for given table
-        '''
-
-- Write timestamps to parameter store
-
-        '''
-
-        Writes the updated dictionary of table_name : timestamp key value pairs to parameter store
-
-        Args:
-            timestamps (dict) : dictionary of table_name : timestamp key value pairs
-
-        Raises:
-            ConnectionError : connection issue to parameter store
-
-        Returns:
-            None
-        '''
-
-- Collect data from one database table
-
-        '''
-
-        Returns all data from a table newer than most recent timestamp
-
-        Args:
-            table_name (string)
-            timestamp (timestamp)
-
-        Raises:
-            KeyError: table_name does not exist
-            ConnectionError : connection issue to parameter store
-
-
-        Returns:
-            table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
-        '''
-
-- Gathers latest timestamp
-  '''
-
-        Collect data from one database table() returns the most recent timestamp
-
-        Args:
-            table_data (list) : list of dictionaries
-
-        Raises:
-            KeyError: created_at/updated_at does not exist
-
-
-
-        Returns:
-            most_recent_timestamp (timestamp) : from list returns most recent timestamp from created_at/updated_at values
-        '''
 
 - Write ingested data to S3 bucket per table
 
         '''
 
-        Write file to S3 bucket as Json lines format
+        Write file to S3 bucket in Parquet format
 
         Args:
             table_name (string)
