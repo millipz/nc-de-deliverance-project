@@ -3,3 +3,6 @@ pytest
 flake8
 coverage
 black
+pg8000
+python-dotenv
+
