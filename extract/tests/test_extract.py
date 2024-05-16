@@ -213,6 +213,6 @@ class TestWriteSeqId:
 
     def test_id_writtem_to_param_store(self, ssm_client):
         id_to_write = 101
-        write_timestamp(id_to_write, "test_table", ssm_client)
+        write_seq_id(id_to_write, "test_table", ssm_client)
         id = get_seq_id("test_table", ssm_client)
         assert id == 101
