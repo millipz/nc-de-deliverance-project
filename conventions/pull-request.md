@@ -3,7 +3,7 @@
 ## Introduction to Pull Requests
 
 Explanation of pull requests and their role in the version control process.
-If all collaborators are admins on the repository, the process of creating and merging pull requests might vary slightly compared to when there are designated reviewers or maintainers. Here's how the pull request workflow typically works in such a scenario:
+If all collaborators are admins on the repository, the process of creating and merging pull requests might vary slightly compared to when there are designated reviewers or maintainers. It could cause issue with missing files and or settings from tasks done by other collaborators. This how we will use our pull rrequests:
 
 ## 1. Creating Feature Branch
 
@@ -17,11 +17,12 @@ Practice lean branching, where each team member works on a separate feature bran
 
 ## 3. Pushing Changes to Feature Branch
 
+- Before committing the changes githooks precommit will run to check al linting and formatting is done
 - Once a collaborator completes their work on a feature branch, they push their changes to the remote repository on the feature branch.
 
 ## 4. Pull Request Creation
 
-- Since all collaborators are admins, they have the privilege to directly create pull requests from their feature branches to the main branch without needing approval from other reviewers. **However this should be done by whoever is assigned to do so from the team**.
+- All collaborators will be able to apprve/review pull requests except their own
 
 - The main branch settings can be found `settings > code and automations > Branches` with the options selected as follows:
 

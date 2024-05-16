@@ -42,7 +42,7 @@ def write_timestamp(timestamp: datetime, table_name: str, ssm_client) -> None:
     Args:
         timestamp (timestamp) : timestamp of latest extracted data
         table_name (str) : table name to store timestamp for
-        client (boto3 SSM Client) : client passed in to avoid recreating for each invocation
+        client (boto3 SSM Client) : avoid recreating for each invocation
 
     Raises:
         ConnectionError : connection issue to parameter store
@@ -53,7 +53,7 @@ def write_timestamp(timestamp: datetime, table_name: str, ssm_client) -> None:
     try:
         ssm_client.put_parameter(
             Name=f"{table_name}_latest_extracted",
-            Description=f"Latest timestamp of data ingested from Totesys database for {table_name} table",
+            Description=f"Latest timestamp ingested data for {table_name}",
             Value=timestamp.isoformat(),
             Overwrite=True,
         )
@@ -80,9 +80,15 @@ def collect_table_data(
 
 
     Returns:
-        table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
+        table_data (list) : list of dictionaries all data in table,
+        one dictionary per row keys will be column headings
     """
     pass
+
+    """
+
+        Collect data from one database table()
+            returns the most recent timestamp
 
 
 def find_latest_timestamp(
@@ -97,11 +103,12 @@ def find_latest_timestamp(
         table_data (list) : list of dictionaries representing rows of the table
         columns (list[str], optional keyword) : columns to search for timestamps. Defauts to ["last_updated"]
 
-    Raises:
-        KeyError: columns do not exist
+        Returns:
+            most_recent_timestamp (timestamp):
+                from list returns most recent timestamp
+        Raises:
+            KeyError: columns do not exist
 
-    Returns:
-        most_recent_timestamp (timestamp) : from list returns most recent timestamp from created_at/updated_at values
     """
     timestamps = []
     for dic in table_data:
@@ -120,11 +127,14 @@ def write_table_data_to_s3(
     """
     Write file to S3 bucket as Json lines format
 
-    Args:
-        table_name (string)
-        table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
-        s3_client (boto3 s3 client)
-
+        Args:
+            table_name (string)
+            most_recent_timestamp (timestamp) :
+                timestamp of most recent records in data
+            table_data (list) : list of dictionaries all data in table,
+                one dictionary per row keys will be column headings
+            sequential_id (int) : integer stored in parameter store
+                retrieved earlier in application flow
 
     Raises:
         FileExistsError: S3 object already exists with the same name
@@ -142,8 +152,8 @@ def write_table_data_to_s3(
 
 def get_seq_id(table_name: str, ssm_client) -> int:
     """
-    From parameter store retrieves table_name : sequential_id key value pair
-
+        From parameter store retrieves table_name :
+            sequential_id key value pair
     Args:
         table_name (string)
 
