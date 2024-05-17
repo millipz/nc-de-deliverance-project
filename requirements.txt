@@ -51,6 +51,8 @@ markupsafe==2.1.5
     #   werkzeug
 mccabe==0.7.0
     # via flake8
+mock==5.1.0
+    # via -r requirements.in
 moto==5.0.7
     # via -r requirements.in
 mypy-extensions==1.0.0

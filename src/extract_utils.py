@@ -1,5 +1,6 @@
 from datetime import datetime, date
 import json
+from pg8000.native import identifier, literal
 
 
 def get_timestamp(table_name: str, ssm_client) -> datetime:
@@ -20,13 +21,17 @@ def get_timestamp(table_name: str, ssm_client) -> datetime:
         ingested data for given table
     """
     try:
-        response = ssm_client.get_parameter(Name=(table_name + "_latest_extracted_timestamp"))
+        response = ssm_client.get_parameter(
+            Name=(table_name + "_latest_extracted_timestamp")
+        )
 
         timestamp = response["Parameter"]["Value"]
-        return timestamp
+        return datetime.fromisoformat(timestamp)
 
     except ssm_client.exceptions.ParameterNotFound:
-        raise KeyError(f"Table name '{table_name}' does not have any recorded latest data.")
+        raise KeyError(
+            f"Table name '{table_name}' does not have any recorded latest data."
+        )
 
     # TODO connection errors should be checked when connecting with
     # credentials so this might not be needed here
@@ -53,8 +58,9 @@ def write_timestamp(timestamp: datetime, table_name: str, ssm_client) -> None:
     try:
         ssm_client.put_parameter(
             Name=f"{table_name}_latest_extracted_timestamp",
+            Type="String",
             Description=f"Latest timestamp of data ingested from Totesys database for {table_name} table",
-            Value=timestamp.isoformat(),
+            Value=timestamp.isoformat(timespec="milliseconds"),
             Overwrite=True,
         )
     except Exception as e:
@@ -62,9 +68,7 @@ def write_timestamp(timestamp: datetime, table_name: str, ssm_client) -> None:
 
 
 def collect_table_data(
-    table_name: str,
-    timestamp: datetime,
-    db_conn,
+    table_name: str, timestamp: datetime, db_conn, column="last_updated"
 ) -> list[dict]:
     """
     Returns all data from a table newer than most recent timestamp
@@ -80,9 +84,20 @@ def collect_table_data(
 
 
     Returns:
-        table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
+        table_data (list) : list of dictionaries
+            all data in table, one dictionary
+            per row keys will be column headings
     """
-    pass
+    sql_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S.%f")
+    query = (
+        f"SELECT * FROM {identifier(table_name)} "
+        f"WHERE {identifier(column)} > {literal(sql_timestamp)}"
+    )
+    print(query)
+    data = db_conn.run(query)
+    headings = [column["name"] for column in db_conn.columns]
+    result = [dict(zip(headings, row)) for row in data]
+    return result
 
 
 def find_latest_timestamp(
@@ -105,9 +120,16 @@ def find_latest_timestamp(
     """
     timestamps = []
     for dic in table_data:
+        print(f"checking {dic}")
         for col in columns:
+            print(f"checking {col}")
             timestamps.append(dic[col])
-    return max(timestamps)
+            print(f"==>> dic[col]: {dic[col]}")
+
+    try:
+        return max(timestamps)
+    except ValueError:
+        return None
 
 
 def write_table_data_to_s3(
@@ -193,6 +215,7 @@ def write_seq_id(seq_id: int, table_name: str, ssm_client) -> None:
         print("writing ")
         ssm_client.put_parameter(
             Name=f"{table_name}_latest_packet_id",
+            Type="String",
             Description=f"Latest packet_id of data ingested from Totesys database for {table_name} table",
             Value=str(seq_id),
             Overwrite=True,

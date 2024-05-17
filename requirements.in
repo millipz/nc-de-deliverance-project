@@ -9,3 +9,4 @@ flake8
 coverage
 black
 freezegun
+mock

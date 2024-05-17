@@ -9,6 +9,22 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+
+DROP TABLE IF EXISTS 
+transaction,
+sales_order,
+purchase_order,
+payment_type,
+department,
+currency,
+counterparty,
+address
+CASCADE;
+
+DROP TYPE IF EXISTS
+PaymentTypeName;
+
+
 CREATE TYPE public."PaymentTypeName" AS ENUM (
     'SALES_RECEIPT',
     'SALES_REFUND',
