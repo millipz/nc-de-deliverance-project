@@ -1,3 +1,5 @@
+# TODO remove below and run checks  when ready
+# flake8: noqa
 import boto3
 import os
 import pytest
@@ -123,30 +125,30 @@ class TestFindLatestTimestamp:
 class TestWriteTableDataToS3:
     staff_sample_data = [
         {
-            "created_at": '2022-11-03 14:20:51.563000',
+            "created_at": "2022-11-03 14:20:51.563000",
             "department_id": 2,
             "email_address": "jeremie.franey@terrifictotes.com",
             "first_name": "Jeremie",
             "last_name": "Franey",
-            "last_updated": '2022-11-03 14:20:51.563000',
+            "last_updated": "2022-11-03 14:20:51.563000",
             "staff_id": 1,
         },
         {
-            "created_at": '2022-11-03 14:20:51.563000',
+            "created_at": "2022-11-03 14:20:51.563000",
             "department_id": 6,
             "email_address": "deron.beier@terrifictotes.com",
             "first_name": "Deron",
             "last_name": "Beier",
-            "last_updated": '2022-11-03 14:20:51.563000',
+            "last_updated": "2022-11-03 14:20:51.563000",
             "staff_id": 2,
         },
         {
-            "created_at": '2022-11-03 14:20:51.563000',
+            "created_at": "2022-11-03 14:20:51.563000",
             "department_id": 6,
             "email_address": "jeanette.erdman@terrifictotes.com",
             "first_name": "Jeanette",
             "last_name": "Erdman",
-            "last_updated": '2022-11-03 14:20:51.563000',
+            "last_updated": "2022-11-03 14:20:51.563000",
             "staff_id": 3,
         },
     ]

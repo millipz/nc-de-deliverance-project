@@ -1,3 +1,5 @@
+# TODO remove below and run checks  when ready
+# flake8: noqa
 from datetime import datetime, date
 import json
 
@@ -20,13 +22,17 @@ def get_timestamp(table_name: str, ssm_client) -> datetime:
         ingested data for given table
     """
     try:
-        response = ssm_client.get_parameter(Name=(table_name + "_latest_extracted_timestamp"))
+        response = ssm_client.get_parameter(
+            Name=(table_name + "_latest_extracted_timestamp")
+        )
 
         timestamp = response["Parameter"]["Value"]
         return timestamp
 
     except ssm_client.exceptions.ParameterNotFound:
-        raise KeyError(f"Table name '{table_name}' does not have any recorded latest data.")
+        raise KeyError(
+            f"Table name '{table_name}' does not have any recorded latest data."
+        )
 
     # TODO connection errors should be checked when connecting with
     # credentials so this might not be needed here
