@@ -1,8 +1,14 @@
-import boto3
 import os
 import pytest
+import boto3
+from pg8000.native import Connection
 from moto import mock_aws
-from extract.src.extract import (
+from datetime import datetime, date
+from freezegun import freeze_time
+import json
+from mock import Mock
+from dotenv import load_dotenv
+from extract.src.extract_utils import (
     get_timestamp,
     write_timestamp,
     collect_table_data,
@@ -11,9 +17,6 @@ from extract.src.extract import (
     get_seq_id,
     write_seq_id,
 )
-from datetime import datetime, date, time
-from freezegun import freeze_time
-import json
 
 
 @pytest.fixture(scope="function")
@@ -86,15 +89,31 @@ class TestCollectTableData:
 class TestFindLatestTimestamp:
     def test_returns_timestamp(self):
         dummy_data = [
-            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123456")},
-            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123456")},
+            {
+                "last_updated": datetime.fromisoformat(
+                    "2024-05-16T10:50:30.123456"
+                )
+            },
+            {
+                "last_updated": datetime.fromisoformat(
+                    "2024-05-16T12:50:30.123456"
+                )
+            },
         ]
         assert isinstance(find_latest_timestamp(dummy_data), datetime)
 
     def test_returns_latest_date(self):
         dummy_data = [
-            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123456")},
-            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123456")},
+            {
+                "last_updated": datetime.fromisoformat(
+                    "2024-05-16T10:50:30.123456"
+                )
+            },
+            {
+                "last_updated": datetime.fromisoformat(
+                    "2024-05-16T12:50:30.123456"
+                )
+            },
         ]
         assert (
             find_latest_timestamp(dummy_data).isoformat()
@@ -104,12 +123,20 @@ class TestFindLatestTimestamp:
     def test_allows_passing_custom_columns(self):
         dummy_data = [
             {
-                "last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123456"),
-                "other_column": datetime.fromisoformat("2024-05-20T10:10:10.123456"),
+                "last_updated": datetime.fromisoformat(
+                    "2024-05-16T10:50:30.123456"
+                ),
+                "other_column": datetime.fromisoformat(
+                    "2024-05-20T10:10:10.123456"
+                ),
             },
             {
-                "last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123456"),
-                "other_column": datetime.fromisoformat("2024-01-20T10:10:10.123456"),
+                "last_updated": datetime.fromisoformat(
+                    "2024-05-16T12:50:30.123456"
+                ),
+                "other_column": datetime.fromisoformat(
+                    "2024-01-20T10:10:10.123456"
+                ),
             },
         ]
         assert (
@@ -123,30 +150,30 @@ class TestFindLatestTimestamp:
 class TestWriteTableDataToS3:
     staff_sample_data = [
         {
-            "created_at": '2022-11-03 14:20:51.563000',
+            "created_at": "2022-11-03 14:20:51.563000",
             "department_id": 2,
             "email_address": "jeremie.franey@terrifictotes.com",
             "first_name": "Jeremie",
             "last_name": "Franey",
-            "last_updated": '2022-11-03 14:20:51.563000',
+            "last_updated": "2022-11-03 14:20:51.563000",
             "staff_id": 1,
         },
         {
-            "created_at": '2022-11-03 14:20:51.563000',
+            "created_at": "2022-11-03 14:20:51.563000",
             "department_id": 6,
             "email_address": "deron.beier@terrifictotes.com",
             "first_name": "Deron",
             "last_name": "Beier",
-            "last_updated": '2022-11-03 14:20:51.563000',
+            "last_updated": "2022-11-03 14:20:51.563000",
             "staff_id": 2,
         },
         {
-            "created_at": '2022-11-03 14:20:51.563000',
+            "created_at": "2022-11-03 14:20:51.563000",
             "department_id": 6,
             "email_address": "jeanette.erdman@terrifictotes.com",
             "first_name": "Jeanette",
             "last_name": "Erdman",
-            "last_updated": '2022-11-03 14:20:51.563000',
+            "last_updated": "2022-11-03 14:20:51.563000",
             "staff_id": 3,
         },
     ]
@@ -173,7 +200,11 @@ class TestWriteTableDataToS3:
         )
 
         write_table_data_to_s3(
-            table_name, self.staff_sample_data, bucket_name, sequential_id, s3_client
+            table_name,
+            self.staff_sample_data,
+            bucket_name,
+            sequential_id,
+            s3_client,
         )
         result = json.loads(
             s3_client.get_object(Bucket=bucket_name, Key=expected_key)["Body"]
@@ -216,3 +247,47 @@ class TestWriteSeqId:
         write_seq_id(id_to_write, "test_table", ssm_client)
         id = get_seq_id("test_table", ssm_client)
         assert id == 101
+
+
+class TestCollectTableData:
+
+    def test_list_of_dicts_returned(self):
+        with open("extract/tests/test_staff_response.txt") as f:
+            data = f.read()
+        mock_conn = Mock()
+        mock_conn.run.return_value = data
+        mock_conn.columns = [
+            {"name": "created_at"},
+            {"name": "department_id"},
+            {"name": "email_address"},
+            {"name": "first_name"},
+            {"name": "last_name"},
+            {"name": "last_updated"},
+            {"name": "staff_id"},
+        ]
+
+        result = collect_table_data("staff", datetime.now(), mock_conn)
+        assert isinstance(result, list)
+        assert isinstance(result[0], dict)
+
+    # Not sure how to mock PSQL filter - testing with real test_db credentials
+    def test_results_filtered_by_date(self):
+        load_dotenv(".secrets/db_credentials.env")
+        db_endpoint = os.getenv("TEST_DB_ENDPOINT")
+        db_name = os.getenv("TEST_DB_NAME")
+        db_username = os.getenv("TEST_DB_USERNAME")
+        db_password = os.getenv("TEST_DB_PASSWORD")
+
+        db_host, db_port = db_endpoint.split(":")
+
+        db = Connection(
+            host=db_host,
+            database=db_name,
+            user=db_username,
+            password=db_password,
+            port=int(db_port),
+        )
+
+        query_date = datetime.fromisoformat("2023-01-01")
+        result = collect_table_data("design", query_date, db)
+        assert all([design["last_updated"] > query_date for design in result])

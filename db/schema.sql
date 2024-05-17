@@ -9,6 +9,9 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+DROP OWNED BY totesys_test_user;
+CREATE SCHEMA public;
+
 CREATE TYPE public."PaymentTypeName" AS ENUM (
     'SALES_RECEIPT',
     'SALES_REFUND',

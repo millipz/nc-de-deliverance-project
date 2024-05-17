@@ -1,0 +1,7 @@
+db_username = "totesys_test_user" 
+db_password = "!acfaGzN7H6JtVz"
+totesys_username = "project_team_7"
+totesys_password = "kIWE7eaFsCAGpBGS"
+totesys_database = "totesys"
+totesys_hostname = "nc-data-eng-totesys-production.chpsczt8h1nu.eu-west-2.rds.amazonaws.com"
+totesys_port = "5432"
