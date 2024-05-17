@@ -71,8 +71,6 @@ recreate-test-db:
 
 initialise-test-db:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_schema.py)
-
-seed-test-db:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_seed.py)
 
 run-extract:
