@@ -19,5 +19,5 @@ venv/
 .env
 requirements.txt
 .secrets
-terraform/secret.tfvars
+*.tfvars
 requirements.txt
