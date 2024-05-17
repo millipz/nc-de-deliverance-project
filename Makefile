@@ -39,6 +39,8 @@ requirements: create-environment
 	$(call execute_in_env, $(PIP) install pip-tools)
 	$(call execute_in_env, pip-compile requirements.in)
 	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
+	mkdir layer && cd layer && mkdir python
+	cp -r ./venv/lib/python3.11/site-packages/* ./layer/python
 
 ################################################################################################################
 # Set Up
@@ -86,7 +88,7 @@ security-test:
 ## Run the black code formatter
 run-black:
 	$(call execute_in_env, find . -type f -name "*.py" \
-		! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" \
+		! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
 		! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
 		-exec sed -i '' -e 's/[[:space:]]\+$$//' {} \; \
 		-exec black {} \;)
