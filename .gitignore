@@ -17,6 +17,6 @@ venv/
 **/.terraform*
 *.tfstate*
 .env
-requirements.txt
 .secrets
 terraform/*.tfvars
+requirements.txt
