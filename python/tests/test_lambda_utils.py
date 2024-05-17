@@ -8,7 +8,7 @@ from freezegun import freeze_time
 import json
 from mock import Mock
 from dotenv import load_dotenv
-from src.lambda_utils import (
+from src.ingestion_function.lambda_utils import (
     get_timestamp,
     write_timestamp,
     collect_table_data,
