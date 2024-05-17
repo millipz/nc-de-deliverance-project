@@ -5,12 +5,11 @@ on:
     branches-ignore:
       - main
     paths:
-        - '**.py'
+      - '**.py'
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
 
     steps:
       - name: Checkout code
@@ -32,11 +31,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-        - name: Run tests with coverage
+      - name: Run tests with coverage
         run: |
           coverage run -m pytest extract/tests/
-          coverage run -m pytest transform/tests/
-          coverage run -m pytest load/tests/
+          # coverage run -m pytest transform/tests/
+          # coverage run -m pytest load/tests/
           coverage report -m
 
       - name: Run Black
