@@ -3,10 +3,10 @@
 ## Ingestion Bucket: `nc-totesys-ingest`
 - **Purpose**: Stores raw data extracted from the `totesys` database.
 - **Data Format**: JSON lines.
-- **File Naming Convention**: `{tablename}_sequentialID_{timestamp}.json` (e.g., `sales_order_20240510T120000.json`)
+- **File Naming Convention**: `{tablename}_sequentialID_{timestamp}.jsonl` (e.g., `sales_order_20240510T120000.jsonl`)
 - **Storage Structure**:
   - Data is stored in partitioned folders based on the date of ingestion: `yyyy-mm-dd/`
-  - Example Path: `s3://nc-totesys-ingest/2024-05-10/sales_order_20240510T120000.json`
+  - Example Path: `s3://nc-totesys-ingest/2024-05-10/sales_order_20240510T120000.jsonl`
 - **Data Versioning and Immutability**: Versioning enabled to track and manage historical data versions.
 
 ## Processed Bucket: `nc-totesys-processed`
