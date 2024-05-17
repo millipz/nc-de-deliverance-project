@@ -5,7 +5,7 @@ resource "aws_lambda_function" "ingestion_function" {
     runtime = "python3.11"
     filename = "${path.module}/../src/lambda_function.zip"
     layers = [aws_lambda_layer_version.ingestion_lambda_layer.arn]
-    timeout = 60
+    timeout = 180
     
     environment {
         variables = {
