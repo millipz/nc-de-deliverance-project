@@ -43,6 +43,21 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
           "arn:aws:s3:::nc-totesys-ingest/*",
         ],
       },
+      {
+        "Effect": "Allow",
+        "Action": [
+            "secretsmanager:GetSecretValue"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+            "ssm:GetParameter",
+            "ssm:PutParameter"
+        ],
+        "Resource": "*"
+      }
     ],
   })
 }
