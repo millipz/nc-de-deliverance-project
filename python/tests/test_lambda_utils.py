@@ -55,14 +55,14 @@ class TestGetTimestamp:
 
         ssm_client.put_parameter(
             Name="example_table_latest_extracted_timestamp",
-            Value="2024-05-16T10:50:30.123456",
+            Value="2024-05-16T10:50:30.123000",
             Type="String",
             Overwrite=True,
         )
 
         # Get the latest timestamp
         timestamp = get_timestamp("example_table", ssm_client)
-        assert timestamp == datetime.fromisoformat("2024-05-16T10:50:30.123456")
+        assert timestamp == datetime.fromisoformat("2024-05-16T10:50:30.123000")
 
     # TODO: Add a test for connection issues
     # def test_connection_issue(self):
@@ -75,51 +75,46 @@ class TestGetTimestamp:
 class TestWriteTimestamp:
 
     def test_timestamp_writtem_to_param_store(self, ssm_client):
-        time_to_write = datetime.fromisoformat("2024-05-16T10:50:30.123456")
+        time_to_write = datetime.fromisoformat("2024-05-16T10:50:30.123000")
         write_timestamp(time_to_write, "test_table", ssm_client)
         timestamp = get_timestamp("test_table", ssm_client)
-        assert str(timestamp) == "2024-05-16T10:50:30.123456"
-
-
-class TestCollectTableData:
-    def test_returns_list_of_dicts(self):
-        pass
+        assert timestamp.isoformat() == "2024-05-16T10:50:30.123000"
 
 
 class TestFindLatestTimestamp:
     def test_returns_timestamp(self):
         dummy_data = [
-            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123456")},
-            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123456")},
+            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123000")},
+            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123000")},
         ]
         assert isinstance(find_latest_timestamp(dummy_data), datetime)
 
     def test_returns_latest_date(self):
         dummy_data = [
-            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123456")},
-            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123456")},
+            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123000")},
+            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123000")},
         ]
         assert (
             find_latest_timestamp(dummy_data).isoformat()
-            == "2024-05-16T12:50:30.123456"
+            == "2024-05-16T12:50:30.123000"
         )
 
     def test_allows_passing_custom_columns(self):
         dummy_data = [
             {
-                "last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123456"),
-                "other_column": datetime.fromisoformat("2024-05-20T10:10:10.123456"),
+                "last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123000"),
+                "other_column": datetime.fromisoformat("2024-05-20T10:10:10.123000"),
             },
             {
-                "last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123456"),
-                "other_column": datetime.fromisoformat("2024-01-20T10:10:10.123456"),
+                "last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123000"),
+                "other_column": datetime.fromisoformat("2024-01-20T10:10:10.123000"),
             },
         ]
         assert (
             find_latest_timestamp(
                 dummy_data, columns=["last_updated", "other_column"]
             ).isoformat()
-            == "2024-05-20T10:10:10.123456"
+            == "2024-05-20T10:10:10.123000"
         )
 
 
@@ -159,7 +154,11 @@ class TestWriteTableDataToS3:
         table_name = "staff"
         sequential_id = 101
         time_format = "%H%M%S%f"
-        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime(time_format)}.jsonl"
+        expected_key = (
+            f"{date.today()}/{table_name}_"
+            f"{str(sequential_id).zfill(8)}_"
+            f"{datetime.now().strftime(time_format)}.jsonl"
+        )
         assert expected_key == "2024-01-01/staff_00000101_000000000000.jsonl"
 
     @freeze_time("2024-01-01")
@@ -168,7 +167,11 @@ class TestWriteTableDataToS3:
         table_name = "staff"
         sequential_id = 101
         time_format = "%H%M%S%f"
-        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime(time_format)}.jsonl"
+        expected_key = (
+            f"{date.today()}/{table_name}_"
+            f"{str(sequential_id).zfill(8)}_"
+            f"{datetime.now().strftime(time_format)}.jsonl"
+        )
 
         s3_client.create_bucket(
             Bucket=bucket_name,
