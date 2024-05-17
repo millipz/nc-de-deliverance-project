@@ -20,3 +20,4 @@ venv/
 .secrets
 terraform/*.tfvars
 requirements.txt
+layer/python/
