@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "ingestion_schedule" {
     name = "ingestion_schedule"
     description = "Eventbridge rule to trigger ingestion Lambda function every 10 minutes"
-    schedule_expression = "rate(10 minutes)"
+    schedule_expression = "rate(1 minute)"
 }
 
 resource "aws_cloudwatch_event_target" "ingestion_lambda_target" {

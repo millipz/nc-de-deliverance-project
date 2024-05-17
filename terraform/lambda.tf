@@ -5,7 +5,8 @@ resource "aws_lambda_function" "ingestion_function" {
     runtime = "python3.11"
     filename = "${path.module}/../src/lambda_function.zip"
     layers = [aws_lambda_layer_version.ingestion_lambda_layer.arn]
-
+    timeout = 60
+    
     environment {
         variables = {
             S3_BUCKET = aws_s3_bucket.ingestion_bucket.bucket
