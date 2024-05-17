@@ -33,9 +33,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          coverage run -m pytest extract/tests/
-          # coverage run -m pytest transform/tests/
-          # coverage run -m pytest load/tests/
+          coverage run -m pytest python/tests/
           coverage report -m
 
       - name: Run Black

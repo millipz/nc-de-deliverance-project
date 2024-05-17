@@ -8,7 +8,7 @@ from freezegun import freeze_time
 import json
 from mock import Mock
 from dotenv import load_dotenv
-from extract.src.extract_utils import (
+from python.src.ingestion_function.lambda_utils import (
     get_timestamp,
     write_timestamp,
     collect_table_data,
@@ -62,7 +62,7 @@ class TestGetTimestamp:
 
         # Get the latest timestamp
         timestamp = get_timestamp("example_table", ssm_client)
-        assert timestamp == "2024-05-16T10:50:30.123456"
+        assert timestamp == datetime.fromisoformat("2024-05-16T10:50:30.123456")
 
     # TODO: Add a test for connection issues
     # def test_connection_issue(self):
@@ -89,31 +89,15 @@ class TestCollectTableData:
 class TestFindLatestTimestamp:
     def test_returns_timestamp(self):
         dummy_data = [
-            {
-                "last_updated": datetime.fromisoformat(
-                    "2024-05-16T10:50:30.123456"
-                )
-            },
-            {
-                "last_updated": datetime.fromisoformat(
-                    "2024-05-16T12:50:30.123456"
-                )
-            },
+            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123456")},
+            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123456")},
         ]
         assert isinstance(find_latest_timestamp(dummy_data), datetime)
 
     def test_returns_latest_date(self):
         dummy_data = [
-            {
-                "last_updated": datetime.fromisoformat(
-                    "2024-05-16T10:50:30.123456"
-                )
-            },
-            {
-                "last_updated": datetime.fromisoformat(
-                    "2024-05-16T12:50:30.123456"
-                )
-            },
+            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123456")},
+            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123456")},
         ]
         assert (
             find_latest_timestamp(dummy_data).isoformat()
@@ -123,20 +107,12 @@ class TestFindLatestTimestamp:
     def test_allows_passing_custom_columns(self):
         dummy_data = [
             {
-                "last_updated": datetime.fromisoformat(
-                    "2024-05-16T10:50:30.123456"
-                ),
-                "other_column": datetime.fromisoformat(
-                    "2024-05-20T10:10:10.123456"
-                ),
+                "last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123456"),
+                "other_column": datetime.fromisoformat("2024-05-20T10:10:10.123456"),
             },
             {
-                "last_updated": datetime.fromisoformat(
-                    "2024-05-16T12:50:30.123456"
-                ),
-                "other_column": datetime.fromisoformat(
-                    "2024-01-20T10:10:10.123456"
-                ),
+                "last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123456"),
+                "other_column": datetime.fromisoformat("2024-01-20T10:10:10.123456"),
             },
         ]
         assert (
@@ -252,7 +228,7 @@ class TestWriteSeqId:
 class TestCollectTableData:
 
     def test_list_of_dicts_returned(self):
-        with open("extract/tests/test_staff_response.txt") as f:
+        with open("python/tests/test_staff_response.txt") as f:
             data = f.read()
         mock_conn = Mock()
         mock_conn.run.return_value = data
