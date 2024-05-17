@@ -89,7 +89,7 @@ run-black:
 		! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" \
 		! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
 		-exec sed -i '' -e 's/[[:space:]]\+$$//' {} \; \
-		-exec black {} \;)
+		-exec black -l 79 {} \;)
 
 ## Run the flake8 code check
 run-flake8:
