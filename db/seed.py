@@ -1,6 +1,7 @@
 from pg8000.native import literal
 from db.connection import db
 
+
 def seed(
     address,
     counterparty,

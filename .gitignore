@@ -18,6 +18,6 @@ venv/
 *.tfstate*
 .env
 requirements.txt
-.secrets
+.secrets/
 terraform/secret.tfvars
 requirements.txt

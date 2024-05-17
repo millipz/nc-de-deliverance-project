@@ -48,8 +48,10 @@ s3_client = boto3.client("s3")
 
 for table in tables:
     try:
-        timestamp = get_timestamp(table,ssm_client)
-        print(f"On last run the latest data from {table} was dated {timestamp}")
+        timestamp = get_timestamp(table, ssm_client)
+        print(
+            f"On last run the latest data from {table} was dated {timestamp}"
+        )
     except KeyError:
         # assume first run, get all data
         timestamp = datetime.fromisoformat("2000-01-01")
@@ -58,7 +60,7 @@ for table in tables:
     print(f"Data ingested for {table}")
     latest = find_latest_timestamp(data)
     try:
-        last_id = get_seq_id(table,ssm_client)
+        last_id = get_seq_id(table, ssm_client)
     except KeyError:
         # assume first run
         last_id = 0
@@ -71,7 +73,7 @@ for table in tables:
         print(f"error writing bucket: {e}")
     else:
         print(f"{table} data written to s3")
-        write_timestamp(latest,table,ssm_client)
+        write_timestamp(latest, table, ssm_client)
         write_seq_id(id, table, ssm_client)
 
-    # TODO - Invoke processing lambda 
+    # TODO - Invoke processing lambda

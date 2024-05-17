@@ -81,11 +81,6 @@ class TestWriteTimestamp:
         assert str(timestamp) == "2024-05-16T10:50:30.123456"
 
 
-class TestCollectTableData:
-    def test_returns_list_of_dicts(self):
-        pass
-
-
 class TestFindLatestTimestamp:
     def test_returns_timestamp(self):
         dummy_data = [
@@ -183,7 +178,13 @@ class TestWriteTableDataToS3:
         table_name = "staff"
         sequential_id = 101
         time_format = "%H%M%S%f"
-        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime(time_format)}.jsonl"
+        expected_key = (
+            f"{date.today()}/"
+            f"{table_name}_"
+            f"{str(sequential_id).zfill(8)}_"
+            f"{datetime.now().strftime(time_format)}"
+            ".jsonl"
+        )
         assert expected_key == "2024-01-01/staff_00000101_000000000000.jsonl"
 
     @freeze_time("2024-01-01")
@@ -192,8 +193,13 @@ class TestWriteTableDataToS3:
         table_name = "staff"
         sequential_id = 101
         time_format = "%H%M%S%f"
-        expected_key = f"{date.today()}/{table_name}_{str(sequential_id).zfill(8)}_{datetime.now().strftime(time_format)}.jsonl"
-
+        expected_key = (
+            f"{date.today()}/"
+            f"{table_name}_"
+            f"{str(sequential_id).zfill(8)}_"
+            f"{datetime.now().strftime(time_format)}"
+            ".jsonl"
+        )
         s3_client.create_bucket(
             Bucket=bucket_name,
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
