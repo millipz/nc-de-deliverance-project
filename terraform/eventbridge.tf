@@ -6,7 +6,7 @@ resource "aws_cloudwatch_event_rule" "ingestion_schedule" {
 
 resource "aws_cloudwatch_event_target" "ingestion_lambda_target" {
     rule = aws_cloudwatch_event_rule.ingestion_schedule.name
-    target_id = "ingestion_lambda"
+    target_id = "ingestion_lambda_target"
     arn = aws_lambda_function.ingestion_function.arn
 }
 

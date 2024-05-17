@@ -2,3 +2,5 @@ boto3
 pytest
 pg8000
 python-dotenv
+freezegun
+mock

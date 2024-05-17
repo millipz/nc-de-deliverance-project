@@ -14,12 +14,16 @@ botocore==1.34.105
     #   s3transfer
 exceptiongroup==1.2.1
     # via pytest
+freezegun==1.5.1
+    # via -r requirements.in
 iniconfig==2.0.0
     # via pytest
 jmespath==1.0.1
     # via
     #   boto3
     #   botocore
+mock==5.1.0
+    # via -r requirements.in
 packaging==24.0
     # via pytest
 pg8000==1.31.2
@@ -31,6 +35,7 @@ pytest==8.2.0
 python-dateutil==2.9.0.post0
     # via
     #   botocore
+    #   freezegun
     #   pg8000
 python-dotenv==1.0.1
     # via -r requirements.in
