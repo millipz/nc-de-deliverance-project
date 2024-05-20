@@ -27,6 +27,8 @@ def aws_creds():
     os.environ["AWS_SESSION_TOKEN"] = "test"
     os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
 
+    # TODO - edit to allow environment variables for dev/test/prod
+
 
 @pytest.fixture(scope="function")
 def ssm_client(aws_creds: None):
