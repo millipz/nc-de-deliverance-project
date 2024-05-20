@@ -13,8 +13,6 @@ SHELL := /bin/bash
 PROFILE = default
 PIP:=pip
 
-include .env
-
 ## Create python interpreter environment.
 create-environment:
 	@echo ">>> About to create environment: $(PROJECT_NAME)..."
@@ -88,18 +86,19 @@ security-test:
 ## Run the black code formatter
 run-black:
 	$(call execute_in_env, \
-		
-		@if [ "ENVIRONMENT" = "TEST" ] then \
+
+		if [ "$(uname)" == "Darwin" ]; then \
+			# Do something under Mac OS X platform        
 			find . -type f -name "*.py" \
 			! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
 			! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
-			-exec sed -i 's/[[:space:]]\+$$//' {} \; \
+			-exec sed -i '' -e 's/[[:space:]]\+$$//' {} \; \
 			-exec black {} \; \
 		else \
 			find . -type f -name "*.py" \
 			! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
 			! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
-			-exec sed -i '' -e 's/[[:space:]]\+$$//' {} \; \
+			-exec sed -i 's/[[:space:]]\+$$//' {} \; \
 			-exec black {} \; \
 		fi)
 	
