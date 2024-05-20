@@ -1,4 +1,4 @@
-name: Branch Code Review
+name: Main Code Review
 
 on:
   push:
