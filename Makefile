@@ -68,7 +68,6 @@ flake8:
 dev-setup: bandit safety black coverage flake8
 
 # Test Database
-
 initialise-test-db:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_schema.py)
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_seed.py)
@@ -85,23 +84,11 @@ security-test:
 
 ## Run the black code formatter
 run-black:
-	$(call execute_in_env, \
-
-		if [ "$(uname)" == "Darwin" ]; then \
-			# Do something under Mac OS X platform        
-			find . -type f -name "*.py" \
-			! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
-			! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
-			-exec sed -i '' -e 's/[[:space:]]\+$$//' {} \; \
-			-exec black {} \; \
-		else \
-			find . -type f -name "*.py" \
-			! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
-			! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
-			-exec sed -i 's/[[:space:]]\+$$//' {} \; \
-			-exec black {} \; \
-		fi)
-	
+	$(call execute_in_env, find . -type f -name "*.py" \
+		! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
+		! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
+		-exec sed -i '' -e 's/[[:space:]]\+$$//' {} \; \
+		-exec black {} \;)
 
 ## Run the flake8 code check
 run-flake8:
