@@ -21,6 +21,10 @@ from python.src.ingestion_function.lambda_utils import (
 
 @pytest.fixture(scope="function")
 def aws_creds():
+    try:
+        environment = os.environ["ENVIRONMENT"]
+    except KeyError:
+        environment = "TEST"
     if os.environ["ENVIRONMENT"] == "DEV":
         os.environ["AWS_ACCESS_KEY_ID"] = "test"
         os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
