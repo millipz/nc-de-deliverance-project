@@ -21,16 +21,11 @@ from python.src.ingestion_function.lambda_utils import (
 
 @pytest.fixture(scope="function")
 def aws_creds():
-    try:
-        environment = os.environ["ENVIRONMENT"]
-    except KeyError:
-        environment = "TEST"
-    if environment == "DEV":
-        os.environ["AWS_ACCESS_KEY_ID"] = "test"
-        os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
-        os.environ["AWS_SECURITY_TOKEN"] = "test"
-        os.environ["AWS_SESSION_TOKEN"] = "test"
-        os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
+    os.environ["AWS_ACCESS_KEY_ID"] = "test"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
+    os.environ["AWS_SECURITY_TOKEN"] = "test"
+    os.environ["AWS_SESSION_TOKEN"] = "test"
+    os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
 
     # TODO - edit to allow environment variables for dev/test/prod
 
