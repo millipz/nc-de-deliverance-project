@@ -60,16 +60,18 @@ db = Connection(
 
 
 def lambda_handler(event, context):
-    logger.info('## ENVIRONMENT VARIABLES')
-    logger.info(os.environ['AWS_LAMBDA_LOG_GROUP_NAME'])
-    logger.info(os.environ['AWS_LAMBDA_LOG_STREAM_NAME'])
-    logger.info('## EVENT')
+    logger.info("## ENVIRONMENT VARIABLES")
+    logger.info(os.environ["AWS_LAMBDA_LOG_GROUP_NAME"])
+    logger.info(os.environ["AWS_LAMBDA_LOG_STREAM_NAME"])
+    logger.info("## EVENT")
     logger.info(event)
-    
+
     for table in tables:
         try:
             timestamp = get_timestamp(table, ssm_client)
-            logger.info(f"On last run the latest data from {table} was dated {timestamp}")
+            logger.info(
+                f"On last run the latest data from {table} was dated {timestamp}"
+            )
         except KeyError:
             # assume first run, get all data
             timestamp = datetime.fromisoformat("2000-01-01")
@@ -97,7 +99,7 @@ def lambda_handler(event, context):
             else:
                 write_timestamp(latest, table, ssm_client)
                 write_seq_id(id, table, ssm_client)
-                logger.info(f"{table} data written to S3")            
+                logger.info(f"{table} data written to S3")
 
         # TODO - Invoke processing lambda
 
