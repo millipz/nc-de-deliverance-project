@@ -1,0 +1,30 @@
+name: Branch Code Review
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.py'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4   
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+      #     python-version: 3.11
+
+      - name: Requirements
+        run: make requirements
+
+      - name: Dev Setup
+        run: make dev-setup
+      
+      - name: Run Checks
+        run: make run-checks
