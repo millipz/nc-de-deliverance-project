@@ -19,6 +19,6 @@ venv/
 .env
 requirements.txt
 .secrets
-*.tfvars
+secret*.tfvars
 requirements.txt
 layer/
