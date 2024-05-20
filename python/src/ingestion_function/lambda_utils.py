@@ -96,7 +96,6 @@ def collect_table_data(
         f"SELECT * FROM {identifier(table_name)} "
         f"WHERE {identifier(column)} > {literal(sql_timestamp)}"
     )
-    print(query)
     data = db_conn.run(query)
     headings = [column["name"] for column in db_conn.columns]
     result = [dict(zip(headings, row)) for row in data]
