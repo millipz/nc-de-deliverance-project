@@ -51,7 +51,7 @@
   1. **Write Transformed Data to S3**:
       - Convert the transformed DataFrame to Parquet format.
       - Save the Parquet file to the "processed" S3 bucket.
-      - Use a structured naming convention for the files.
+      - Use the structured naming convention for the Parqeut files as set out in the S3 specification.
       - Write sequential ID to parameter store.
 
   1. **Record Processing Status**:
@@ -73,84 +73,84 @@
 
 - **Date Handling**: Convert date and time fields to the appropriate formats required by the schema. (timestamp -> date; timestamp -> time)
 
-- **Naming Convention**: Use a consistent naming convention for the output Parquet files to ensure easy retrieval and organisation.
+- **File Naming Convention**: `{tablename}_sequentialID_processed_{timestamp}.parquet`
 
 ## Functions
 
 - Retrieve data from S3 ingestion bucket
 
-"""
-Retrieve and read the JSON lines file from S3.
+        """
+        Retrieve and read the JSON lines file from S3.
 
-Args:
-    bucket_name (str): The name of the S3 bucket.
-    object_key (str): The key of the S3 object.
+        Args:
+            bucket_name (str): The name of the S3 bucket.
+            object_key (str): The key of the S3 object.
 
-Returns:
-    DataFrame: The raw data as a pandas DataFrame.
-"""
+        Returns:
+            DataFrame: The raw data as a pandas DataFrame.
+        """
 
 - Transform the data into the the star schema
 
-"""
-Apply transformation logic to convert raw data to predefined schema.
+        """
+        Apply transformation logic to convert raw data to predefined schema.
 
-Args:
-    df (DataFrame): The raw data as a pandas DataFrame.
-    
-Returns:
-    dict: A dictionary of transformed DataFrames for each table.
-"""
+        Args:
+            df (DataFrame): The raw data as a pandas DataFrame.
+
+        Returns:
+            dict: A dictionary of transformed DataFrames for each table.
+        """
 
 - Write data to S3 bucket per table
 
-'''
-Write file to S3 bucket in Parquet format
+        '''
+        Write file to S3 bucket in Parquet format
 
-Args:
-    table_name (string)
-    most_recent_timestamp (timestamp) : timestamp of most recent records in data
-    table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
-    sequential_id (int) : integer stored in parameter store retrieved earlier in application flow
+        Args:
+            table_name (string)
+            most_recent_timestamp (timestamp) : timestamp of most recent records in data
+            table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
+            sequential_id (int) : integer stored in parameter store retrieved earlier in application flow
 
-Raises:
-    FileExistsError: S3 object already exists with the same name
-    ConnectionError : connection issue to S3 bucket
+        Raises:
+            FileExistsError: S3 object already exists with the same name
+            ConnectionError : connection issue to S3 bucket
 
-Returns:
-    None
-'''
+        Returns:
+            None
+        '''
 
 - Read sequential_id
 
-'''
-From parameter store retrieves table_name : sequential_id key value pair
+        '''
+        From parameter store retrieves table_name : sequential_id key value pair
 
-Args:
-    table_name (string)
+        Args:
+            table_name (string)
 
-Raises:
-    KeyError: table_name does not exist
-    ConnectionError : connection issue to parameter store
+        Raises:
+            KeyError: table_name does not exist
+            ConnectionError : connection issue to parameter store
 
-Returns:
-    sequential_id(int)
-'''
+        Returns:
+            sequential_id(int)
+        '''
 
 - Write sequential_id
 
-'''
-To parameter store write table_name : sequential_id key value pair
--- checks sequential_id is one greater than previous sequential_id
+        '''
+        To parameter store write table_name : sequential_id key value pair
+        -- checks sequential_id is one greater than previous sequential_id
 
-Args:
-    table_name (string)
-    sequential_id(int)
+        Args:
+            table_name (string)
+            sequential_id(int)
 
-Raises:
-    KeyError: table_name does not exist
-    ConnectionError : connection issue to parameter store
+        Raises:
+            KeyError: table_name does not exist
+            ConnectionError : connection issue to parameter store
 
-Returns:
-    None
-'''
+        Returns:
+            None
+        '''
