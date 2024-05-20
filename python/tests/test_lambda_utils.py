@@ -25,7 +25,7 @@ def aws_creds():
         environment = os.environ["ENVIRONMENT"]
     except KeyError:
         environment = "TEST"
-    if os.environ["ENVIRONMENT"] == "DEV":
+    if environment == "DEV":
         os.environ["AWS_ACCESS_KEY_ID"] = "test"
         os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
         os.environ["AWS_SECURITY_TOKEN"] = "test"
