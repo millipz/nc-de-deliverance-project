@@ -68,8 +68,6 @@ flake8:
 dev-setup: bandit safety black coverage flake8
 
 # Test Database
-recreate-test-db:
-	cd ${PYTHONPATH}/terraform && terraform apply -var-file="secret.tfvars" -replace='aws_db_instance.totesys_test_db' -auto-approve
 
 initialise-test-db:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_schema.py)
