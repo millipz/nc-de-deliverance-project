@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_exec_role" {
-  name = "lambda_exec_role"
+  name = "${var.env_name}-lambda_exec_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -17,8 +17,8 @@ resource "aws_iam_role" "lambda_exec_role" {
 }
 
 resource "aws_iam_role_policy" "lambda_exec_policy" {
-  name   = "lambda_exec_policy"
-  role   = aws_iam_role.lambda_exec_role.id
+  name = "${var.env_name}-lambda_exec_policy"
+  role = aws_iam_role.lambda_exec_role.id
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -44,19 +44,19 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
         ],
       },
       {
-        "Effect": "Allow",
-        "Action": [
-            "secretsmanager:GetSecretValue"
+        "Effect" : "Allow",
+        "Action" : [
+          "secretsmanager:GetSecretValue"
         ],
-        "Resource": "*"
+        "Resource" : "*"
       },
       {
-        "Effect": "Allow",
-        "Action": [
-            "ssm:GetParameter",
-            "ssm:PutParameter"
+        "Effect" : "Allow",
+        "Action" : [
+          "ssm:GetParameter",
+          "ssm:PutParameter"
         ],
-        "Resource": "*"
+        "Resource" : "*"
       }
     ],
   })

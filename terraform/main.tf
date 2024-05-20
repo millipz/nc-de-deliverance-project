@@ -7,7 +7,6 @@ terraform {
   }
   backend "s3" {
     bucket = "nc-de-deliverance-terraform-state"
-    key = "dev/terraform.tfstate"
     region = "eu-west-2"
   }
 }
@@ -21,7 +20,7 @@ provider "aws" {
       DeployedFrom = "Terraform"
       Repository = "https://github.com/millipz/nc-de-deliverance-project"
       CostCentre = "DE"
-      Environment = "dev"
+      Environment = "${var.env_name}"
       RetentionDate = "2024-05-31"
     }
   }
