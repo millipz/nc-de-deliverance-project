@@ -65,6 +65,7 @@ def lambda_handler(event, context):
     logger.info(event)
     
     response_data = {}
+    total_ingested_rows = 0
 
     for table in tables:
         try:
@@ -77,6 +78,7 @@ def lambda_handler(event, context):
             timestamp = datetime.fromisoformat("2000-01-01")
             logger.error(f"No previous data logged from {table}")
         data = collect_table_data(table, timestamp, db)
+        total_ingested_rows += len(data)
         if len(data) == 0:
             logger.info(f"No new data for {table}")
         else:
@@ -98,7 +100,7 @@ def lambda_handler(event, context):
             else:
                 write_timestamp(latest, ENVIRONMENT + "_" + table, ssm_client)
                 write_seq_id(id, ENVIRONMENT + "_" + table, ssm_client)
-                logger.info(f"{table} data written to S3")
+                logger.info(f"{table} data written to S3, {len(data)} rows ingested")
                 response_data[table] = key
-
+    logger.info(f"{total_ingested_rows} rows ingested this run")
     return {"statusCode": 200, "data": response_data}
