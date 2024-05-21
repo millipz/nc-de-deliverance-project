@@ -1,117 +1,117 @@
-# Processing Lambda
+# Processing Lambda Function Specification
 
-A Python Lambda application to:
+- A Python Lambda application to:
 
-- Collect new data from the ingestion bucket (json lines format) when triggered.
-- Process it into into the star schema format as specified by the client's data analysts.
-- Write the new data in parquet format to an object in the processed bucket.
+  - Collect new data from the ingestion bucket (JSON lines format) when triggered.
+  - Process it into the star schema format as specified by the client's data analysts.
+  - Write the new data in Parquet format to an object in the processed bucket.
 
-## Overview
+- **Terraform Objects:**
 
-- **Use:** Lambda
-- **Terraform Objects**
+  - **Lambda function:** To run the transformation process.
 
-  - **Lambda function** to run proccessing
-  - **Trigger** based on object landing in ingestion bucket
-  - **Permissions**... like lots of them
+  - **Permissions**: Including (but not limited to):
+    - Access to S3 buckets
+    - Access to SSM Parameter Store
+    - Access to CloudWatch for logging and monitoring
+    - Access to Secrets Manager for retrieving credentials
 
-- **Inputs:** Event triggered when ingest bucket receives a new object
+- **Inputs:** Lambda function triggered by ingestion lambda function once successfully completed. Input JSON payload in the form:
+
+    ```json
+    {"packets": [
+        {"table": <table_name>, "id": <sequential_id>}
+        {...}
+    ]}
+    ```
+
 - **Processes:**
-  1. Gather data from new object in s3 ingestion bucket
-  2. Record the latest object id ingested for reference
-  3. If object ids are not sequential, log a warning to cloudwatch
-  4. Proccess the data in Python to conform to warehouse schema
-  5. Write processed data to a parquet file and save to s3 processed bucket
-  6. Record success/failure, quantity of data processed, timestamp. Log to CloudWatch
-  7. On failure, wait a few mins and retry. On multiple failures, send an alert via Cloudwatch and tigger an email to administrators.
-- **Other Notes**
-  - How to store the latest object processed? This may go in AWS Parameter Store?
-  - Should we benchmark this lambda and try to optimize it?
+  1. **Extract Object Keys**:
+      - Use the table name and sequential ID from the input JSON payload to construct the S3 object keys.
+      - Retrieve the list of new objects from the "ingestion" S3 bucket.
+
+  1. **Check Object Keys against Payload**:
+      - Verify that the object keys in S3 match the information provided in the payload.
+      - If object IDs are not sequential, log a warning to CloudWatch.
+
+  1. **Record Ingestion Status**:
+      - Record success or failure, and timestamp. Log to CloudWatch.
+
+  1. **Transform Data**:
+      - Retrieve and read the JSON lines file from the "ingestion" S3 bucket into a pandas DataFrame.
+      - Apply transformation logic to convert raw data into the predefined schema.
+      - Ensure all foreign key relationships are maintained and data types are correct.
+      - Handle date and time conversions appropriately.
+
+  1. **Validate Data**:
+      - Validate that the transformed data conforms to the schema.
+      - Handle missing or null values appropriately.
+      - Log any discrepancies or errors.
+
+  1. **Write Transformed Data to S3**:
+      - Convert the transformed DataFrame to Parquet format.
+      - Save the Parquet file to the "processed" S3 bucket.
+      - Use the structured naming convention for the Parqeut files as set out in the S3 specification.
+      - Write sequential ID to parameter store.
+
+  1. **Record Processing Status**:
+      - Record success or failure, quantity of data processed, and timestamp. Log to CloudWatch.
+
+  1. **Error Handling and Retry Mechanism**:
+      - Implement try-except blocks for error handling.
+      - In case of failure, wait a few minutes and retry.
+      - After multiple failures, send an alert via CloudWatch and trigger an email to administrators.
+
+- **Data Schema**: Transform the data to fit into the following tables:
+  - `fact_sales_order`
+  - `dim_date`
+  - `dim_staff`
+  - `dim_location`
+  - `dim_currency`
+  - `dim_design`
+  - `dim_counterparty`
+
+- **Date Handling**: Convert date and time fields to the appropriate formats required by the schema. (timestamp -> date; timestamp -> time)
+
+- **File Naming Convention**: `{tablename}_sequentialID_processed_{timestamp}.parquet`
 
 ## Functions
 
-- Retrieve timestamps from parameter store
+- Retrieve data from S3 ingestion bucket
 
-        '''
-        Return a dictionary with timestamps showing most recent entry from the OLTP database that has been processed
-        by the ingestion lambda.
-        -- awaiting looking at data in database to confirm how created and updated timestamps are processed
+        """
+        Retrieve and read the JSON lines file from S3.
 
         Args:
-            table_name (str): table name to get timestamp for
-
-        Raises:
-            KeyError: table_name does not exist
-            ConnectionError : connection issue to parameter store
+            bucket_name (str): The name of the S3 bucket.
+            object_key (str): The key of the S3 object.
 
         Returns:
-            timestamp (datetime timestamp) : stored timestamp of most recent ingested data for given table
-        '''
+            DataFrame: The raw data as a pandas DataFrame.
+        """
 
-- Write timestamps to parameter store
+- Transform the data into the the star schema
 
-        '''
-
-        Writes the updated dictionary of table_name : timestamp key value pairs to parameter store
+        """
+        Apply transformation logic to convert raw data to predefined schema.
 
         Args:
-            timestamps (dict) : dictionary of table_name : timestamp key value pairs
-
-        Raises:
-            ConnectionError : connection issue to parameter store
+            df (DataFrame): The raw data as a pandas DataFrame.
 
         Returns:
-            None
-        '''
+            dict: A dictionary of transformed DataFrames for each table.
+        """
 
-- Collect data from one database table
-
-        '''
-
-        Returns all data from a table newer than most recent timestamp
-
-        Args:
-            table_name (string)
-            timestamp (timestamp)
-
-        Raises:
-            KeyError: table_name does not exist
-            ConnectionError : connection issue to parameter store
-
-
-        Returns:
-            table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
-        '''
-
-- Gathers latest timestamp
-  '''
-
-        Collect data from one database table() returns the most recent timestamp
-
-        Args:
-            table_data (list) : list of dictionaries
-
-        Raises:
-            KeyError: created_at/updated_at does not exist
-
-
-
-        Returns:
-            most_recent_timestamp (timestamp) : from list returns most recent timestamp from created_at/updated_at values
-        '''
-
-- Write ingested data to S3 bucket per table
+- Write data to S3 bucket per table
 
         '''
-
-        Write file to S3 bucket as Json lines format
+        Write file to S3 bucket in Parquet format
 
         Args:
             table_name (string)
             most_recent_timestamp (timestamp) : timestamp of most recent records in data
             table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
             sequential_id (int) : integer stored in parameter store retrieved earlier in application flow
-
 
         Raises:
             FileExistsError: S3 object already exists with the same name
@@ -124,12 +124,10 @@ A Python Lambda application to:
 - Read sequential_id
 
         '''
-
         From parameter store retrieves table_name : sequential_id key value pair
 
         Args:
             table_name (string)
-
 
         Raises:
             KeyError: table_name does not exist
@@ -137,13 +135,11 @@ A Python Lambda application to:
 
         Returns:
             sequential_id(int)
-
         '''
 
 - Write sequential_id
 
         '''
-
         To parameter store write table_name : sequential_id key value pair
         -- checks sequential_id is one greater than previous sequential_id
 
@@ -151,27 +147,10 @@ A Python Lambda application to:
             table_name (string)
             sequential_id(int)
 
-
         Raises:
             KeyError: table_name does not exist
             ConnectionError : connection issue to parameter store
 
         Returns:
             None
-        '''
-
-- Lambda application flow
-- Log start of lambda run
-  For each table
-  - Log entry at start of each run
-  - Retrieve timestamps from parameter store
-  - Collect data from one database table
-  - Gathers latest timestamp
-  - Read sequential_id
-  - Write ingested data to S3 bucket per table
-  - Write sequential_id
-  - Log update of table
-  - Log completion/errors
-
-            table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
         '''
