@@ -8,6 +8,7 @@ terraform {
   backend "s3" {
     bucket = "nc-de-deliverance-terraform-state"
     region = "eu-west-2"
+    key = "backend.tfstate"
   }
 }
 
