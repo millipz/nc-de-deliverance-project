@@ -108,8 +108,8 @@ run-checks: security-test run-black run-flake8 unit-test check-coverage
 
 ## Deploy the dev infrastructure
 deploy-dev-env:
-	cd terraform && terraform init -backend-config=dev.tfbackend && terraform apply -var-file="dev.tfvars"
+	cd terraform && terraform init -backend-config=dev.tfbackend -reconfigure && terraform apply -var-file="dev.tfvars"
 
 ## Deploy the test infrastructure
 deploy-test-env:
-	cd terraform && terraform init -backend-config=test.tfbackend && terraform apply -var-file="test.tfvars"
+	cd terraform && terraform init -backend-config=test.tfbackend -reconfigure && terraform apply -var-file="test.tfvars"
