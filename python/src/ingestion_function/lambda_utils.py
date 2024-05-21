@@ -219,7 +219,6 @@ def write_seq_id(seq_id: int, table_name: str, ssm_client) -> None:
         None
     """
     try:
-        print("writing ")
         ssm_client.put_parameter(
             Name=f"{table_name}_latest_packet_id",
             Type="String",
