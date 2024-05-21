@@ -18,6 +18,7 @@ resource "aws_lambda_permission" "allow_eventbridge" {
 }
 
 resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_log_metric_filter" {
+  depends_on = [ aws_cloudwatch_log_group.ingestion_lambda_log_group ]
   name = "${var.env_name}-ingestion_lambda_log_metric_filter"
   pattern = "Error"
   log_group_name = "/aws/lambda/${var.env_name}-ingestion-function"

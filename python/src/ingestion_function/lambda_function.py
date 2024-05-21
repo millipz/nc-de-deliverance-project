@@ -23,6 +23,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 S3_BUCKET = os.getenv("S3_BUCKET")
+ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 DB_USERNAME = secrets_manager_client.get_secret_value(SecretId="totesys-username")[
     "SecretString"
@@ -68,7 +69,7 @@ def lambda_handler(event, context):
 
     for table in tables:
         try:
-            timestamp = get_timestamp(table, ssm_client)
+            timestamp = get_timestamp(ENVIRONMENT + "_" + table, ssm_client)
             logger.info(
                 f"On last run the latest data from {table} was dated {timestamp}"
             )
@@ -83,7 +84,7 @@ def lambda_handler(event, context):
             logger.info(f"Data ingested for {table}")
             latest = find_latest_timestamp(data)
             try:
-                last_id = get_seq_id(table, ssm_client)
+                last_id = get_seq_id(ENVIRONMENT + "_" + table, ssm_client)
             except KeyError:
                 # assume first run
                 last_id = 0
@@ -91,14 +92,14 @@ def lambda_handler(event, context):
             id = last_id + 1
             logger.info(f"this is run {id}")
             try:
-                write_table_data_to_s3(table, data, "nc-totesys-ingest", id, s3_client)
+                write_table_data_to_s3(table, data, S3_BUCKET, id, s3_client)
                 logger.info("Ingestion lambda successfully executed.")
             except Exception as e:
                 logger.error(f"Error writing {table} data to S3: {e}")
                 return {"statusCode": 500, "body": f"Error: {e}"}
             else:
-                write_timestamp(latest, table, ssm_client)
-                write_seq_id(id, table, ssm_client)
+                write_timestamp(latest, ENVIRONMENT + "_" + table, ssm_client)
+                write_seq_id(id, ENVIRONMENT + "_" + table, ssm_client)
                 logger.info(f"{table} data written to S3")
 
         # TODO - Invoke processing lambda

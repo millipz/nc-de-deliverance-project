@@ -39,8 +39,8 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
           "s3:PutObject",
         ],
         Resource = [
-          "arn:aws:s3:::nc-totesys-ingest",
-          "arn:aws:s3:::nc-totesys-ingest/*",
+          aws_s3_bucket.ingestion_bucket.arn,
+          "${aws_s3_bucket.ingestion_bucket.arn}/*",
         ],
       },
       {

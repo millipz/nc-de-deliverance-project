@@ -10,6 +10,7 @@ resource "aws_lambda_function" "ingestion_function" {
     environment {
         variables = {
             S3_BUCKET = aws_s3_bucket.ingestion_bucket.bucket
+            ENVIRONMENT = "${var.env_name}"
         }
     }
 
@@ -20,6 +21,6 @@ resource "aws_lambda_layer_version" "ingestion_lambda_layer" {
     layer_name = "${var.env_name}-ingestion-lambda"
     filename = data.archive_file.ingestion_layer_package.output_path
     compatible_runtimes = ["python3.11"]
-
+    compatible_architectures = ["x86_64"]
     source_code_hash = data.archive_file.ingestion_layer_package.output_sha256
 }
