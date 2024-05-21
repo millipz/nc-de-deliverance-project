@@ -124,11 +124,8 @@ def find_latest_timestamp(
     """
     timestamps = []
     for dic in table_data:
-        print(f"checking {dic}")
         for col in columns:
-            print(f"checking {col}")
             timestamps.append(dic[col])
-            print(f"==>> dic[col]: {dic[col]}")
 
     try:
         return max(timestamps)

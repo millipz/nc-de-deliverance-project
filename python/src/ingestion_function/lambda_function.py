@@ -25,19 +25,16 @@ logger.setLevel(logging.INFO)
 S3_BUCKET = os.getenv("S3_BUCKET")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
-DB_USERNAME = secrets_manager_client.get_secret_value(SecretId="totesys-username")[
+DB_USERNAME = secrets_manager_client.get_secret_value(SecretId=f"totesys_{ENVIRONMENT}_db_username")[
     "SecretString"
 ]
-DB_PASSWORD = secrets_manager_client.get_secret_value(SecretId="totesys-password")[
+DB_PASSWORD = secrets_manager_client.get_secret_value(SecretId=f"totesys_{ENVIRONMENT}_db_password")[
     "SecretString"
 ]
-DB_HOST = secrets_manager_client.get_secret_value(SecretId="totesys-hostname")[
+DB_HOST, DB_PORT = secrets_manager_client.get_secret_value(SecretId=f"totesys_{ENVIRONMENT}_db_endpoint")[
     "SecretString"
-]
-DB_PORT = secrets_manager_client.get_secret_value(SecretId="totesys-port")[
-    "SecretString"
-]
-DB_NAME = secrets_manager_client.get_secret_value(SecretId="totesys-database")[
+].split(":")
+DB_NAME = secrets_manager_client.get_secret_value(SecretId=f"totesys_{ENVIRONMENT}_db_name")[
     "SecretString"
 ]
 
