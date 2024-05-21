@@ -124,7 +124,7 @@ destroy-test-env:
 
 ## Deploy the dev database (used for testing)
 deploy-dev-db:
-	cd dev-db-terraform && terraform workspace select -or-create db && terraform init -reconfigure && terraform apply
+	cd dev-db-terraform && terraform workspace select -or-create db && terraform init && terraform apply
 
 ## Tear down dev database
 destroy-dev-db:
