@@ -155,7 +155,7 @@ def write_table_data_to_s3(
         ConnectionError : connection issue to S3 bucket
 
     Returns:
-        None
+        key: The S3 object key the data is written to
     """
     encoded_data = json.dumps(table_data, indent=4, sort_keys=True, default=str).encode(
         "utf-8"
@@ -167,6 +167,7 @@ def write_table_data_to_s3(
         f"{datetime.now().strftime(time_format)}.jsonl"
     )
     s3_client.put_object(Body=encoded_data, Bucket=bucket_name, Key=key)
+    return key
 
 
 def get_seq_id(table_name: str, ssm_client) -> int:
