@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "dev_db_username" {
-  name = "dev-db-username"
+  name = "totesys_dev_db_username"
 }
 
 resource "aws_secretsmanager_secret_version" "dev_db_username_version" {
@@ -8,7 +8,7 @@ resource "aws_secretsmanager_secret_version" "dev_db_username_version" {
 }
 
 resource "aws_secretsmanager_secret" "dev_db_password" {
-  name = "dev-db-password"
+  name = "totesys_dev_db_password"
 }
 
 resource "aws_secretsmanager_secret_version" "dev_db_password_version" {
@@ -17,7 +17,7 @@ resource "aws_secretsmanager_secret_version" "dev_db_password_version" {
 }
 
 resource "aws_secretsmanager_secret" "dev_db_name" {
-  name = "dev-db-name"
+  name = "totesys_dev_db_name"
 }
 
 resource "aws_secretsmanager_secret_version" "dev_db_name_version" {
@@ -26,7 +26,7 @@ resource "aws_secretsmanager_secret_version" "dev_db_name_version" {
 }
 
 resource "aws_secretsmanager_secret" "dev_db_endpoint" {
-  name = "dev-db-endpoint"
+  name = "totesys_dev_db_endpoint"
 }
 
 resource "aws_secretsmanager_secret_version" "dev_db_endpoint_version" {

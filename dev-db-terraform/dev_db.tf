@@ -1,5 +1,5 @@
-resource "aws_security_group" "rds_sg" {
-  name        = "rds_sg"
+resource "aws_security_group" "dev_rds_sg" {
+  name        = "dev_rds_sg"
   description = "Allow incoming requests"
   ingress {
     description = "PostgreSQL ingress"
@@ -24,21 +24,21 @@ resource "aws_db_instance" "totesys_dev_db" {
   engine                 = "postgres"
   storage_type           = "gp2"
   engine_version         = "14.9"
-  db_name                = var.db_name
-  username               = var.db_username
-  password               = var.db_password
+  db_name                = aws_secretsmanager_secret_version.dev_db_name_version.secret_string
+  username               = aws_secretsmanager_secret_version.dev_db_username_version.secret_string
+  password               = aws_secretsmanager_secret_version.dev_db_password_version.secret_string
   skip_final_snapshot    = true
   publicly_accessible    = true
-  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  vpc_security_group_ids = [aws_security_group.dev_rds_sg.id]
 }
 
-# resource "local_sensitive_file" "db_credentials" {
-#   content  = <<EOF
-# TEST_DB_ENDPOINT="${aws_db_instance.totesys_test_db.endpoint}"
-# TEST_DB_NAME="${aws_db_instance.totesys_test_db.db_name}"
-# TEST_DB_USERNAME="${aws_db_instance.totesys_test_db.username}"
-# TEST_DB_PASSWORD="${aws_db_instance.totesys_test_db.password}"
-# EOF
-#   filename = "${path.module}/../.secrets/db_credentials.env"
-# }
+resource "local_sensitive_file" "db_credentials" {
+  content  = <<EOF
+TEST_DB_ENDPOINT="${aws_db_instance.totesys_dev_db.endpoint}"
+TEST_DB_NAME="${aws_db_instance.totesys_dev_db.db_name}"
+TEST_DB_USERNAME="${aws_db_instance.totesys_dev_db.username}"
+TEST_DB_PASSWORD="${aws_db_instance.totesys_dev_db.password}"
+EOF
+  filename = "${path.module}/../.secrets/db_credentials.env"
+}
 
