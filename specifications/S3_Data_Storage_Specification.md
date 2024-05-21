@@ -1,28 +1,29 @@
 # S3 Data Storage Specification
 
 ## Ingestion Bucket: `nc-totesys-ingest`
+
 - **Purpose**: Stores raw data extracted from the `totesys` database.
 - **Data Format**: JSON lines.
-- **File Naming Convention**: `{tablename}_sequentialID_{timestamp}.jsonl` (e.g., `sales_order_20240510T120000.jsonl`)
+- **File Naming Convention**: `{tablename}_packet_ID_{timestamp}.jsonl` (e.g., `sales_order_20240510T120000.jsonl`)
 - **Storage Structure**:
   - Data is stored in partitioned folders based on the date of ingestion: `yyyy-mm-dd/`
   - Example Path: `s3://nc-totesys-ingest/2024-05-10/sales_order_20240510T120000.jsonl`
 - **Data Versioning and Immutability**: Versioning enabled to track and manage historical data versions.
 
 ## Processed Bucket: `nc-totesys-processed`
+
 - **Purpose**: Stores data transformed and formatted for loading into the data warehouse.
 - **Data Format**: Parquet.
-- **File Naming Convention**: `{tablename}_sequentialID_processed_{timestamp}.parquet`
+- **File Naming Convention**: `{tablename}_packet_ID_processed_{timestamp}.parquet`
 - **Storage Structure**:
   - Data is stored in partitioned folders based on dimension key for the data warehouse, typically date: `yyyy-mm-dd/`
   - Example Path: `s3://nc-totesys-processed/2024-05-10/fact_sales_order_20240510T123000.parquet`
 - **Data Lifecycle**: Older data may be transitioned to colder storage (e.g., Amazon S3 Glacier) based on age and access patterns.
 
-# Data Warehouse Schema Specification
-
 ## Fact Tables
 
 ### Fact Sales Order
+
 - `sales_record_id`: SERIAL (Primary Key, Auto-increment)
 - `sales_order_id`: INT
 - `created_date`: DATE
@@ -42,6 +43,7 @@
 ## Dimension Tables
 
 ### Dim Staff
+
 - `staff_id`: INT (Primary Key)
 - `first_name`: VARCHAR
 - `last_name`: VARCHAR
@@ -50,17 +52,20 @@
 - `email_address`: VARCHAR
 
 ### Dim Currency
+
 - `currency_id`: INT (Primary Key)
 - `currency_code`: VARCHAR(3)
 - `currency_name`: VARCHAR
 
 ### Dim Design
+
 - `design_id`: INT (Primary Key)
 - `design_name`: VARCHAR
 - `file_location`: VARCHAR
 - `file_name`: VARCHAR
 
 ### Dim Location
+
 - `location_id`: INT (Primary Key)
 - `address_line_1`: VARCHAR
 - `address_line_2`: VARCHAR
@@ -71,6 +76,7 @@
 - `phone`: VARCHAR
 
 ### Dim Counterparty
+
 - `counterparty_id`: INT (Primary Key)
 - `counterparty_legal_name`: VARCHAR
 - `counterparty_legal_address_line_1`: VARCHAR
@@ -82,6 +88,7 @@
 - `counterparty_legal_phone_number`: VARCHAR
 
 ### Dim Date
+
 - `date_id`: DATE (Primary Key)
 - `year`: INT
 - `month`: INT
