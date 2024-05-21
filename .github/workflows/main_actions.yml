@@ -1,8 +1,8 @@
-name: Branch Code Review
+name: Main Code Review
 
 on:
   push:
-    branches-ignore:
+    branches:
       - main
     paths:
       - '**.py'

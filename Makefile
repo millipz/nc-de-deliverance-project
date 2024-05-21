@@ -68,9 +68,6 @@ flake8:
 dev-setup: bandit safety black coverage flake8
 
 # Test Database
-recreate-test-db:
-	cd ${PYTHONPATH}/terraform && terraform apply -var-file="secret.tfvars" -replace='aws_db_instance.totesys_test_db' -auto-approve
-
 initialise-test-db:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_schema.py)
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_seed.py)
@@ -90,7 +87,7 @@ run-black:
 	$(call execute_in_env, find . -type f -name "*.py" \
 		! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
 		! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
-		-exec sed -i '' -e 's/[[:space:]]\+$$//' {} \; \
+		-exec sed -i 's/[[:space:]]\+$$//' {} \; \
 		-exec black {} \;)
 
 ## Run the flake8 code check

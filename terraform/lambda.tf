@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "ingestion_function" {
     function_name = "ingestion-function"
     role = aws_iam_role.lambda_exec_role.arn
-    handler = "lambda_function.lambda_handler"
+    handler = var.ingestion_lambda_handler
     runtime = "python3.11"
     filename = data.archive_file.ingestion_lambda_package.output_path
     layers = [aws_lambda_layer_version.ingestion_lambda_layer.arn]
