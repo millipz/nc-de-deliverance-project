@@ -108,8 +108,24 @@ run-checks: security-test run-black run-flake8 unit-test check-coverage
 
 ## Deploy the dev infrastructure
 deploy-dev-env:
-	cd terraform && terraform init -backend-config=dev.tfbackend && terraform apply -var-file="dev.tfvars"
+	cd terraform && terraform init -backend-config=dev.tfbackend -reconfigure && terraform apply -var-file="dev.tfvars"
+
+## Tear down dev infrastructure
+destroy-dev-env:
+	cd terraform && terraform init -backend-config=dev.tfbackend && terraform destroy -var-file="dev.tfvars"
 
 ## Deploy the test infrastructure
 deploy-test-env:
-	cd terraform && terraform init -backend-config=test.tfbackend && terraform apply -var-file="test.tfvars"
+	cd terraform && terraform init -backend-config=test.tfbackend -reconfigure && terraform apply -var-file="test.tfvars"
+
+## Tear down test infrastructure
+destroy-test-env:
+	cd terraform && terraform init -backend-config=dev.tfbackend && terraform destroy -var-file="test.tfvars"
+
+## Deploy the dev database (used for testing)
+deploy-dev-db:
+	cd dev-db-terraform && terraform init && terraform apply
+
+## Tear down dev database
+destroy-dev-db:
+	cd dev-db-terraform && terraform init && terraform destroy
