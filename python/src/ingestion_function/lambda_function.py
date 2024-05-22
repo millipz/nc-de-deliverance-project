@@ -63,6 +63,9 @@ def lambda_handler(event, context):
     logger.info(os.environ["AWS_LAMBDA_LOG_STREAM_NAME"])
     logger.info("## EVENT")
     logger.info(event)
+    
+    response_data = {}
+    total_ingested_rows = 0
 
     for table in tables:
         try:
@@ -75,6 +78,7 @@ def lambda_handler(event, context):
             timestamp = datetime.fromisoformat("2000-01-01")
             logger.error(f"No previous data logged from {table}")
         data = collect_table_data(table, timestamp, db)
+        total_ingested_rows += len(data)
         if len(data) == 0:
             logger.info(f"No new data for {table}")
         else:
@@ -89,16 +93,14 @@ def lambda_handler(event, context):
             id = last_id + 1
             logger.info(f"this is run {id}")
             try:
-                write_table_data_to_s3(table, data, S3_BUCKET, id, s3_client)
-                logger.info("Ingestion lambda successfully executed.")
+                key = write_table_data_to_s3(table, data, S3_BUCKET, id, s3_client)
             except Exception as e:
                 logger.error(f"Error writing {table} data to S3: {e}")
                 return {"statusCode": 500, "body": f"Error: {e}"}
             else:
                 write_timestamp(latest, ENVIRONMENT + "_" + table, ssm_client)
                 write_seq_id(id, ENVIRONMENT + "_" + table, ssm_client)
-                logger.info(f"{table} data written to S3")
-
-        # TODO - Invoke processing lambda
-
-    return {"statusCode": 200, "body": "Ingestion completed successfully."}
+                logger.info(f"{table} data written to S3, {len(data)} rows ingested")
+                response_data[table] = key
+    logger.info(f"{total_ingested_rows} rows ingested this run")
+    return {"statusCode": 200, "data": response_data}
