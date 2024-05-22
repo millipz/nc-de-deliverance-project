@@ -107,11 +107,12 @@ run-checks: security-test run-black run-flake8 unit-test check-coverage
 
 ## Make Lambda Layer
 layer:
-	rm -rf layer/*
+	rm -rf layer/
 	mkdir -p layer/python
 	$(call execute_in_env, $(PIP) install pip-tools)
 	$(call execute_in_env, pip-compile layer.in --output-file layer-requirements.txt)
 	$(call execute_in_env, $(PIP) install -r ./layer-requirements.txt -t layer/python)
+	rm -rf /layer/python/pandas/tests/
 
 ## Deploy the dev infrastructure
 deploy-dev-env: layer

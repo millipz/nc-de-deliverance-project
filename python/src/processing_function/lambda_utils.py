@@ -402,8 +402,7 @@ def write_data_to_s3(df: pd.DataFrame,
         None
     """
     buffer = io.BytesIO()
-    df.to_parquet(engine='fastparquet')
-    buffer.seek(0)
+    df.to_parquet(buffer, engine='fastparquet')
     time_format = "%H%M%S%f"
     key = (
         f"{date.today()}/{table_name}_"

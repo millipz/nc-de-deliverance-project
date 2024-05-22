@@ -1,7 +1,6 @@
 import boto3
 import os
 import logging
-import json
 from datetime import datetime, timedelta
 from pg8000.native import Connection
 from lambda_utils import (
@@ -92,7 +91,7 @@ def lambda_handler(event, context):
                 new_table_name = "dim_counterparty"
                 processed_data_frames[new_table_name] = transform_counterparty(data_frame)
         packet_id = int(object_key.split("_")[1])
-        processed_key = write_data_to_s3(data_frame, new_table_name,
+        processed_key = write_data_to_s3(processed_data_frames[new_table_name], new_table_name,
                                          S3_PROCESSED_BUCKET, packet_id, s3_client)
         response_data[new_table_name] = processed_key
 
