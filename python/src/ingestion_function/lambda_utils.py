@@ -1,6 +1,13 @@
 from datetime import datetime, date
 import json
 from pg8000.native import identifier, literal
+import logging
+import boto3
+
+logs_client = boto3.client("logs")
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def get_timestamp(table_name: str, ssm_client) -> datetime:
@@ -67,7 +74,8 @@ def write_timestamp(timestamp: datetime, table_name: str, ssm_client) -> None:
             Overwrite=True,
         )
     except Exception as e:
-        print(f"The timestamp could not be written: {e}")
+        logger.error(f"The timestamp could not be written: {e}")
+        raise ConnectionError from e
 
 
 def collect_table_data(
@@ -113,7 +121,7 @@ def find_latest_timestamp(
     Args:
         table_data (list) : list of dictionaries representing rows of the table
         columns (list[str], optional keyword) : columns to search for timestamps.
-            Defauts to ["last_updated"]
+            Defaults to ["last_updated"]
 
     Raises:
         KeyError: columns do not exist
@@ -230,4 +238,5 @@ def write_seq_id(seq_id: int, table_name: str, ssm_client) -> None:
             Overwrite=True,
         )
     except Exception as e:
-        print(f"The timestamp could not be written: {e}")
+        logger.error(f"The timestamp could not be written: {e}")
+        raise ConnectionError from e

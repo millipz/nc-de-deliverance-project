@@ -8,6 +8,9 @@ from freezegun import freeze_time
 import json
 from mock import Mock
 from dotenv import load_dotenv
+
+# from botocore.exceptions import EndpointConnectionError
+from botocore.stub import Stubber
 from python.src.ingestion_function.lambda_utils import (
     get_timestamp,
     write_timestamp,
@@ -82,6 +85,23 @@ class TestWriteTimestamp:
         timestamp = get_timestamp("test_table", ssm_client)
         assert timestamp.isoformat() == "2024-05-16T10:50:30.123000"
 
+    def test_overwrite_timestamp(self, ssm_client):
+        time_to_write = datetime.fromisoformat("2024-05-16T10:50:30.123000")
+        write_timestamp(time_to_write, "test_table", ssm_client)
+        new_time_to_write = datetime.fromisoformat("2024-05-17T10:50:30.123000")
+        write_timestamp(new_time_to_write, "test_table", ssm_client)
+        timestamp = get_timestamp("test_table", ssm_client)
+        assert timestamp.isoformat() == "2024-05-17T10:50:30.123000"
+
+    def test_connection_error_raised(self, ssm_client):
+        time_to_write = datetime.fromisoformat("2024-05-16T10:50:30.123000")
+        with Stubber(ssm_client) as stubber:
+            stubber.add_client_error(
+                "put_parameter", service_error_code="ConnectionError"
+            )
+            with pytest.raises(ConnectionError):
+                write_timestamp(time_to_write, "test_table", ssm_client)
+
 
 class TestFindLatestTimestamp:
     def test_returns_timestamp(self):
@@ -118,6 +138,11 @@ class TestFindLatestTimestamp:
             ).isoformat()
             == "2024-05-20T10:10:10.123000"
         )
+
+    def test_none_returned_for_empty_list(self):
+        dummy_data = []
+        result = find_latest_timestamp(dummy_data)
+        assert result is None
 
 
 class TestWriteTableDataToS3:
@@ -228,6 +253,15 @@ class TestWriteSeqId:
         write_seq_id(id_to_write, "test_table", ssm_client)
         id = get_seq_id("test_table", ssm_client)
         assert id == 101
+
+    def test_connection_error_raised_for_seq_id(self, ssm_client):
+        id_to_write = 101
+        with Stubber(ssm_client) as stubber:
+            stubber.add_client_error(
+                "put_parameter", service_error_code="ConnectionError"
+            )
+            with pytest.raises(ConnectionError):
+                write_seq_id(id_to_write, "test_table", ssm_client)
 
 
 class TestCollectTableData:
