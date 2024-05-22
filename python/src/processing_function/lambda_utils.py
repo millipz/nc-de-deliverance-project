@@ -68,13 +68,14 @@ def transform_staff(staff_df, department_df):
     dim_staff = staff_df.copy()
     dim_staff = dim_staff.merge(department_df[['department_id', 'department_name', 'location']],
                                 on='department_id', how='left')
-    return dim_staff
+    return dim_staff[["staff_id", "first_name", "last_name", "department_name",
+                      "location", "email_address"]]
 
 
 def transform_location(address_df):
     dim_location = address_df.copy()
     dim_location = dim_location.rename(columns={
-        'address_id': 'location_id'    
+        'address_id': 'location_id'
         })
     return dim_location
 
@@ -97,8 +98,6 @@ def transform_counterparty(counterparty_df, address_df):
     dim_counterparty = dim_counterparty.merge(address_df, left_on='legal_address_id',
                                               right_on='address_id', how='left')
     dim_counterparty = dim_counterparty.rename(columns={
-        'counterparty_id': 'counterparty_id',
-        'counterparty_legal_name': 'counterparty_legal_name',
         'address_line_1': 'counterparty_legal_address_line_1',
         'address_line_2': 'counterparty_legal_address_line_2',
         'district': 'counterparty_legal_district',
@@ -113,7 +112,7 @@ def transform_counterparty(counterparty_df, address_df):
 def transform_to_star_schema(sales_order_df, staff_df, address_df, currency_df,
                              design_df, counterparty_df, department_df):
     fact_sales_order = transform_sales_order(sales_order_df)
-    dim_date = create_dim_date(fact_sales_order)
+    dim_date = create_dim_date('2024-01-01', '2030-01-01')
     dim_staff = transform_staff(staff_df, department_df)
     dim_location = transform_location(address_df)
     dim_currency = transform_currency(currency_df)

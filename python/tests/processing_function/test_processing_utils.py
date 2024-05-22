@@ -8,7 +8,9 @@ from python.src.processing_function.lambda_utils import (
     get_packet_id,
     write_packet_id,
     retrieve_data,
-    transform_sales_order
+    transform_sales_order,
+    create_dim_date,
+    transform_staff,
 )
 
 
@@ -38,12 +40,70 @@ def s3_client(aws_creds: None):
         yield conn
 
 
-# sample dataframe fixtures for each table
-
 @pytest.fixture(scope="function")
 def sample_sales_order_dataframe(s3_client):
     with mock_aws():
         with open("python/tests/processing_function/sales_order_table.jsonl",
+                  'r', encoding='utf-8') as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(Bucket="nc-totesys-ingest",
+                                 Body=json.dumps(json_data), Key="test-data")
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
+@pytest.fixture(scope="function")
+def sample_staff_dataframe(s3_client):
+    with mock_aws():
+        with open("python/tests/processing_function/staff_table.jsonl",
+                  'r', encoding='utf-8') as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(Bucket="nc-totesys-ingest",
+                                 Body=json.dumps(json_data), Key="test-data")
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
+@pytest.fixture(scope="function")
+def sample_department_dataframe(s3_client):
+    with mock_aws():
+        with open("python/tests/processing_function/department_table.jsonl",
+                  'r', encoding='utf-8') as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(Bucket="nc-totesys-ingest",
+                                 Body=json.dumps(json_data), Key="test-data")
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
+@pytest.fixture(scope="function")
+def sample_currency_dataframe(s3_client):
+    with mock_aws():
+        with open("python/tests/processing_function/currency_table.jsonl",
+                  'r', encoding='utf-8') as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(Bucket="nc-totesys-ingest",
+                                 Body=json.dumps(json_data), Key="test-data")
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
+@pytest.fixture(scope="function")
+def sample_design_dataframe(s3_client):
+    with mock_aws():
+        with open("python/tests/processing_function/design_table.jsonl",
+                  'r', encoding='utf-8') as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(Bucket="nc-totesys-ingest",
+                                 Body=json.dumps(json_data), Key="test-data")
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
+@pytest.fixture(scope="function")
+def sample_counterparty_dataframe(s3_client):
+    with mock_aws():
+        with open("python/tests/processing_function/counterparty_table.jsonl",
                   'r', encoding='utf-8') as data_file:
             json_data = json.load(data_file)
             s3_client.put_object(Bucket="nc-totesys-ingest",
@@ -124,7 +184,7 @@ class TestRetrieveData:
 
 class TestTransformData:
 
-    def test_transform_sales_order_columns(self, sample_sales_order_dataframe):
+    def test_transform_sales_order(self, sample_sales_order_dataframe):
         result = transform_sales_order(sample_sales_order_dataframe)
         expected_columns = ['sales_order_id',
                             'created_date',
@@ -143,8 +203,6 @@ class TestTransformData:
 
         assert list(result.columns) == expected_columns
 
-    def test_transform_sales_order_values(self, sample_sales_order_dataframe):
-        result = transform_sales_order(sample_sales_order_dataframe)
         assert result['sales_order_id'].iloc[0] == 2
         assert result['units_sold'].iloc[0] == 42972
         assert result['unit_price'].iloc[0] == "3.94"
@@ -160,3 +218,37 @@ class TestTransformData:
         assert result['last_updated_date'].iloc[0] == pd.Timestamp('2022-11-03').date()
         assert result['last_updated_time'].iloc[0] == \
             pd.Timestamp('14:20:52.186000').time()
+
+    def test_create_dim_date(self):
+        start_date = '2023-01-01'
+        end_date = '2023-01-10'
+        result = create_dim_date(start_date, end_date)
+
+        expected_num_rows = 10
+        assert len(result) == expected_num_rows
+
+        expected_columns = ["date_id", "year", "month", "day",
+                            "day_of_week", "day_name", "month_name", "quarter"]
+        assert (list(result.columns)) == expected_columns
+
+        first_date = result.iloc[0]
+        assert first_date['date_id'] == pd.Timestamp('2023-01-01')
+        assert first_date['year'] == 2023
+        assert first_date['month'] == 1
+        assert first_date['day'] == 1
+        assert first_date['day_of_week'] == 6
+        assert first_date['day_name'] == 'Sunday'
+        assert first_date['month_name'] == 'January'
+        assert first_date['quarter'] == 1
+
+    def test_transform_staff(self, sample_staff_dataframe, sample_department_dataframe):
+        result = transform_staff(sample_staff_dataframe, sample_department_dataframe)
+        expected_columns = ["staff_id", "first_name", "last_name", "department_name",
+                            "location", "email_address"]
+        assert list(result.columns) == expected_columns
+
+        assert result['staff_id'].iloc[0] == 1
+        assert result['first_name'].iloc[0] == "Jeremie"
+        assert result['last_name'].iloc[0] == "Franey"
+        assert result['department_name'].iloc[0] == "Purchasing"
+        assert result['location'].iloc[0] == "Manchester"
