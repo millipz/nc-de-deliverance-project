@@ -29,3 +29,6 @@ jobs:
       
       - name: Run Checks
         run: make run-checks
+
+      - name: Deploy Test Infrastructure
+        run: make deploy-test-env
