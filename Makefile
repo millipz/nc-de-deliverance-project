@@ -84,11 +84,11 @@ security-test:
 
 ## Run the black code formatter
 run-black:
+run-black:
 	$(call execute_in_env, find . -type f -name "*.py" \
 		! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
 		! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
 		-exec bash -c 'sed -i.bak "s/[[:space:]]\+$$//" {} && rm {}.bak && black {}' \;)
-
 
 ## Run the flake8 code check
 run-flake8:
@@ -100,7 +100,8 @@ unit-test:
 
 ## Run the coverage check
 check-coverage:
-	$(call source venv/bin/activate && find . -path "*/src/*.py" -o -path "*/tests/*.py" -exec pytest --cov=src --cov=tests {} +; PYTHONPATH=${PYTHONPATH})
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=python/src/ python/tests/)
+
 
 
 ## Run all checks
