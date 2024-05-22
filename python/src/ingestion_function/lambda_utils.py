@@ -139,7 +139,7 @@ def write_table_data_to_s3(
     bucket_name: str,
     sequential_id: int,
     s3_client,
-) -> None:
+) -> str:
     """
     Write file to S3 bucket as Json lines format
 
@@ -155,7 +155,7 @@ def write_table_data_to_s3(
         ConnectionError : connection issue to S3 bucket
 
     Returns:
-        key: The S3 object key the data is written to
+        key (str): The S3 object key the data is written to
     """
     encoded_data = json.dumps(table_data, indent=4, sort_keys=True, default=str).encode(
         "utf-8"
