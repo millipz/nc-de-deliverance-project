@@ -402,7 +402,7 @@ def write_data_to_s3(df: pd.DataFrame,
         None
     """
     buffer = io.BytesIO()
-    df.to_parquet()
+    df.to_parquet(engine='fastparquet')
     buffer.seek(0)
     time_format = "%H%M%S%f"
     key = (

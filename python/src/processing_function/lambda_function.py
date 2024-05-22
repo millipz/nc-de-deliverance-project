@@ -53,7 +53,7 @@ try:
     last_date = get_timestamp(f"{ENVIRONMENT}_dim_date", ssm_client)
 except KeyError:
     # if no last date exists, assume first run
-    last_date = datetime("2020-01-01")
+    last_date = datetime.fromisoformat("2020-01-01")
 
 if last_date != tomorrow:
     processed_data_frames = {"dim_date": create_dim_date(last_date, tomorrow)}
@@ -69,7 +69,7 @@ def lambda_handler(event, context):
 
     response_data = {}
 
-    payload = json.loads(event["body"])["data"]
+    payload = event["body"]["data"]
     for table_name, object_key in payload.items():
         data_frame = retrieve_data(S3_INGESTION_BUCKET, object_key, s3_client)
         match table_name:

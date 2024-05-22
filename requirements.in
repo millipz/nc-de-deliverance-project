@@ -10,3 +10,4 @@ coverage
 black
 freezegun
 mock
+pandas
