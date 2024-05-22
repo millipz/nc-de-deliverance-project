@@ -87,8 +87,8 @@ run-black:
 	$(call execute_in_env, find . -type f -name "*.py" \
 		! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
 		! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
-		-exec sed -i 's/[[:space:]]\+$$//' {} \; \
-		-exec black {} \;)
+		-exec bash -c 'sed -i.bak "s/[[:space:]]\+$$//" {} && rm {}.bak && black {}' \;)
+
 
 ## Run the flake8 code check
 run-flake8:
