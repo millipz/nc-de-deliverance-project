@@ -160,9 +160,3 @@ class TestTransformData:
         assert result['last_updated_date'].iloc[0] == pd.Timestamp('2022-11-03').date()
         assert result['last_updated_time'].iloc[0] == \
             pd.Timestamp('14:20:52.186000').time()
-
-    def test_transform_sales_order_types(self, sample_sales_order_dataframe):
-        result = transform_sales_order(sample_sales_order_dataframe)
-        print(sample_sales_order_dataframe.dtypes)
-        print(result.dtypes)
-        assert 0

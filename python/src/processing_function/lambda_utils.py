@@ -14,7 +14,8 @@ def retrieve_data(bucket_name: str, object_key: str, s3_client):
         raise KeyError(f"The key '{object_key}' does not exist.")
 
 
-# def transform_to_star_schema(sales_order_df, staff_df, address_df, currency_df, design_df, counterparty_df):
+# def transform_to_star_schema(sales_order_df, staff_df,
+# address_df, currency_df, design_df, counterparty_df):
 
 
 def transform_sales_order(sales_order_df):
@@ -28,15 +29,7 @@ def transform_sales_order(sales_order_df):
         pd.to_datetime(fact_sales_order['last_updated']).dt.time
 
     fact_sales_order.rename(columns={
-        'sales_order_id': 'sales_order_id',
         'staff_id': 'sales_staff_id',
-        'units_sold': 'units_sold',
-        'unit_price': 'unit_price',
-        'currency_id': 'currency_id',
-        'design_id': 'design_id',
-        'agreed_payment_date': 'agreed_payment_date',
-        'agreed_delivery_date': 'agreed_delivery_date',
-        'agreed_delivery_location_id': 'agreed_delivery_location_id'
     }, inplace=True)
 
     fact_sales_order = fact_sales_order[[
@@ -56,6 +49,78 @@ def transform_sales_order(sales_order_df):
         'agreed_delivery_location_id']]
 
     return fact_sales_order
+
+
+def create_dim_date(start_date, end_date):
+    date_range = pd.date_range(start=start_date, end=end_date)
+    dim_date = pd.DataFrame(date_range, columns=['date_id'])
+    dim_date['year'] = dim_date['date_id'].dt.year
+    dim_date['month'] = dim_date['date_id'].dt.month
+    dim_date['day'] = dim_date['date_id'].dt.day
+    dim_date['day_of_week'] = dim_date['date_id'].dt.weekday
+    dim_date['day_name'] = dim_date['date_id'].dt.day_name()
+    dim_date['month_name'] = dim_date['date_id'].dt.month_name()
+    dim_date['quarter'] = dim_date['date_id'].dt.quarter
+    return dim_date
+
+
+def transform_staff(staff_df, department_df):
+    dim_staff = staff_df.copy()
+    dim_staff = dim_staff.merge(department_df[['department_id', 'department_name', 'location']],
+                                on='department_id', how='left')
+    return dim_staff
+
+
+def transform_location(address_df):
+    dim_location = address_df.copy()
+    dim_location = dim_location.rename(columns={
+        'address_id': 'location_id'    
+        })
+    return dim_location
+
+
+def transform_currency(currency_df):
+    dim_currency = currency_df.copy()
+    dim_currency['currency_name'] = dim_currency['currency_code'].apply(lambda x: 'Unknown')
+    return dim_currency
+
+
+def transform_design(design_df):
+    dim_design = design_df.copy()
+    return dim_design[[
+        'design_id', 'design_name', 'file_location', 'file_name'
+    ]]
+
+
+def transform_counterparty(counterparty_df, address_df):
+    dim_counterparty = counterparty_df.copy()
+    dim_counterparty = dim_counterparty.merge(address_df, left_on='legal_address_id',
+                                              right_on='address_id', how='left')
+    dim_counterparty = dim_counterparty.rename(columns={
+        'counterparty_id': 'counterparty_id',
+        'counterparty_legal_name': 'counterparty_legal_name',
+        'address_line_1': 'counterparty_legal_address_line_1',
+        'address_line_2': 'counterparty_legal_address_line_2',
+        'district': 'counterparty_legal_district',
+        'city': 'counterparty_legal_city',
+        'postal_code': 'counterparty_legal_postal_code',
+        'country': 'counterparty_legal_country',
+        'phone': 'counterparty_legal_phone_number'
+    })
+    return dim_counterparty
+
+
+def transform_to_star_schema(sales_order_df, staff_df, address_df, currency_df,
+                             design_df, counterparty_df, department_df):
+    fact_sales_order = transform_sales_order(sales_order_df)
+    dim_date = create_dim_date(fact_sales_order)
+    dim_staff = transform_staff(staff_df, department_df)
+    dim_location = transform_location(address_df)
+    dim_currency = transform_currency(currency_df)
+    dim_design = transform_design(design_df)
+    dim_counterparty = transform_counterparty(counterparty_df, address_df)
+    return fact_sales_order, dim_date, dim_staff, dim_location, \
+        dim_currency, dim_design, dim_counterparty
 
 
 def write_packet_id(packet_id: int, table_name: str, ssm_client) -> None:

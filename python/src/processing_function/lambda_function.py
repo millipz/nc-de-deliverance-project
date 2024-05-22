@@ -1,14 +1,13 @@
 import boto3
 import os
 import logging
-from datetime import datetime
 from pg8000.native import Connection
-from lambda_utils import (
-    retrieve_data,
-    transform_to_star_schema,
-    get_packet_id,
-    write_packet_id,
-)
+# from lambda_utils import (
+#     retrieve_data,
+#     transform_to_star_schema,
+#     get_packet_id,
+#     write_packet_id,
+# )
 
 s3_client = boto3.client("s3")
 secrets_manager_client = boto3.client("secretsmanager")
@@ -62,5 +61,4 @@ db = Connection(
 #     logger.info(os.environ['AWS_LAMBDA_LOG_STREAM_NAME'])
 #     logger.info('## EVENT')
 #     logger.info(event)
-    
 #     for table in tables:
