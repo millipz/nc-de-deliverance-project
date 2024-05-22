@@ -101,7 +101,7 @@
             table_name (string)
             most_recent_timestamp (timestamp) : timestamp of most recent records in data
             table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
-            sequential_id (int) : integer stored in parameter store retrieved earlier in application flow
+            packet_id (int) : integer stored in parameter store retrieved earlier in application flow
 
 
         Raises:
@@ -112,11 +112,11 @@
             None
         '''
 
-- Read sequential_id
+- Read packet_id
 
         '''
 
-        From parameter store retrieves table_name : sequential_id key value pair
+        From parameter store retrieves table_name : packet_id key value pair
 
         Args:
             table_name (string)
@@ -127,20 +127,19 @@
             ConnectionError : connection issue to parameter store
 
         Returns:
-            sequential_id(int)
+            packet_id(int)
 
         '''
 
-- Write sequential_id
+- Write packet_id
 
         '''
 
-        To parameter store write table_name : sequential_id key value pair
-        -- checks sequential_id is one greater than previous sequential_id
+        To parameter store write table_name : packet_id key value pair
 
         Args:
             table_name (string)
-            sequential_id(int)
+            packet_id(int)
 
 
         Raises:
@@ -158,8 +157,8 @@
   - Retrieve timestamps from parameter store
   - Collect data from one database table
   - Gathers latest timestamp
-  - Read sequential_id
+  - Read packet_id
   - Write ingested data to S3 bucket per table
-  - Write sequential_id
+  - Write packet_id
   - Log update of table
   - Log completion/errors
