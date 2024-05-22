@@ -47,7 +47,7 @@ def s3_client(aws_creds: None):
 @pytest.fixture(scope='function')
 def sample_address_dataframe(s3_client):
     with mock_aws():
-        with open('python/tests/processing_function/address_table.jsonl',
+        with open('python/tests/processing_function/sample_jsonl_data/address_table.jsonl',
                   'r', encoding='utf-8') as data_file:
             json_data = json.load(data_file)
             s3_client.put_object(Bucket='nc-totesys-ingest',
@@ -59,7 +59,7 @@ def sample_address_dataframe(s3_client):
 @pytest.fixture(scope='function')
 def sample_sales_order_dataframe(s3_client):
     with mock_aws():
-        with open('python/tests/processing_function/sales_order_table.jsonl',
+        with open('python/tests/processing_function/sample_jsonl_data/sales_order_table.jsonl',
                   'r', encoding='utf-8') as data_file:
             json_data = json.load(data_file)
             s3_client.put_object(Bucket='nc-totesys-ingest',
@@ -71,7 +71,7 @@ def sample_sales_order_dataframe(s3_client):
 @pytest.fixture(scope='function')
 def sample_staff_dataframe(s3_client):
     with mock_aws():
-        with open('python/tests/processing_function/staff_table.jsonl',
+        with open('python/tests/processing_function/sample_jsonl_data/staff_table.jsonl',
                   'r', encoding='utf-8') as data_file:
             json_data = json.load(data_file)
             s3_client.put_object(Bucket='nc-totesys-ingest',
@@ -83,7 +83,7 @@ def sample_staff_dataframe(s3_client):
 @pytest.fixture(scope='function')
 def sample_department_dataframe(s3_client):
     with mock_aws():
-        with open('python/tests/processing_function/department_table.jsonl',
+        with open('python/tests/processing_function/sample_jsonl_data/department_table.jsonl',
                   'r', encoding='utf-8') as data_file:
             json_data = json.load(data_file)
             s3_client.put_object(Bucket='nc-totesys-ingest',
@@ -95,7 +95,7 @@ def sample_department_dataframe(s3_client):
 @pytest.fixture(scope='function')
 def sample_currency_dataframe(s3_client):
     with mock_aws():
-        with open('python/tests/processing_function/currency_table.jsonl',
+        with open('python/tests/processing_function/sample_jsonl_data/currency_table.jsonl',
                   'r', encoding='utf-8') as data_file:
             json_data = json.load(data_file)
             s3_client.put_object(Bucket='nc-totesys-ingest',
@@ -107,7 +107,7 @@ def sample_currency_dataframe(s3_client):
 @pytest.fixture(scope='function')
 def sample_design_dataframe(s3_client):
     with mock_aws():
-        with open('python/tests/processing_function/design_table.jsonl',
+        with open('python/tests/processing_function/sample_jsonl_data/design_table.jsonl',
                   'r', encoding='utf-8') as data_file:
             json_data = json.load(data_file)
             s3_client.put_object(Bucket='nc-totesys-ingest',
@@ -119,7 +119,7 @@ def sample_design_dataframe(s3_client):
 @pytest.fixture(scope='function')
 def sample_counterparty_dataframe(s3_client):
     with mock_aws():
-        with open('python/tests/processing_function/counterparty_table.jsonl',
+        with open('python/tests/processing_function/sample_jsonl_data/counterparty_table.jsonl',
                   'r', encoding='utf-8') as data_file:
             json_data = json.load(data_file)
             s3_client.put_object(Bucket='nc-totesys-ingest',
@@ -170,7 +170,7 @@ class TestRetrieveData:
             retrieve_data('nc-totesys-ingest', 'false-key', s3_client)
 
     def test_function_returns_dataframe(self, s3_client):
-        with open('python/tests/processing_function/address_table.jsonl',
+        with open('python/tests/processing_function/sample_jsonl_data/address_table.jsonl',
                   'r', encoding='utf-8') as data_file:
             data = json.load(data_file)
             s3_client.put_object(Bucket='nc-totesys-ingest',
@@ -180,7 +180,7 @@ class TestRetrieveData:
             assert isinstance(result, pd.DataFrame)
 
     def test_proper_data_structure(self, s3_client):
-        with open('python/tests/processing_function/address_table.jsonl',
+        with open('python/tests/processing_function/sample_jsonl_data/address_table.jsonl',
                   'r', encoding='utf-8') as data_file:
             data = json.load(data_file)
             s3_client.put_object(Bucket='nc-totesys-ingest',

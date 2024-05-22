@@ -9,8 +9,8 @@ from lambda_utils import (
     collect_table_data,
     find_latest_timestamp,
     write_table_data_to_s3,
-    get_seq_id,
-    write_seq_id,
+    get_packet_id,
+    write_packet_id,
 )
 
 s3_client = boto3.client("s3")
@@ -81,7 +81,7 @@ def lambda_handler(event, context):
             logger.info(f"Data ingested for {table}")
             latest = find_latest_timestamp(data)
             try:
-                last_id = get_seq_id(ENVIRONMENT + "_" + table, ssm_client)
+                last_id = get_packet_id(ENVIRONMENT + "_" + table, ssm_client)
             except KeyError:
                 # assume first run
                 last_id = 0
@@ -96,7 +96,7 @@ def lambda_handler(event, context):
                 return {"statusCode": 500, "body": f"Error: {e}"}
             else:
                 write_timestamp(latest, ENVIRONMENT + "_" + table, ssm_client)
-                write_seq_id(id, ENVIRONMENT + "_" + table, ssm_client)
+                write_packet_id(id, ENVIRONMENT + "_" + table, ssm_client)
                 logger.info(f"{table} data written to S3")
 
         # TODO - Invoke processing lambda

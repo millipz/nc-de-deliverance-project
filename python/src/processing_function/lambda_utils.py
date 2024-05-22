@@ -1,9 +1,28 @@
 import pandas as pd
 import json
+import io
+import boto3
+from datetime import datetime, date
+
+s3_client = boto3.client('s3')
 
 
 def retrieve_data(bucket_name: str, object_key: str, s3_client):
+    """
+    Load data from an s3 object (json lines) into a pandas dataframe
 
+    Args:
+        bucket_name (str): bucket where the object is stored
+        object_key (str): key of data object
+        client (boto3 s3 Client)
+
+    Raises:
+        KeyError: table_name does not exist
+        ConnectionError : connection issue to parameter store
+
+    Returns:
+        data: pandas dataframe
+    """
     try:
         response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
         data = json.loads(response["Body"].read().decode('utf-8'))
@@ -15,6 +34,18 @@ def retrieve_data(bucket_name: str, object_key: str, s3_client):
 
 
 def transform_sales_order(sales_order_df):
+    """
+    Transform loaded sales order data into star schema
+        - splits out time and date data into seperate columns
+        - renames staff_id to sales_staff_id
+        - removes unwanted columns
+
+    Args:
+        sales_order_df (pandas dataframe): original data
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
     fact_sales_order = sales_order_df.copy()
 
     fact_sales_order['created_date'] = pd.to_datetime(fact_sales_order['created_at']).dt.date
@@ -46,6 +77,25 @@ def transform_sales_order(sales_order_df):
 
 
 def create_dim_date(start_date, end_date):
+    """
+    Creates a table of dates in the given range
+    with columns for:
+        - year
+        - month
+        - month name
+        - day of month
+        - day of year
+        - day of week
+        - quarter
+
+
+    Args:
+        start_date (datetime)
+        end_date (datetime)
+
+    Returns:
+        dates (pandas dataframe)
+    """
     date_range = pd.date_range(start=start_date, end=end_date)
     dim_date = pd.DataFrame(date_range, columns=['date_id'])
     dim_date['year'] = dim_date['date_id'].dt.year
@@ -59,6 +109,17 @@ def create_dim_date(start_date, end_date):
 
 
 def transform_staff(staff_df, department_df):
+    """
+    Transform loaded staff order data into star schema
+        - adds a location by reference to department table
+
+    Args:
+        staff_df (pandas dataframe): original data
+        department_df (pandas dataframe): department data for location
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
     dim_staff = staff_df.copy()
     dim_staff = dim_staff.merge(department_df[['department_id', 'department_name', 'location']],
                                 on='department_id', how='left')
@@ -67,6 +128,16 @@ def transform_staff(staff_df, department_df):
 
 
 def transform_location(address_df):
+    """
+    Transform loaded address order data into star schema
+        - renames address_id to location_id
+
+    Args:
+        address_df (pandas dataframe): original data
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
     dim_location = address_df.copy()
     dim_location = dim_location.rename(columns={
         'address_id': 'location_id'
@@ -76,6 +147,17 @@ def transform_location(address_df):
 
 
 def transform_currency(currency_df):
+    """
+    Transform loaded currency data into star schema
+        - adds currency names from currency codes
+        - remove unwanted last_updated column
+
+    Args:
+        currency_df (pandas dataframe): original data
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
     def get_currency_name(currency_code):
         currency_name_map = {
             'AED': 'United Arab Emirates Dirham',
@@ -247,6 +329,16 @@ def transform_currency(currency_df):
 
 
 def transform_design(design_df):
+    """
+    Transform loaded design data into star schema
+        - remove unwanted columns
+
+    Args:
+        design_df (pandas dataframe): original data
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
     dim_design = design_df.copy()
     return dim_design[[
         'design_id', 'design_name', 'file_location', 'file_name'
@@ -254,6 +346,19 @@ def transform_design(design_df):
 
 
 def transform_counterparty(counterparty_df, address_df):
+    """
+    Transform loaded counterparty data into star schema
+        - lookup address in address data and add to table
+        - renames columns to suit star schema
+        - removes unwanted columns
+
+    Args:
+        counterparty_df (pandas dataframe): original data
+        address_df (pandas dataframe): address data for reference
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
     dim_counterparty = counterparty_df.copy()
     dim_counterparty = dim_counterparty.merge(address_df, left_on='legal_address_id',
                                               right_on='address_id', how='left')
@@ -274,97 +379,103 @@ def transform_counterparty(counterparty_df, address_df):
                              'counterparty_legal_phone_number']]
 
 
-def transform_to_star_schema(sales_order_df, staff_df, address_df, currency_df,
-                             design_df, counterparty_df, department_df):
-    fact_sales_order = transform_sales_order(sales_order_df)
-    dim_date = create_dim_date('2024-01-01', '2030-01-01')
-    dim_staff = transform_staff(staff_df, department_df)
-    dim_location = transform_location(address_df)
-    dim_currency = transform_currency(currency_df)
-    dim_design = transform_design(design_df)
-    dim_counterparty = transform_counterparty(counterparty_df, address_df)
-    return fact_sales_order, dim_date, dim_staff, dim_location, \
-        dim_currency, dim_design, dim_counterparty
-
-
-def write_packet_id(packet_id: int, table_name: str, ssm_client) -> None:
+def write_data_to_s3(df: pd.DataFrame,
+                     table_name: str,
+                     bucket_name: str,
+                     packet_id: int,
+                     s3_client):
     """
-
-    Write table_name : packet_id key value pair to Parameter Store
+    Write dataframe to S3 bucket in Parquet format
 
     Args:
+        df (pd.DataFrame): DataFrame to write
         table_name (string)
-        packet_id(int)
+        bucket_name (string)
+        packet_id (string)
+        s3_client (boto3 s3 client)
+
+    Raises:
+        FileExistsError: S3 object already exists with the same name
+        ConnectionError : connection issue to S3 bucket
+
+    Returns:
+        None
+    """
+    buffer = io.BytesIO()
+    df.to_parquet()
+    buffer.seek(0)
+    time_format = "%H%M%S%f"
+    key = (
+        f"{date.today()}/{table_name}_"
+        f"{str(packet_id).zfill(8)}_"
+        f"processed_"
+        f"{datetime.now().strftime(time_format)}.parquet"
+    )
+    s3_client.put_object(Bucket=bucket_name, Key=key, Body=buffer.getvalue())
+
+
+def get_timestamp(table_name: str, ssm_client) -> datetime:
+    """
+    Return timestamp showing most recent entry from the given table
+    that has been processed by the ingestion lambda.
+
+    Args:
+        table_name (str): table name to get timestamp for
+        client (boto3 SSM Client)
 
     Raises:
         KeyError: table_name does not exist
+        ConnectionError : connection issue to parameter store
+
+    Returns:
+        timestamp (datetime timestamp) : stored timestamp of most recent
+        ingested data for given table
+    """
+    try:
+        response = ssm_client.get_parameter(
+            Name=(table_name + "_latest_extracted_timestamp")
+        )
+
+        timestamp = response["Parameter"]["Value"]
+        return datetime.fromisoformat(timestamp)
+
+    except ssm_client.exceptions.ParameterNotFound:
+        raise KeyError(
+            f"Table name '{table_name}' does not have any recorded latest data."
+        )
+
+    # TODO connection errors should be checked when connecting with
+    # credentials so this might not be needed here
+    # except (ssm_client.exceptions.ConnectionError):
+    #     raise ConnectionError("Connection issue to Parameter Store.")
+
+
+def write_timestamp(timestamp: datetime, table_name: str, ssm_client) -> None:
+    """
+
+    Writes timestamp to parameter store for given table
+
+    Args:
+        timestamp (timestamp) : timestamp of latest extracted data
+        table_name (str) : table name to store timestamp for
+        client (boto3 SSM Client) : client passed in to avoid recreating for each invocation
+
+    Raises:
         ConnectionError : connection issue to parameter store
 
     Returns:
         None
     """
     try:
-        print("writing ")
         ssm_client.put_parameter(
-            Name=f"/processing/{table_name}/latest_packet_id",
+            Name=f"{table_name}_latest_extracted_timestamp",
             Type="String",
             Description=(
-                "Latest packet_id of data processed "
+                "Latest timestamp of data ingested"
                 f"from Totesys database for {table_name} table"
             ),
-            Value=str(packet_id),
+            Value=timestamp.isoformat(timespec="milliseconds"),
             Overwrite=True,
         )
     except Exception as e:
-        print(f"The packet ID could not be written: {e}")
-
-
-def get_packet_id(table_name: str, ssm_client) -> int:
-    """
-    From parameter store retrieves table_name : packet_id key value pair
-
-    Args:
-        table_name (string)
-
-
-    Raises:
-        KeyError: table_name does not exist
-        ConnectionError : connection issue to parameter store
-
-    Returns:
-        packet_id(int)
-
-    """
-    try:
-        response = ssm_client.get_parameter(Name=("/processing/"+table_name+"/latest_packet_id"))
-        id = response["Parameter"]["Value"]
-        return int(id)
-
-    except ssm_client.exceptions.ParameterNotFound:
-        raise KeyError(f"Table name '{table_name}' does not have any recorded packets.")
-
-
-# def write_table_data_to_s3(
-#     dict_name dict,
-#     bucket_name: str,
-#     packet_id: int,
-#     s3_client,
-# ) -> None:
-# """
-# Write file to S3 bucket in Parquet format
-
-# Args:
-#     table_name (string)
-#     table_data (list) : list of dictionaries all data in table,
-#         one dictionary per row keys will be column headings
-#     bucket_name (string)
-#     packet_id (string)
-#     s3_client (boto3 s3 client)
-
-# Raises:
-#     FileExistsError: S3 object already exists with the same name
-#     ConnectionError : connection issue to S3 bucket
-
-# Returns:
-#     None
-# """
+        print(f"The timestamp could not be written: {e}")

@@ -39,9 +39,3 @@ variable "totesys_port" {
   type        = string
   sensitive   = true
 }
-
-variable "ingestion_lambda_handler" {
-  description = "Path to the Ingestion Lambda handler"
-  type = string
-  default = "lambda_function.lambda_handler"
-}

@@ -29,7 +29,7 @@
   1. **Extract Object Keys**:
       - Use the table name and packet ID from the input JSON payload to construct the S3 object keys.
       - Retrieve the list of new objects from the "ingestion" S3 bucket.
-      - If object IDs are not sequential, log a warning to CloudWatch..
+      - If object IDs are not sequential, log a warning to CloudWatch.
 
   1. **Transform Data**:
       - Retrieve and read the JSON lines file from the "ingestion" S3 bucket into a pandas DataFrame.

@@ -1,6 +1,8 @@
 import boto3
 import os
 import logging
+import json
+from datetime import datetime, timedelta
 from pg8000.native import Connection
 from lambda_utils import (
     retrieve_data,
@@ -11,10 +13,9 @@ from lambda_utils import (
     transform_currency,
     transform_design,
     transform_counterparty,
-    transform_to_star_schema,
-    write_packet_id,
-    get_packet_id,
-    write_table_data_to_s3,
+    write_data_to_s3,
+    get_timestamp,
+    write_timestamp
 )
 
 s3_client = boto3.client("s3")
@@ -26,7 +27,8 @@ logs_client = boto3.client("logs")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-S3_BUCKET = os.getenv("S3_BUCKET")
+S3_INGESTION_BUCKET = os.getenv("S3_INGESTION_BUCKET")
+S3_PROCESSED_BUCKET = os.getenv("S3_PROCESSED_BUCKET")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 DB_USERNAME = secrets_manager_client.get_secret_value(
@@ -42,23 +44,20 @@ DB_NAME = secrets_manager_client.get_secret_value(
     SecretId=f"totesys_{ENVIRONMENT}_db_name"
 )["SecretString"]
 
-tables = [
-    "address",
-    "counterparty",
-    "currency",
-    "department",
-    "design",
-    "payment_type",
-    "payment",
-    "purchase_order",
-    "sales_order",
-    "staff",
-    "transaction",
-]
+db = Connection(user=DB_USERNAME, password=DB_PASSWORD,
+                database=DB_NAME, port=DB_PORT, host=DB_HOST)
 
-db = Connection(
-    user=DB_USERNAME, password=DB_PASSWORD, database=DB_NAME, port=DB_PORT, host=DB_HOST
-)
+tomorrow = datetime.today()+timedelta(days=1)
+
+try:
+    last_date = get_timestamp(f"{ENVIRONMENT}_dim_date", ssm_client)
+except KeyError:
+    # if no last date exists, assume first run
+    last_date = datetime("2020-01-01")
+
+if last_date != tomorrow:
+    processed_data_frames = {"dim_date": create_dim_date(last_date, tomorrow)}
+    write_timestamp(tomorrow, f"{ENVIRONMENT}_dim_date", ssm_client)
 
 
 def lambda_handler(event, context):
@@ -69,42 +68,35 @@ def lambda_handler(event, context):
     logger.info(event)
 
     response_data = {}
-    total_ingested_rows = 0
 
-    for table in tables:
-        try:
-            timestamp = get_timestamp(ENVIRONMENT + "_" + table, ssm_client)
-            logger.info(
-                f"On last run the latest data from {table} was dated {timestamp}"
-            )
-        except KeyError:
-            # assume first run, get all data
-            timestamp = datetime.fromisoformat("2000-01-01")
-            logger.error(f"No previous data logged from {table}")
-        data = collect_table_data(table, timestamp, db)
-        total_ingested_rows += len(data)
-        if len(data) == 0:
-            logger.info(f"No new data for {table}")
-        else:
-            logger.info(f"Data ingested for {table}")
-            latest = find_latest_timestamp(data)
-            try:
-                last_id = get_seq_id(ENVIRONMENT + "_" + table, ssm_client)
-            except KeyError:
-                # assume first run
-                last_id = 0
-                logger.error("No previous runs logged for {table}")
-            id = last_id + 1
-            logger.info(f"this is run {id}")
-            try:
-                key = write_table_data_to_s3(table, data, S3_BUCKET, id, s3_client)
-            except Exception as e:
-                logger.error(f"Error writing {table} data to S3: {e}")
-                return {"statusCode": 500, "body": f"Error: {e}"}
-            else:
-                write_timestamp(latest, ENVIRONMENT + "_" + table, ssm_client)
-                write_seq_id(id, ENVIRONMENT + "_" + table, ssm_client)
-                logger.info(f"{table} data written to S3, {len(data)} rows ingested")
-                response_data[table] = key
-    logger.info(f"{total_ingested_rows} rows ingested this run")
-    return {"statusCode": 200, "data": response_data}
+    payload = json.loads(event["body"])["data"]
+    for table_name, object_key in payload.items():
+        data_frame = retrieve_data(S3_INGESTION_BUCKET, object_key, s3_client)
+        match table_name:
+            case "sales_order":
+                new_table_name = "fact_sales_order"
+                processed_data_frames[new_table_name] = transform_sales_order(data_frame)
+            case "staff":
+                new_table_name = "dim_staff"
+                processed_data_frames[new_table_name] = transform_staff(data_frame)
+            case "address":
+                new_table_name = "dim_location"
+                processed_data_frames[new_table_name] = transform_location(data_frame)
+            case "currency":
+                new_table_name = "dim_currency"
+                processed_data_frames[new_table_name] = transform_currency(data_frame)
+            case "design":
+                new_table_name = "dim_design"
+                processed_data_frames[new_table_name] = transform_design(data_frame)
+            case "counterparty":
+                new_table_name = "dim_counterparty"
+                processed_data_frames[new_table_name] = transform_counterparty(data_frame)
+        packet_id = int(object_key.split("_")[1])
+        processed_key = write_data_to_s3(data_frame, new_table_name,
+                                         S3_PROCESSED_BUCKET, packet_id, s3_client)
+        response_data[new_table_name] = processed_key
+
+    return {
+        'statusCode': 200,
+        'data': response_data
+    }

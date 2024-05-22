@@ -137,9 +137,9 @@ def write_table_data_to_s3(
     table_name: str,
     table_data: list[dict],
     bucket_name: str,
-    sequential_id: int,
+    packet_id: int,
     s3_client,
-) -> None:
+) -> str:
     """
     Write file to S3 bucket as Json lines format
 
@@ -155,7 +155,7 @@ def write_table_data_to_s3(
         ConnectionError : connection issue to S3 bucket
 
     Returns:
-        None
+        key: The S3 object key the data is written to
     """
     encoded_data = json.dumps(table_data, indent=4, sort_keys=True, default=str).encode(
         "utf-8"
@@ -163,15 +163,16 @@ def write_table_data_to_s3(
     time_format = "%H%M%S%f"
     key = (
         f"{date.today()}/{table_name}_"
-        f"{str(sequential_id).zfill(8)}_"
+        f"{str(packet_id).zfill(8)}_"
         f"{datetime.now().strftime(time_format)}.jsonl"
     )
     s3_client.put_object(Body=encoded_data, Bucket=bucket_name, Key=key)
+    return key
 
 
-def get_seq_id(table_name: str, ssm_client) -> int:
+def get_packet_id(table_name: str, ssm_client) -> int:
     """
-    From parameter store retrieves table_name : sequential_id key value pair
+    From parameter store retrieves table_name : packet_id key value pair
 
     Args:
         table_name (string)
@@ -182,7 +183,7 @@ def get_seq_id(table_name: str, ssm_client) -> int:
         ConnectionError : connection issue to parameter store
 
     Returns:
-        sequential_id(int)
+        packet_id(int)
 
     """
     try:
@@ -199,15 +200,15 @@ def get_seq_id(table_name: str, ssm_client) -> int:
     #     raise ConnectionError("Connection issue to Parameter Store.")
 
 
-def write_seq_id(seq_id: int, table_name: str, ssm_client) -> None:
+def write_packet_id(packet_id: int, table_name: str, ssm_client) -> None:
     """
 
-    To parameter store write table_name : sequential_id key value pair
-    -- checks sequential_id is one greater than previous sequential_id
+    To parameter store write table_name : packet_id key value pair
+    -- checks packet_id is one greater than previous packet_id
 
     Args:
         table_name (string)
-        sequential_id(int)
+        packet_id(int)
 
 
     Raises:
@@ -226,7 +227,7 @@ def write_seq_id(seq_id: int, table_name: str, ssm_client) -> None:
                 "Latest packet_id of data ingested "
                 f"from Totesys database for {table_name} table"
             ),
-            Value=str(seq_id),
+            Value=str(packet_id),
             Overwrite=True,
         )
     except Exception as e:
