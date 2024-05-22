@@ -68,7 +68,6 @@ flake8:
 dev-setup: bandit safety black coverage flake8
 
 # Test Database
-
 initialise-test-db:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_schema.py)
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} $(PYTHON_INTERPRETER) db/run_seed.py)
@@ -88,8 +87,8 @@ run-black:
 	$(call execute_in_env, find . -type f -name "*.py" \
 		! -path "./.git/*" ! -path "./__pycache__/*" ! -path "./venv/*" ! -path "./layer/*"\
 		! -path "./.github/*" ! -path "./.gitignore/*" ! -path "./.env/*" \
-		-exec sed -i '' -e 's/[[:space:]]\+$$//' {} \; \
-		-exec black {} \;)
+		-exec bash -c 'sed -i.bak "s/[[:space:]]\+$$//" {} && rm {}.bak && black {}' \;)
+
 
 ## Run the flake8 code check
 run-flake8:
@@ -106,3 +105,27 @@ check-coverage:
 
 ## Run all checks
 run-checks: security-test run-black run-flake8 unit-test check-coverage
+
+## Deploy the dev infrastructure
+deploy-dev-env:
+	cd terraform && terraform init && terraform workspace select -or-create dev && terraform apply -var-file="dev.tfvars"
+
+## Tear down dev infrastructure
+destroy-dev-env:
+	cd terraform && terraform init && terraform workspace select -or-create dev && terraform destroy -var-file="dev.tfvars"
+
+## Deploy the test infrastructure
+deploy-test-env:
+	cd terraform && terraform init && terraform workspace select -or-create test && terraform apply -var-file="test.tfvars"
+
+## Tear down test infrastructure
+destroy-test-env:
+	cd terraform && terraform init && terraform workspace select -or-create test && terraform destroy -var-file="test.tfvars"
+
+## Deploy the dev database (used for testing)
+deploy-dev-db:
+	cd dev-db-terraform && terraform workspace select -or-create db && terraform init && terraform apply
+
+## Tear down dev database
+destroy-dev-db:
+	cd dev-db-terraform && terraform workspace select -or-create db && terraform init && terraform destroy	
