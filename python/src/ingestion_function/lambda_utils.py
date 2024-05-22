@@ -5,20 +5,20 @@ from pg8000.native import identifier, literal
 
 def get_timestamp(table_name: str, ssm_client) -> datetime:
     """
+    
     Return timestamp showing most recent entry from the given table
     that has been processed by the ingestion lambda.
 
     Args:
         table_name (str): table name to get timestamp for
-        client (boto3 SSM Client)
+        ssm_client (boto3 SSM Client): secrests manager client passed into func
 
     Raises:
         KeyError: table_name does not exist
-        ConnectionError : connection issue to parameter store
+        ConnectionError: connection issue to parameter store
 
     Returns:
-        timestamp (datetime timestamp) : stored timestamp of most recent
-        ingested data for given table
+        timestamp (datetime timestamp): stored timestamp of most recent ingested data for given table
     """
     try:
         response = ssm_client.get_parameter(
