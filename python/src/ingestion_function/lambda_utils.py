@@ -22,7 +22,7 @@ def get_timestamp(table_name: str, ssm_client) -> datetime:
     """
     try:
         response = ssm_client.get_parameter(
-            Name=("/ingestion/" + table_name + "/latest_extracted_timestamp")
+            Name=(table_name + "_latest_extracted_timestamp")
         )
 
         timestamp = response["Parameter"]["Value"]
@@ -57,7 +57,7 @@ def write_timestamp(timestamp: datetime, table_name: str, ssm_client) -> None:
     """
     try:
         ssm_client.put_parameter(
-            Name=f"/ingestion/{table_name}/latest_extracted_timestamp",
+            Name=f"{table_name}_latest_extracted_timestamp",
             Type="String",
             Description=(
                 "Latest timestamp of data ingested"
@@ -124,11 +124,8 @@ def find_latest_timestamp(
     """
     timestamps = []
     for dic in table_data:
-        print(f"checking {dic}")
         for col in columns:
-            print(f"checking {col}")
             timestamps.append(dic[col])
-            print(f"==>> dic[col]: {dic[col]}")
 
     try:
         return max(timestamps)
@@ -140,23 +137,22 @@ def write_table_data_to_s3(
     table_name: str,
     table_data: list[dict],
     bucket_name: str,
-    packet_id: int,
+    sequential_id: int,
     s3_client,
 ) -> None:
     """
-    Write file to S3 bucket in JSON Lines format
+    Write file to S3 bucket as Json lines format
 
     Args:
         table_name (string)
-        table_data (list): list of dictionaries all data in table,
+        table_data (list) : list of dictionaries all data in table,
             one dictionary per row keys will be column headings
-        bucket_name (string)
-        packet_id (string)
         s3_client (boto3 s3 client)
+
 
     Raises:
         FileExistsError: S3 object already exists with the same name
-        ConnectionError: connection issue to S3 bucket
+        ConnectionError : connection issue to S3 bucket
 
     Returns:
         None
@@ -167,15 +163,15 @@ def write_table_data_to_s3(
     time_format = "%H%M%S%f"
     key = (
         f"{date.today()}/{table_name}_"
-        f"{str(packet_id).zfill(8)}_"
+        f"{str(sequential_id).zfill(8)}_"
         f"{datetime.now().strftime(time_format)}.jsonl"
     )
     s3_client.put_object(Body=encoded_data, Bucket=bucket_name, Key=key)
 
 
-def get_packet_id(table_name: str, ssm_client) -> int:
+def get_seq_id(table_name: str, ssm_client) -> int:
     """
-    From parameter store retrieves table_name : packet_id key value pair
+    From parameter store retrieves table_name : sequential_id key value pair
 
     Args:
         table_name (string)
@@ -186,11 +182,11 @@ def get_packet_id(table_name: str, ssm_client) -> int:
         ConnectionError : connection issue to parameter store
 
     Returns:
-        packet_id(int)
+        sequential_id(int)
 
     """
     try:
-        response = ssm_client.get_parameter(Name=("/ingestion/"+table_name+"/latest_packet_id"))
+        response = ssm_client.get_parameter(Name=(table_name + "_latest_packet_id"))
         id = response["Parameter"]["Value"]
         return int(id)
 
@@ -203,14 +199,16 @@ def get_packet_id(table_name: str, ssm_client) -> int:
     #     raise ConnectionError("Connection issue to Parameter Store.")
 
 
-def write_packet_id(packet_id: int, table_name: str, ssm_client) -> None:
+def write_seq_id(seq_id: int, table_name: str, ssm_client) -> None:
     """
 
-    Write table_name : packet_id key value pair to Parameter Store
+    To parameter store write table_name : sequential_id key value pair
+    -- checks sequential_id is one greater than previous sequential_id
 
     Args:
         table_name (string)
-        packet_id(int)
+        sequential_id(int)
+
 
     Raises:
         KeyError: table_name does not exist
@@ -222,14 +220,14 @@ def write_packet_id(packet_id: int, table_name: str, ssm_client) -> None:
     try:
         print("writing ")
         ssm_client.put_parameter(
-            Name=f"/ingestion/{table_name}/latest_packet_id",
+            Name=f"{table_name}_latest_packet_id",
             Type="String",
             Description=(
                 "Latest packet_id of data ingested "
                 f"from Totesys database for {table_name} table"
             ),
-            Value=str(packet_id),
+            Value=str(seq_id),
             Overwrite=True,
         )
     except Exception as e:
-        print(f"The packet ID could not be written: {e}")
+        print(f"The timestamp could not be written: {e}")
