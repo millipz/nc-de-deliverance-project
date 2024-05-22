@@ -128,4 +128,4 @@ deploy-dev-db:
 
 ## Tear down dev database
 destroy-dev-db:
-	cd dev-db-terraform && terraform workspace select -or-create db && terraform init && terraform destroy	
+	cd dev-db-terraform && terraform workspace select -or-create db && terraform init && terraform destroy
