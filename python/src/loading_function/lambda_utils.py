@@ -44,13 +44,6 @@ def write_table_data_to_warehouse(
         response: database response
     """
 
-    """
-    INSERT INTO table_name (
-        col_1, col2
-    )
-    VALUES
-    (val1, val2)
-    """
     rows = data_frame.to_string(header=False, index=False, index_names=False).split('\n')
     print(rows)
     processed_rows = []
