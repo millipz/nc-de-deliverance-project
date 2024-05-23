@@ -39,8 +39,6 @@ requirements: create-environment
 	$(call execute_in_env, $(PIP) install pip-tools)
 	$(call execute_in_env, pip-compile requirements.in)
 	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
-	mkdir layer && cd layer && mkdir python
-	cp -r ./venv/lib/python3.11/site-packages/* ./layer/python
 
 ################################################################################################################
 # Set Up
@@ -107,8 +105,17 @@ check-coverage:
 ## Run all checks
 run-checks: security-test run-black run-flake8 unit-test check-coverage
 
+## Make Lambda Layer
+layer:
+	rm -rf layer/
+	mkdir -p layer/python
+	$(call execute_in_env, $(PIP) install pip-tools)
+	$(call execute_in_env, pip-compile layer.in --output-file layer-requirements.txt)
+	$(call execute_in_env, $(PIP) install -r ./layer-requirements.txt -t layer/python)
+	rm -rf /layer/python/pandas/tests/
+
 ## Deploy the dev infrastructure
-deploy-dev-env:
+deploy-dev-env: layer
 	cd terraform && terraform init && terraform workspace select -or-create dev && terraform apply -var-file="dev.tfvars"
 
 ## Tear down dev infrastructure
@@ -116,7 +123,7 @@ destroy-dev-env:
 	cd terraform && terraform init && terraform workspace select -or-create dev && terraform destroy -var-file="dev.tfvars"
 
 ## Deploy the test infrastructure
-deploy-test-env:
+deploy-test-env: layer
 	cd terraform && terraform init && terraform workspace select -or-create test && terraform apply -var-file="test.tfvars" -var="admin_email=$(ADMIN_EMAIL)"
 
 ## Tear down test infrastructure
