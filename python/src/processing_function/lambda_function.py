@@ -90,6 +90,9 @@ def lambda_handler(event, context):
             case "counterparty":
                 new_table_name = "dim_counterparty"
                 processed_data_frames[new_table_name] = transform_counterparty(data_frame)
+            case _:
+                logger.error(f"Unknown table name: {table_name}")
+                continue
         packet_id = int(object_key.split("_")[1])
         processed_key = write_data_to_s3(processed_data_frames[new_table_name], new_table_name,
                                          S3_PROCESSED_BUCKET, packet_id, s3_client)
