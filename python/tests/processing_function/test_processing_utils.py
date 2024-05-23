@@ -192,11 +192,10 @@ class TestTransformData:
         assert result['agreed_payment_date'].iloc[0] == '2022-11-08'
         assert result['agreed_delivery_date'].iloc[0] == '2022-11-07'
         assert result['agreed_delivery_location_id'].iloc[0] == 8
-        assert result['created_date'].iloc[0] == pd.Timestamp('2022-11-03').date()
-        assert result['created_time'].iloc[0] == pd.Timestamp('14:20:52.186000').time()
-        assert result['last_updated_date'].iloc[0] == pd.Timestamp('2022-11-03').date()
-        assert result['last_updated_time'].iloc[0] == \
-            pd.Timestamp('14:20:52.186000').time()
+        assert result['created_date'].iloc[0] == '2022-11-03'
+        assert result['created_time'].iloc[0] == '14:20:52.186000'
+        assert result['last_updated_date'].iloc[0] == '2022-11-03'
+        assert result['last_updated_time'].iloc[0] == '14:20:52.186000'
 
     def test_create_dim_date(self):
         start_date = '2023-01-01'
