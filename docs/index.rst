@@ -12,8 +12,6 @@ Welcome to docs's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   usage
-
 .. automodule:: lambda_utils
    :members:
 

@@ -6,8 +6,7 @@
 
 import os
 import sys
-from recommonmark.transform import AutoStructify
-from recommonmark.parser import CommonMarkParser
+
 sys.path.insert(0, os.path.abspath('../python/src/ingestion_function'))
 
 # -- Project information -----------------------------------------------------
@@ -24,14 +23,10 @@ release = '1'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-    'recommonmark',
-    'sphinx_markdown_tables',
 ]
 
 source_suffix = ['.rst', '.md']
-source_parsers = {
-    '.md': CommonMarkParser,
-}
+
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -43,10 +38,3 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-# Enable the AutoStructify transform to process your markdown files
-def setup(app):
-    app.add_config_value('recommonmark_config', {
-            'url_resolver': lambda url: 'https://github.com/millipz/nc-de-deliverance-project',
-            'auto_toc_tree_section': 'Contents',
-        }, True)
-    app.add_transform(AutoStructify)
