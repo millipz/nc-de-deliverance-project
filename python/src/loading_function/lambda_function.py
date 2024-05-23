@@ -57,7 +57,8 @@ def lambda_handler(event, context):
         loaded_rows = len(data_frame.index)
         total_loaded_rows += loaded_rows
         try:
-            response = write_table_data_to_warehouse(data_frame, table_name, db)
+            if ENVIRONMENT == "test":
+                response = write_table_data_to_warehouse(data_frame, table_name, db)
         except Exception as e:
             logger.error(f"Error loading {table_name} data to warehouse: {e}")
             return {"statusCode": 500, "body": f"Error: {e}"}
