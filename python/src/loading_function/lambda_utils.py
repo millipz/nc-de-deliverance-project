@@ -43,14 +43,11 @@ def write_table_data_to_warehouse(
         response: database response
     """
 
-    rows = data_frame.to_string(header=False, index=False, index_names=False).split(
-        "\n"
-    )
+    rows = data_frame.values.tolist()
     print(rows)
     processed_rows = []
     for row in rows:
-        values = row.split()
-        values = [literal(v) for v in values]
+        values = [literal(v) for v in row]
         row_string = ", ".join(values)
         processed_rows.append(f"({row_string})")
 
