@@ -33,6 +33,22 @@ resource "aws_lambda_function" "processing_function" {
     }
 }
 
+resource "aws_lambda_function" "loading_function" {
+    function_name = "${var.env_name}-loading-function"
+    role = aws_iam_role.lambda_exec_role.arn
+    handler = "lambda_function.lambda_handler"
+    runtime = "python3.11"
+    filename = data.archive_file.loading_lambda_package.output_path
+    layers = [aws_lambda_layer_version.lambda_layer.arn]
+    timeout = 180
+    source_code_hash = data.archive_file.loading_lambda_package.output_sha256
+    environment {
+        variables = {
+            S3_PROCESSED_BUCKET = aws_s3_bucket.processed_bucket.bucket
+            ENVIRONMENT = "${var.env_name}"
+        }
+    }
+}
 resource "aws_lambda_layer_version" "lambda_layer" {
     layer_name = "totesys-${var.env_name}-lambda-layer"
     filename = data.archive_file.lambda_layer_package.output_path

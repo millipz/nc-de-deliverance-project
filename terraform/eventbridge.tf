@@ -1,13 +1,13 @@
-resource "aws_cloudwatch_event_rule" "ingestion_schedule" {
-    name = "${var.env_name}-ingestion_schedule"
-    description = "Eventbridge rule to trigger ingestion Lambda function every 10 minutes"
+resource "aws_cloudwatch_event_rule" "etl_schedule" {
+    name = "${var.env_name}-ETL-Schedule"
+    description = "Eventbridge rule to trigger step function every 10 minutes"
     schedule_expression = "rate(10 minutes)"
 }
 
-resource "aws_cloudwatch_event_target" "ingestion_lambda_target" {
-    rule = aws_cloudwatch_event_rule.ingestion_schedule.name
-    target_id = "${var.env_name}-ingestion_lambda_target"
-    arn = aws_lambda_function.ingestion_function.arn
+resource "aws_cloudwatch_event_target" "totesys_step_function_target" {
+    rule = aws_cloudwatch_event_rule.etl_schedule.name
+    target_id = "${var.env_name}-totesys_step_function_target"
+    arn = aws_sfn_state_machine.nc-totesys-deliverance.arn
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
