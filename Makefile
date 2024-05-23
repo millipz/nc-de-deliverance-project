@@ -98,7 +98,7 @@ unit-test:
 
 ## Run the coverage check
 check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=python/src/ python/tests/)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=python/src/ --cov-report=html python/tests/)
 
 
 
@@ -124,7 +124,7 @@ destroy-dev-env:
 
 ## Deploy the test infrastructure
 deploy-test-env: layer
-	cd terraform && terraform init && terraform workspace select -or-create test && terraform apply -var-file="test.tfvars"
+	cd terraform && terraform init && terraform workspace select -or-create test && terraform apply -var-file="test.tfvars" -var="admin_email=$(ADMIN_EMAIL)"
 
 ## Tear down test infrastructure
 destroy-test-env:
