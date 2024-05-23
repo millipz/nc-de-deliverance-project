@@ -36,7 +36,7 @@ def retrieve_data(bucket_name: str, object_key: str, s3_client):
 def transform_sales_order(sales_order_df):
     """
     Transform loaded sales order data into star schema
-        - splits out time and date data into seperate columns
+        - splits out time and date data into separate columns
         - renames staff_id to sales_staff_id
         - removes unwanted columns
 
@@ -48,16 +48,24 @@ def transform_sales_order(sales_order_df):
     """
     fact_sales_order = sales_order_df.copy()
 
-    fact_sales_order['created_date'] = pd.to_datetime(fact_sales_order['created_at']).dt.date
-    fact_sales_order['created_time'] = pd.to_datetime(fact_sales_order['created_at']).dt.time
-    fact_sales_order['last_updated_date'] = \
-        pd.to_datetime(fact_sales_order['last_updated']).dt.date
-    fact_sales_order['last_updated_time'] = \
-        pd.to_datetime(fact_sales_order['last_updated']).dt.time
+    fact_sales_order['created_at'] = pd.to_datetime(
+        fact_sales_order['created_at'], errors='coerce')
+    fact_sales_order['last_updated'] = pd.to_datetime(
+        fact_sales_order['last_updated'], errors='coerce')
+    fact_sales_order['agreed_payment_date'] = pd.to_datetime(
+        fact_sales_order['agreed_payment_date'], errors='coerce')
+    fact_sales_order['agreed_delivery_date'] = pd.to_datetime(
+        fact_sales_order['agreed_delivery_date'], errors='coerce')
 
-    fact_sales_order.rename(columns={
-        'staff_id': 'sales_staff_id',
-    }, inplace=True)
+    fact_sales_order['created_date'] = fact_sales_order['created_at'].dt.date.astype(str)
+    fact_sales_order['created_time'] = fact_sales_order['created_at'].dt.time.astype(str)
+    fact_sales_order['last_updated_date'] = fact_sales_order['last_updated'].dt.date.astype(str)
+    fact_sales_order['last_updated_time'] = fact_sales_order['last_updated'].dt.time.astype(str)
+
+    fact_sales_order['agreed_payment_date'] = fact_sales_order['agreed_payment_date'].astype(str)
+    fact_sales_order['agreed_delivery_date'] = fact_sales_order['agreed_delivery_date'].astype(str)
+
+    fact_sales_order.rename(columns={'staff_id': 'sales_staff_id'}, inplace=True)
 
     return fact_sales_order[[
         'sales_order_id',
@@ -73,7 +81,8 @@ def transform_sales_order(sales_order_df):
         'design_id',
         'agreed_payment_date',
         'agreed_delivery_date',
-        'agreed_delivery_location_id']]
+        'agreed_delivery_location_id'
+    ]]
 
 
 def create_dim_date(start_date, end_date):
