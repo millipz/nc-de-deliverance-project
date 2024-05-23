@@ -63,3 +63,71 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
     ],
   })
 }
+
+resource "aws_iam_role" "eventbridge_schedule_policy_exec_role" {
+  name = "${var.env_name}-eventbridge_schedule_policy_exec_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Sid    = "",
+        Principal = {
+          Service = "lambda.amazonaws.com",
+        },
+      },
+    ],
+  })
+}
+resource "aws_iam_role_policy" "eventbridge_schedule_policy"{
+    name = "${var.env_name}-eventbridge_schedule_policy"
+    role = aws_iam_role.eventbridge_schedule_policy_exec_role.id
+    policy = jsonencode({
+      Version = "2012-10-17",
+      Statement = [
+        {
+              Effect  = "Allow",
+              Action = [
+                "states:StartExecution"
+            ],
+            Resource = "*"            
+        }
+    ]
+    })
+}
+
+resource "aws_iam_role" "step_function_policy_exec_role" {
+  name = "${var.env_name}-step_function_policy_exec_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Sid    = "",
+        Principal = {
+          Service = "lambda.amazonaws.com",
+        },
+      },
+    ],
+  })
+}
+
+resource "aws_iam_role_policy" "step_function_policy"{
+    name = "${var.env_name}-step_function_policy"
+    role = aws_iam_role.step_function_policy_exec_role.id
+    policy = jsonencode({
+      Version = "2012-10-17",
+      Statement = [
+        {
+              Effect  = "Allow",
+              Action = [
+                "Lambda:InvokeFunction"
+            ],
+            Resource = "*"            
+        }
+    ]
+    })
+}
