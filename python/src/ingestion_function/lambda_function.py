@@ -26,17 +26,13 @@ S3_BUCKET = os.getenv("S3_BUCKET")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 DB_USERNAME = secrets_manager_client.get_secret_value(
-    SecretId=f"totesys_{ENVIRONMENT}_db_username"
-)["SecretString"]
+    SecretId=f"totesys_{ENVIRONMENT}_db_username")["SecretString"]
 DB_PASSWORD = secrets_manager_client.get_secret_value(
-    SecretId=f"totesys_{ENVIRONMENT}_db_password"
-)["SecretString"]
+    SecretId=f"totesys_{ENVIRONMENT}_db_password")["SecretString"]
 DB_HOST, DB_PORT = secrets_manager_client.get_secret_value(
-    SecretId=f"totesys_{ENVIRONMENT}_db_endpoint"
-)["SecretString".split(":")]
+    SecretId=f"totesys_{ENVIRONMENT}_db_endpoint")["SecretString"].split(":")
 DB_NAME = secrets_manager_client.get_secret_value(
-    SecretId=f"totesys_{ENVIRONMENT}_db_name"
-)["SecretString"]
+    SecretId=f"totesys_{ENVIRONMENT}_db_name")["SecretString"]
 
 tables = [
     "address",
