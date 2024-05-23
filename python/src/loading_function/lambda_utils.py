@@ -43,14 +43,11 @@ def write_table_data_to_warehouse(
         response: database response
     """
 
-    rows = data_frame.to_string(header=False, index=False, index_names=False).split(
-        "\n"
-    )
+    rows = data_frame.values.tolist()
     print(rows)
     processed_rows = []
     for row in rows:
-        values = row.split()
-        values = [literal(v) for v in values]
+        values = [literal(v) for v in row]
         row_string = ", ".join(values)
         processed_rows.append(f"({row_string})")
 
@@ -67,3 +64,36 @@ def write_table_data_to_warehouse(
 
     response = db.run(query)
     return response
+
+
+
+def create_dim_date(start_date, end_date):
+    """
+    Creates a table of dates in the given range
+    with columns for:
+        - year
+        - month
+        - month name
+        - day of month
+        - day of year
+        - day of week
+        - quarter
+
+
+    Args:
+        start_date (datetime)
+        end_date (datetime)
+
+    Returns:
+        dates (pandas dataframe)
+    """
+    date_range = pd.date_range(start=start_date, end=end_date)
+    dim_date = pd.DataFrame(date_range, columns=['date_id'])
+    dim_date['year'] = dim_date['date_id'].dt.year
+    dim_date['month'] = dim_date['date_id'].dt.month
+    dim_date['day'] = dim_date['date_id'].dt.day
+    dim_date['day_of_week'] = dim_date['date_id'].dt.weekday
+    dim_date['day_name'] = dim_date['date_id'].dt.day_name()
+    dim_date['month_name'] = dim_date['date_id'].dt.month_name()
+    dim_date['quarter'] = dim_date['date_id'].dt.quarter
+    return dim_date

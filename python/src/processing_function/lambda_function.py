@@ -6,7 +6,6 @@ from pg8000.native import Connection
 from lambda_utils import (
     retrieve_data,
     transform_sales_order,
-    create_dim_date,
     transform_staff,
     transform_location,
     transform_currency,
@@ -14,7 +13,7 @@ from lambda_utils import (
     transform_counterparty,
     write_data_to_s3,
     get_timestamp,
-    write_timestamp
+    write_timestamp,
 )
 
 s3_client = boto3.client("s3")
@@ -45,18 +44,6 @@ DB_NAME = secrets_manager_client.get_secret_value(
 
 db = Connection(user=DB_USERNAME, password=DB_PASSWORD,
                 database=DB_NAME, port=DB_PORT, host=DB_HOST)
-
-tomorrow = datetime.today()+timedelta(days=1)
-
-try:
-    last_date = get_timestamp(f"{ENVIRONMENT}_dim_date", ssm_client)
-except KeyError:
-    # if no last date exists, assume first run
-    last_date = datetime.fromisoformat("2020-01-01")
-
-if last_date != tomorrow:
-    processed_data_frames = {"dim_date": create_dim_date(last_date, tomorrow)}
-    write_timestamp(tomorrow, f"{ENVIRONMENT}_dim_date", ssm_client)
 
 
 def lambda_handler(event, context):
