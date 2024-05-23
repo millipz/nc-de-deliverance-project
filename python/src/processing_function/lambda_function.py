@@ -44,7 +44,11 @@ DB_NAME = secrets_manager_client.get_secret_value(
 )["SecretString"]
 
 db = Connection(
-    user=DB_USERNAME, password=DB_PASSWORD, database=DB_NAME, port=DB_PORT, host=DB_HOST
+    user=DB_USERNAME,
+    password=DB_PASSWORD,
+    database=DB_NAME,
+    port=DB_PORT,
+    host=DB_HOST,
 )
 
 tomorrow = datetime.today() + timedelta(days=1)
@@ -80,22 +84,33 @@ def lambda_handler(event, context):
                 )
             case "staff":
                 new_table_name = "dim_staff"
-                processed_data_frames[new_table_name] = transform_staff(data_frame)
+                processed_data_frames[new_table_name] = transform_staff(
+                    data_frame
+                )
             case "address":
                 new_table_name = "dim_location"
-                processed_data_frames[new_table_name] = transform_location(data_frame)
+                processed_data_frames[new_table_name] = transform_location(
+                    data_frame
+                )
             case "currency":
                 new_table_name = "dim_currency"
-                processed_data_frames[new_table_name] = transform_currency(data_frame)
+                processed_data_frames[new_table_name] = transform_currency(
+                    data_frame
+                )
             case "design":
                 new_table_name = "dim_design"
-                processed_data_frames[new_table_name] = transform_design(data_frame)
+                processed_data_frames[new_table_name] = transform_design(
+                    data_frame
+                )
             case "counterparty":
                 new_table_name = "dim_counterparty"
                 processed_data_frames[new_table_name] = transform_counterparty(
                     data_frame
                 )
-        packet_id = int(object_key.split("_")[1])
+            case _:
+                logger.error(f"Unknown table name: {table_name}")
+                continue
+        packet_id = int(object_key.split("_")[-2])
         processed_key = write_data_to_s3(
             processed_data_frames[new_table_name],
             new_table_name,
