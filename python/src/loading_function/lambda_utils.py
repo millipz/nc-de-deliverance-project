@@ -1,5 +1,3 @@
-from datetime import datetime, date
-import json
 from pg8000.native import identifier, literal, Connection
 import pandas as pd
 import io
