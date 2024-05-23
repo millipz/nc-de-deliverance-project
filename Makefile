@@ -117,7 +117,7 @@ destroy-dev-env:
 
 ## Deploy the test infrastructure
 deploy-test-env:
-	cd terraform && terraform init && terraform workspace select -or-create test && terraform apply -var-file="test.tfvars"
+	cd terraform && terraform init && terraform workspace select -or-create test && terraform apply -var-file="test.tfvars" -var="admin_email=$(ADMIN_EMAIL)"
 
 ## Tear down test infrastructure
 destroy-test-env:

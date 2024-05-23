@@ -38,6 +38,11 @@ jobs:
       - name: Run Checks
         run: make run-checks
 
+      - name: Set Environment Variables
+        run: echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> $GITHUB_ENV
+
 
       - name: Deploy Test Infrastructure
         run: make deploy-test-env
+        env:
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
