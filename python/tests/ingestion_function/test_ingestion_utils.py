@@ -233,7 +233,7 @@ class TestWriteSeqId:
 class TestCollectTableData:
 
     def test_list_of_dicts_returned(self):
-        with open("python/tests/test_staff_response.txt") as f:
+        with open("python/tests/ingestion_function/test_staff_response.txt") as f:
             data = f.read()
         mock_conn = Mock()
         mock_conn.run.return_value = data

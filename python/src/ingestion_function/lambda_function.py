@@ -25,18 +25,14 @@ logger.setLevel(logging.INFO)
 S3_BUCKET = os.getenv("S3_BUCKET")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
-DB_USERNAME = secrets_manager_client.get_secret_value(SecretId=f"totesys_{ENVIRONMENT}_db_username")[
-    "SecretString"
-]
-DB_PASSWORD = secrets_manager_client.get_secret_value(SecretId=f"totesys_{ENVIRONMENT}_db_password")[
-    "SecretString"
-]
-DB_HOST, DB_PORT = secrets_manager_client.get_secret_value(SecretId=f"totesys_{ENVIRONMENT}_db_endpoint")[
-    "SecretString"
-].split(":")
-DB_NAME = secrets_manager_client.get_secret_value(SecretId=f"totesys_{ENVIRONMENT}_db_name")[
-    "SecretString"
-]
+DB_USERNAME = secrets_manager_client.get_secret_value(
+    SecretId=f"totesys_{ENVIRONMENT}_db_username")["SecretString"]
+DB_PASSWORD = secrets_manager_client.get_secret_value(
+    SecretId=f"totesys_{ENVIRONMENT}_db_password")["SecretString"]
+DB_HOST, DB_PORT = secrets_manager_client.get_secret_value(
+    SecretId=f"totesys_{ENVIRONMENT}_db_endpoint")["SecretString".split(":")]
+DB_NAME = secrets_manager_client.get_secret_value(
+    SecretId=f"totesys_{ENVIRONMENT}_db_name")["SecretString"]
 
 tables = [
     "address",
@@ -63,7 +59,7 @@ def lambda_handler(event, context):
     logger.info(os.environ["AWS_LAMBDA_LOG_STREAM_NAME"])
     logger.info("## EVENT")
     logger.info(event)
-    
+
     response_data = {}
     total_ingested_rows = 0
 

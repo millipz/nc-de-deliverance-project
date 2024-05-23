@@ -68,7 +68,7 @@ def lambda_handler(event, context):
 
     response_data = {}
 
-    payload = event["body"]["data"]
+    payload = event["data"]
     for table_name, object_key in payload.items():
         data_frame = retrieve_data(S3_INGESTION_BUCKET, object_key, s3_client)
         match table_name:

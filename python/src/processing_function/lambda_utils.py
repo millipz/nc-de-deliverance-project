@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-import io
+import os
 import boto3
 from datetime import datetime, date
 
@@ -399,10 +399,11 @@ def write_data_to_s3(df: pd.DataFrame,
         ConnectionError : connection issue to S3 bucket
 
     Returns:
-        None
+        key: The S3 object key the data is written to
     """
-    buffer = io.BytesIO()
-    df.to_parquet(buffer, engine='fastparquet')
+    if bucket_name is None:
+        raise ValueError("bucket_name cannot be None")
+
     time_format = "%H%M%S%f"
     key = (
         f"{date.today()}/{table_name}_"
@@ -410,7 +411,24 @@ def write_data_to_s3(df: pd.DataFrame,
         f"processed_"
         f"{datetime.now().strftime(time_format)}.parquet"
     )
-    s3_client.put_object(Bucket=bucket_name, Key=key, Body=buffer.getvalue())
+
+    with open(f"/tmp/{table_name}", "wb") as f:
+        df.to_parquet(f, engine='fastparquet', index=False)
+
+    assert os.path.isfile(f"/tmp/{table_name}")
+    print(f"file written to /tmp/{table_name}")
+
+    with open(f"/tmp/{table_name}", "rb") as f:
+        file_size = os.path.getsize(f"/tmp/{table_name}")
+        print(f"File size: {file_size}")
+        file_data = f.read()
+        print(f"File data length: {len(file_data)}")
+
+    if file_data:
+        s3_client.put_object(Bucket=bucket_name, Key=key, Body=file_data)
+    else:
+        raise ValueError("File data is empty")
+    return key
 
 
 def get_timestamp(table_name: str, ssm_client) -> datetime:
