@@ -41,6 +41,7 @@ db = Connection(
     host=WAREHOUSE_HOST,
 )
 
+
 def lambda_handler(event, context):
     logger.info("## ENVIRONMENT VARIABLES")
     logger.info(os.environ["AWS_LAMBDA_LOG_GROUP_NAME"])
@@ -62,7 +63,9 @@ def lambda_handler(event, context):
             logger.error(f"Error loading {table_name} data to warehouse: {e}")
             return {"statusCode": 500, "body": f"Error: {e}"}
         else:
-            logger.info(f"{table_name} data loaded to warehouse, {loaded_rows} rows ingested")
+            logger.info(
+                f"{table_name} data loaded to warehouse, {loaded_rows} rows ingested"
+            )
             response_data[table_name] = loaded_rows
     logger.info(f"{total_loaded_rows} rows ingested this run")
     return {"statusCode": 200, "data": response_data}

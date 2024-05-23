@@ -14,7 +14,7 @@ from lambda_utils import (
     transform_counterparty,
     write_data_to_s3,
     get_timestamp,
-    write_timestamp
+    write_timestamp,
 )
 
 s3_client = boto3.client("s3")
@@ -43,10 +43,11 @@ DB_NAME = secrets_manager_client.get_secret_value(
     SecretId=f"totesys_{ENVIRONMENT}_db_name"
 )["SecretString"]
 
-db = Connection(user=DB_USERNAME, password=DB_PASSWORD,
-                database=DB_NAME, port=DB_PORT, host=DB_HOST)
+db = Connection(
+    user=DB_USERNAME, password=DB_PASSWORD, database=DB_NAME, port=DB_PORT, host=DB_HOST
+)
 
-tomorrow = datetime.today()+timedelta(days=1)
+tomorrow = datetime.today() + timedelta(days=1)
 
 try:
     last_date = get_timestamp(f"{ENVIRONMENT}_dim_date", ssm_client)
@@ -74,7 +75,9 @@ def lambda_handler(event, context):
         match table_name:
             case "sales_order":
                 new_table_name = "fact_sales_order"
-                processed_data_frames[new_table_name] = transform_sales_order(data_frame)
+                processed_data_frames[new_table_name] = transform_sales_order(
+                    data_frame
+                )
             case "staff":
                 new_table_name = "dim_staff"
                 processed_data_frames[new_table_name] = transform_staff(data_frame)
@@ -89,13 +92,17 @@ def lambda_handler(event, context):
                 processed_data_frames[new_table_name] = transform_design(data_frame)
             case "counterparty":
                 new_table_name = "dim_counterparty"
-                processed_data_frames[new_table_name] = transform_counterparty(data_frame)
+                processed_data_frames[new_table_name] = transform_counterparty(
+                    data_frame
+                )
         packet_id = int(object_key.split("_")[1])
-        processed_key = write_data_to_s3(processed_data_frames[new_table_name], new_table_name,
-                                         S3_PROCESSED_BUCKET, packet_id, s3_client)
+        processed_key = write_data_to_s3(
+            processed_data_frames[new_table_name],
+            new_table_name,
+            S3_PROCESSED_BUCKET,
+            packet_id,
+            s3_client,
+        )
         response_data[new_table_name] = processed_key
 
-    return {
-        'statusCode': 200,
-        'data': response_data
-    }
+    return {"statusCode": 200, "data": response_data}
