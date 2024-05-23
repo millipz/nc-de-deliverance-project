@@ -1,7 +1,6 @@
 import boto3
 import os
 import logging
-from datetime import datetime
 from pg8000.native import Connection
 from lambda_utils import (
     retrieve_processed_data,
@@ -21,16 +20,16 @@ S3_PROCESSED_BUCKET = os.getenv("S3_PROCESSED_BUCKET")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 WAREHOUSE_USERNAME = secrets_manager_client.get_secret_value(
-    SecretId=f"totesys_warehouse_username"
+    SecretId="totesys_warehouse_username"
 )["SecretString"]
 WAREHOUSE_PASSWORD = secrets_manager_client.get_secret_value(
-    SecretId=f"totesys_warehouse_password"
+    SecretId="totesys_warehouse_password"
 )["SecretString"]
 WAREHOUSE_HOST, WAREHOUSE_PORT = secrets_manager_client.get_secret_value(
-    SecretId=f"totesys_warehouse_endpoint"
+    SecretId="totesys_warehouse_endpoint"
 )["SecretString"].split(":")
 WAREHOUSE_NAME = secrets_manager_client.get_secret_value(
-    SecretId=f"totesys_warehouse_name"
+    SecretId="totesys_warehouse_name"
 )["SecretString"]
 
 db = Connection(
@@ -40,6 +39,7 @@ db = Connection(
     port=WAREHOUSE_PORT,
     host=WAREHOUSE_HOST,
 )
+
 
 def lambda_handler(event, context):
     logger.info("## ENVIRONMENT VARIABLES")
@@ -62,7 +62,9 @@ def lambda_handler(event, context):
             logger.error(f"Error loading {table_name} data to warehouse: {e}")
             return {"statusCode": 500, "body": f"Error: {e}"}
         else:
-            logger.info(f"{table_name} data loaded to warehouse, {loaded_rows} rows ingested")
+            logger.info(
+                f"{table_name} data loaded to warehouse, {loaded_rows} rows ingested"
+            )
             response_data[table_name] = loaded_rows
     logger.info(f"{total_loaded_rows} rows ingested this run")
-    return {"statusCode": 200, "data": response_data}
+    return {"statusCode": 200, "data": response_data, "message": response}
