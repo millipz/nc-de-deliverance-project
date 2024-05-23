@@ -41,6 +41,8 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
         Resource = [
           aws_s3_bucket.ingestion_bucket.arn,
           "${aws_s3_bucket.ingestion_bucket.arn}/*",
+          aws_s3_bucket.processed_bucket.arn,
+          "${aws_s3_bucket.processed_bucket.arn}/*"
         ],
       },
       {

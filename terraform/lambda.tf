@@ -27,7 +27,7 @@ resource "aws_lambda_function" "processing_function" {
     environment {
         variables = {
             S3_INGESTION_BUCKET = aws_s3_bucket.ingestion_bucket.bucket
-            S3_PROCESSING_BUCKET = aws_s3_bucket.processing_bucket.bucket
+            S3_PROCESSED_BUCKET = aws_s3_bucket.processed_bucket.bucket
             ENVIRONMENT = "${var.env_name}"
         }
     }
