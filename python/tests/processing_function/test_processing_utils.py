@@ -5,8 +5,6 @@ import pandas as pd
 from moto import mock_aws
 import json
 from python.src.processing_function.lambda_utils import (
-    get_packet_id,
-    write_packet_id,
     retrieve_data,
     transform_sales_order,
     create_dim_date,
@@ -126,41 +124,6 @@ def sample_counterparty_dataframe(s3_client):
                                  Body=json.dumps(json_data), Key='test-data')
             dataframe = retrieve_data('nc-totesys-ingest', 'test-data', s3_client)
             yield dataframe
-
-
-class TestGetPacketId:
-    def test_table_name_does_not_exist(self, ssm_client):
-        with pytest.raises(KeyError):
-            get_packet_id('non_existent_table', ssm_client)
-
-    def test_successful_retrieval(self, ssm_client):
-        ssm_client.put_parameter(
-            Name='/processing/example_table/latest_packet_id',
-            Value='00000100',
-            Type='String',
-        )
-
-        ssm_client.put_parameter(
-            Name='/processing/example_table/latest_packet_id',
-            Value='00000101',
-            Type='String',
-            Overwrite=True,
-        )
-
-        # Get the latest timestamp
-        id = get_packet_id('example_table', ssm_client)
-        assert id == 101
-
-    # TODO: Add a test for connection issues
-
-
-class TestWritePacketId:
-
-    def test_id_writtem_to_param_store(self, ssm_client):
-        id_to_write = 101
-        write_packet_id(id_to_write, 'test_table', ssm_client)
-        id = get_packet_id('test_table', ssm_client)
-        assert id == 101
 
 
 class TestRetrieveData:
