@@ -30,7 +30,7 @@ DB_USERNAME = secrets_manager_client.get_secret_value(
 DB_PASSWORD = secrets_manager_client.get_secret_value(
     SecretId=f"totesys_{ENVIRONMENT}_db_password")["SecretString"]
 DB_HOST, DB_PORT = secrets_manager_client.get_secret_value(
-    SecretId=f"totesys_{ENVIRONMENT}_db_endpoint")["SecretString".split(":")]
+    SecretId=f"totesys_{ENVIRONMENT}_db_endpoint")["SecretString"].split(":")
 DB_NAME = secrets_manager_client.get_secret_value(
     SecretId=f"totesys_{ENVIRONMENT}_db_name")["SecretString"]
 
