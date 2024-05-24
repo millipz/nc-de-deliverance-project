@@ -82,6 +82,7 @@ def transform_sales_order(sales_order_df):
     ].astype(str)
 
     fact_sales_order.rename(columns={"staff_id": "sales_staff_id"}, inplace=True)
+    fact_sales_order.where(pd.notnull(fact_sales_order), None)
 
     return fact_sales_order[
         [
