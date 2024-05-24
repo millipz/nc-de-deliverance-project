@@ -52,7 +52,7 @@ def lambda_handler(event, context):
     logger.info("## EVENT")
     logger.info(event)
 
-    future_date = datetime.today() + timedelta(years=50)
+    future_date = datetime.today() + timedelta(weeks=3000)
 
     try:
         last_date = get_timestamp(f"{ENVIRONMENT}_loaded_date", ssm_client)
