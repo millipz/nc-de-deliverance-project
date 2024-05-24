@@ -63,11 +63,14 @@ def lambda_handler(event, context):
     if last_date != future_date:
         date_dataframe = create_dim_date(last_date, future_date)
         write_timestamp(future_date, f"{ENVIRONMENT}_dim_date", ssm_client)
-        try:
-            response = write_table_data_to_warehouse(date_dataframe, "dim_date", db)
-        except Exception as e:
-            logger.error(f"Error loading dim_date data to warehouse: {e}")
-            return {"statusCode": 500, "body": f"Error: {e}"}
+        if ENVIRONMENT == "prod":
+            try:
+                response = write_table_data_to_warehouse(date_dataframe, "dim_date", db)
+            except Exception as e:
+                logger.error(f"Error loading dim_date data to warehouse: {e}")
+                return {"statusCode": 500, "body": f"Error: {e}"}
+        else:
+            logger.info(f"Would have written dim_date data, skipping in {ENVIRONMENT} environment")
 
     response = ""
     response_data = {}
@@ -91,15 +94,19 @@ def lambda_handler(event, context):
             )
             loaded_rows = len(data_frame.index)
             total_loaded_rows += loaded_rows
-            try:
-                response = write_table_data_to_warehouse(data_frame, table_name, db)
-            except Exception as e:
-                logger.error(f"Error loading {table_name} data to warehouse: {e}")
-                return {"statusCode": 500, "body": f"Error: {e}"}
+            if ENVIRONMENT == "prod":
+                try:
+                    response = write_table_data_to_warehouse(data_frame, table_name, db)
+                    logger.info(
+                        f"{table_name} data loaded to warehouse, {loaded_rows} rows ingested"
+                    )
+                    response_data[table_name] = loaded_rows
+                except Exception as e:
+                    logger.error(f"Error loading {table_name} data to warehouse: {e}")
+                    return {"statusCode": 500, "body": f"Error: {e}"}
             else:
-                logger.info(
-                    f"{table_name} data loaded to warehouse, {loaded_rows} rows ingested"
-                )
+                logger.info(f"Would have written {table_name} data, skipping in {ENVIRONMENT} environment")
                 response_data[table_name] = loaded_rows
+
     logger.info(f"{total_loaded_rows} rows ingested this run")
     return {"statusCode": 200, "data": response_data, "message": response}
