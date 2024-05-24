@@ -1,0 +1,182 @@
+[
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 2,
+        "email_address": "jeremie.franey@terrifictotes.com",
+        "first_name": "Jeremie",
+        "last_name": "Franey",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 1
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 6,
+        "email_address": "deron.beier@terrifictotes.com",
+        "first_name": "Deron",
+        "last_name": "Beier",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 2
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 6,
+        "email_address": "jeanette.erdman@terrifictotes.com",
+        "first_name": "Jeanette",
+        "last_name": "Erdman",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 3
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 3,
+        "email_address": "ana.glover@terrifictotes.com",
+        "first_name": "Ana",
+        "last_name": "Glover",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 4
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 8,
+        "email_address": "magdalena.zieme@terrifictotes.com",
+        "first_name": "Magdalena",
+        "last_name": "Zieme",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 5
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 3,
+        "email_address": "korey.kreiger@terrifictotes.com",
+        "first_name": "Korey",
+        "last_name": "Kreiger",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 6
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 2,
+        "email_address": "raphael.rippin@terrifictotes.com",
+        "first_name": "Raphael",
+        "last_name": "Rippin",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 7
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 7,
+        "email_address": "oswaldo.bergstrom@terrifictotes.com",
+        "first_name": "Oswaldo",
+        "last_name": "Bergstrom",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 8
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 2,
+        "email_address": "brody.ratke@terrifictotes.com",
+        "first_name": "Brody",
+        "last_name": "Ratke",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 9
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 2,
+        "email_address": "jazmyn.kuhn@terrifictotes.com",
+        "first_name": "Jazmyn",
+        "last_name": "Kuhn",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 10
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 5,
+        "email_address": "meda.cremin@terrifictotes.com",
+        "first_name": "Meda",
+        "last_name": "Cremin",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 11
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 5,
+        "email_address": "imani.walker@terrifictotes.com",
+        "first_name": "Imani",
+        "last_name": "Walker",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 12
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 4,
+        "email_address": "stan.lehner@terrifictotes.com",
+        "first_name": "Stan",
+        "last_name": "Lehner",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 13
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 7,
+        "email_address": "rigoberto.vonrueden@terrifictotes.com",
+        "first_name": "Rigoberto",
+        "last_name": "VonRueden",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 14
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 3,
+        "email_address": "tom.gutkowski@terrifictotes.com",
+        "first_name": "Tom",
+        "last_name": "Gutkowski",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 15
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 6,
+        "email_address": "jett.parisian@terrifictotes.com",
+        "first_name": "Jett",
+        "last_name": "Parisian",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 16
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 3,
+        "email_address": "irving.o'keefe@terrifictotes.com",
+        "first_name": "Irving",
+        "last_name": "O'Keefe",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 17
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 8,
+        "email_address": "tomasa.moore@terrifictotes.com",
+        "first_name": "Tomasa",
+        "last_name": "Moore",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 18
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 2,
+        "email_address": "pierre.sauer@terrifictotes.com",
+        "first_name": "Pierre",
+        "last_name": "Sauer",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 19
+    },
+    {
+        "created_at": "2022-11-03 14:20:51.563000",
+        "department_id": 3,
+        "email_address": "flavio.kulas@terrifictotes.com",
+        "first_name": "Flavio",
+        "last_name": "Kulas",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "staff_id": 20
+    }
+]

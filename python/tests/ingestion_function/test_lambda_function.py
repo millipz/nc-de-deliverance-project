@@ -3,6 +3,7 @@ import boto3
 import pytest
 from moto import mock_aws
 from unittest.mock import patch, MagicMock
+from dotenv import load_dotenv
 
 # from python.src.ingestion_function.lambda_function import lambda_handler, tables
 
@@ -111,18 +112,7 @@ def test_lambda_handler(
     os.environ["AWS_LAMBDA_LOG_GROUP_NAME"] = "log-group"
     os.environ["AWS_LAMBDA_LOG_STREAM_NAME"] = "log-stream"
 
-    secrets_manager_client.create_secret(
-        Name="totesys_dev_db_username", SecretString="test_username"
-    )
-    secrets_manager_client.create_secret(
-        Name="totesys_dev_db_password", SecretString="test_password"
-    )
-    secrets_manager_client.create_secret(
-        Name="totesys_dev_db_endpoint", SecretString="test_host:5432"
-    )
-    secrets_manager_client.create_secret(
-        Name="totesys_dev_db_name", SecretString="test_db"
-    )
+    load_dotenv(".secrets/db_credentials.env")
 
     mock_pg_connection.return_value = MagicMock()
 

@@ -20,22 +20,16 @@
 
     ```json
     {"packets": [
-        {"table": <table_name>, "id": <sequential_id>}
+        {"table": <table_name>, "id": <packet_id>}
         {...}
     ]}
     ```
 
 - **Processes:**
   1. **Extract Object Keys**:
-      - Use the table name and sequential ID from the input JSON payload to construct the S3 object keys.
+      - Use the table name and packet ID from the input JSON payload to construct the S3 object keys.
       - Retrieve the list of new objects from the "ingestion" S3 bucket.
-
-  1. **Check Object Keys against Payload**:
-      - Verify that the object keys in S3 match the information provided in the payload.
       - If object IDs are not sequential, log a warning to CloudWatch.
-
-  1. **Record Ingestion Status**:
-      - Record success or failure, and timestamp. Log to CloudWatch.
 
   1. **Transform Data**:
       - Retrieve and read the JSON lines file from the "ingestion" S3 bucket into a pandas DataFrame.
@@ -52,7 +46,7 @@
       - Convert the transformed DataFrame to Parquet format.
       - Save the Parquet file to the "processed" S3 bucket.
       - Use the structured naming convention for the Parqeut files as set out in the S3 specification.
-      - Write sequential ID to parameter store.
+      - Write packet_id to parameter store.
 
   1. **Record Processing Status**:
       - Record success or failure, quantity of data processed, and timestamp. Log to CloudWatch.
@@ -73,7 +67,7 @@
 
 - **Date Handling**: Convert date and time fields to the appropriate formats required by the schema. (timestamp -> date; timestamp -> time)
 
-- **File Naming Convention**: `{tablename}_sequentialID_processed_{timestamp}.parquet`
+- **File Naming Convention**: `{tablename}_packet_ID_processed_{timestamp}.parquet`
 
 ## Functions
 
@@ -111,7 +105,7 @@
             table_name (string)
             most_recent_timestamp (timestamp) : timestamp of most recent records in data
             table_data (list) : list of dictionaries all data in table, one dictionary per row keys will be column headings
-            sequential_id (int) : integer stored in parameter store retrieved earlier in application flow
+            packet_id (int) : integer stored in parameter store retrieved earlier in application flow
 
         Raises:
             FileExistsError: S3 object already exists with the same name
@@ -121,10 +115,10 @@
             None
         '''
 
-- Read sequential_id
+- Read packet_id
 
         '''
-        From parameter store retrieves table_name : sequential_id key value pair
+        From parameter store retrieves table_name : packet_id key value pair
 
         Args:
             table_name (string)
@@ -134,18 +128,18 @@
             ConnectionError : connection issue to parameter store
 
         Returns:
-            sequential_id(int)
+            packet_id(int)
         '''
 
-- Write sequential_id
+- Write packet_id
 
         '''
-        To parameter store write table_name : sequential_id key value pair
-        -- checks sequential_id is one greater than previous sequential_id
+        To parameter store write table_name : packet_id key value pair
+        -- checks packet_id is one greater than previous packet_id
 
         Args:
             table_name (string)
-            sequential_id(int)
+            packet_id(int)
 
         Raises:
             KeyError: table_name does not exist

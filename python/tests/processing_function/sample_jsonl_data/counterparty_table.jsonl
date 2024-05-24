@@ -1,0 +1,182 @@
+[
+    {
+        "commercial_contact": "Micheal Toy",
+        "counterparty_id": 1,
+        "counterparty_legal_name": "Fahey and Sons",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Mrs. Lucy Runolfsdottir",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 15
+    },
+    {
+        "commercial_contact": "Melba Sanford",
+        "counterparty_id": 2,
+        "counterparty_legal_name": "Leannon, Predovic and Morar",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Jean Hane III",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 28
+    },
+    {
+        "commercial_contact": "Jane Wiza",
+        "counterparty_id": 3,
+        "counterparty_legal_name": "Armstrong Inc",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Myra Kovacek",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 2
+    },
+    {
+        "commercial_contact": "Taylor Haag",
+        "counterparty_id": 4,
+        "counterparty_legal_name": "Kohler Inc",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Alfredo Cassin II",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 29
+    },
+    {
+        "commercial_contact": "Homer Mitchell",
+        "counterparty_id": 5,
+        "counterparty_legal_name": "Frami, Yundt and Macejkovic",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Ivan Balistreri",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 22
+    },
+    {
+        "commercial_contact": "Florence Casper",
+        "counterparty_id": 6,
+        "counterparty_legal_name": "Mraz LLC",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Eva Upton",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 23
+    },
+    {
+        "commercial_contact": "Ms. Wilma Witting",
+        "counterparty_id": 7,
+        "counterparty_legal_name": "Padberg, Lueilwitz and Johnson",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Christy O'Hara",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 16
+    },
+    {
+        "commercial_contact": "Emily Orn",
+        "counterparty_id": 8,
+        "counterparty_legal_name": "Grant - Lakin",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Veronica Fay",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 16
+    },
+    {
+        "commercial_contact": "Sheryl Langworth",
+        "counterparty_id": 9,
+        "counterparty_legal_name": "Price LLC",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Simon Schoen",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 5
+    },
+    {
+        "commercial_contact": "Ed Halvorson",
+        "counterparty_id": 10,
+        "counterparty_legal_name": "Bosco - Grant",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Dewey Kuhic",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 10
+    },
+    {
+        "commercial_contact": "Glen Emmerich",
+        "counterparty_id": 11,
+        "counterparty_legal_name": "Corkery - Nienow",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Laurie Hermiston",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 17
+    },
+    {
+        "commercial_contact": "Marcus Rogahn",
+        "counterparty_id": 12,
+        "counterparty_legal_name": "Keeling - Emmerich",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Rosa Powlowski",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 7
+    },
+    {
+        "commercial_contact": "Sherry Rice",
+        "counterparty_id": 13,
+        "counterparty_legal_name": "Hand, Krajcik and Kuhlman",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Elizabeth Senger",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 5
+    },
+    {
+        "commercial_contact": "Ms. Susan Haley",
+        "counterparty_id": 14,
+        "counterparty_legal_name": "Hintz, Hayes and Will",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Andrea Kassulke PhD",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 30
+    },
+    {
+        "commercial_contact": "Roderick Waters",
+        "counterparty_id": 15,
+        "counterparty_legal_name": "Emmerich, Rohan and Reynolds",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Jake Welch DVM",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 17
+    },
+    {
+        "commercial_contact": "Alberta Franecki DDS",
+        "counterparty_id": 16,
+        "counterparty_legal_name": "Hartmann, Franecki and Ratke",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Tracy Quigley",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 14
+    },
+    {
+        "commercial_contact": "Dr. Doris Heidenreich",
+        "counterparty_id": 17,
+        "counterparty_legal_name": "Kihn Group",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Gregg Beahan",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 17
+    },
+    {
+        "commercial_contact": "Laura Graham",
+        "counterparty_id": 18,
+        "counterparty_legal_name": "Smith and Sons",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Olivia Franey",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 17
+    },
+    {
+        "commercial_contact": "Pearl Kreiger",
+        "counterparty_id": 19,
+        "counterparty_legal_name": "Ondricka, Conroy and Turcotte",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Warren Weimann",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 18
+    },
+    {
+        "commercial_contact": "Sophie Konopelski",
+        "counterparty_id": 20,
+        "counterparty_legal_name": "Yost, Watsica and Mann",
+        "created_at": "2022-11-03 14:20:51.563000",
+        "delivery_contact": "Janie Doyle",
+        "last_updated": "2022-11-03 14:20:51.563000",
+        "legal_address_id": 2
+    }
+]
