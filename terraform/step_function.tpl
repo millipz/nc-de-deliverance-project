@@ -6,7 +6,7 @@
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
       "Parameters": {
-        "FunctionName": "arn:aws:lambda:eu-west-2:471112858444:function:test-ingestion-function:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:471112858444:function:${env}-ingestion-function:$LATEST"
       },
       "Retry": [
         {
@@ -46,7 +46,7 @@
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:eu-west-2:471112858444:function:test-processing-function:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:471112858444:function:${env}-processing-function:$LATEST"
       },
       "Retry": [
         {
@@ -69,7 +69,7 @@
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:eu-west-2:471112858444:function:test-loading-function:$LATEST"
+        "FunctionName": "arn:aws:lambda:eu-west-2:471112858444:function:${env}-loading-function:$LATEST"
       },
       "Retry": [
         {
