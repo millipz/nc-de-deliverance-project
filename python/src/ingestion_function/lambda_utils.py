@@ -96,8 +96,20 @@ def collect_table_data(
         f"SELECT * FROM {identifier(table_name)} "
         f"WHERE {identifier(column)} > {literal(sql_timestamp)}"
     )
+
+    def normalise_datetime(dt: datetime) -> datetime:
+        dt.isoformat(timespec="milliseconds")
+
     data = db_conn.run(query)
+    data = [
+        [
+            value if not isinstance(timestamp) else normalise_datetime(value)
+            for value in values
+        ]
+        for row in rows
+    ]
     headings = [column["name"] for column in db_conn.columns]
+    # types = [column["type_oid"] for column in db_conn.columns]
     result = [dict(zip(headings, row)) for row in data]
     return result
 

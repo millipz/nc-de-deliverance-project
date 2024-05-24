@@ -27,6 +27,7 @@ def retrieve_data(bucket_name: str, object_key: str, s3_client):
         response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
         data = json.loads(response["Body"].read().decode("utf-8"))
         df = pd.DataFrame(data)
+
         return df
 
     except s3_client.exceptions.NoSuchKey:
@@ -82,7 +83,6 @@ def transform_sales_order(sales_order_df):
     ].astype(str)
 
     fact_sales_order.rename(columns={"staff_id": "sales_staff_id"}, inplace=True)
-    fact_sales_order = fact_sales_order.replace({np.nan: None})
 
     return fact_sales_order[
         [
