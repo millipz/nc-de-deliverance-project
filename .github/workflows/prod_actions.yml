@@ -1,0 +1,48 @@
+name: Main Code Review
+
+on:
+  push:
+    branches:
+      - prod
+    paths:
+      - '**.py'
+      - Makefile
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4   
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ secrets.AWS_REGION }}
+            
+
+      - name: Requirements
+        run: make requirements
+
+      - name: Dev Setup
+        run: make dev-setup
+      
+      - name: Run Checks
+        run: make run-checks
+
+      - name: Set Environment Variables
+        run: echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> $GITHUB_ENV
+
+
+      - name: Deploy Production Infrastructure
+        run: make deploy-prod-env
+        env:
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
