@@ -82,7 +82,7 @@ def lambda_handler(event, context):
                 new_table_name = "dim_counterparty"
                 processed_data_frames[new_table_name] = transform_counterparty(
                     data_frame,
-                    processed_data_frames["address"],
+                    processed_data_frames["dim_location"],
                 )
             case _:
                 logger.error(f"Unknown table name: {table_name}")

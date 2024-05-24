@@ -377,7 +377,7 @@ def transform_counterparty(counterparty_df, address_df):
     """
     dim_counterparty = counterparty_df.copy()
     dim_counterparty = dim_counterparty.merge(
-        address_df, left_on="legal_address_id", right_on="address_id", how="left"
+        address_df, left_on="legal_address_id", right_on="location_id", how="left"
     )
     dim_counterparty = dim_counterparty.rename(
         columns={
