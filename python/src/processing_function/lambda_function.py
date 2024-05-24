@@ -55,8 +55,9 @@ def lambda_handler(event, context):
     processed_data_frames = {}
 
     payload = event["data"]
-
-    processed_data_frames["dim_location"] = transform_location(payload["address"])
+    address_key = payload["address"]
+    address_data = retrieve_data(S3_INGESTION_BUCKET, address_key, s3_client)
+    processed_data_frames["dim_location"] = transform_location(address_data)
 
     for table_name, object_key in payload.items():
         data_frame = retrieve_data(S3_INGESTION_BUCKET, object_key, s3_client)
