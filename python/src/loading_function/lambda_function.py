@@ -70,7 +70,9 @@ def lambda_handler(event, context):
                 logger.error(f"Error loading dim_date data to warehouse: {e}")
                 return {"statusCode": 500, "body": f"Error: {e}"}
         else:
-            logger.info(f"Would have written dim_date data, skipping in {ENVIRONMENT} environment")
+            logger.info(
+                f"Would have written dim_date data, skipping in {ENVIRONMENT} environment"
+            )
 
     response = ""
     response_data = {}
@@ -105,7 +107,9 @@ def lambda_handler(event, context):
                     logger.error(f"Error loading {table_name} data to warehouse: {e}")
                     return {"statusCode": 500, "body": f"Error: {e}"}
             else:
-                logger.info(f"Would have written {table_name} data, skipping in {ENVIRONMENT} environment")
+                logger.info(
+                    f"Would have written {table_name} data, skipping in {ENVIRONMENT} environment"
+                )
                 response_data[table_name] = loaded_rows
 
     logger.info(f"{total_loaded_rows} rows ingested this run")
