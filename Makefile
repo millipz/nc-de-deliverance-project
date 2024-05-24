@@ -112,7 +112,7 @@ layer:
 	$(call execute_in_env, $(PIP) install pip-tools)
 	$(call execute_in_env, pip-compile layer.in --output-file layer-requirements.txt)
 	$(call execute_in_env, $(PIP) install -r ./layer-requirements.txt -t layer/python)
-	rm -rf /layer/python/pandas/tests/
+	rm -rf layer/python/pandas/tests/
 
 ## Deploy the dev infrastructure
 deploy-dev-env: layer
