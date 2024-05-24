@@ -137,7 +137,7 @@ def find_latest_timestamp(
     timestamps = []
     for dic in table_data:
         for col in columns:
-            timestamps.append(dic[col])
+            timestamps.append(datetime.fromisoformat(dic[col]))
 
     try:
         return max(timestamps)
