@@ -98,7 +98,7 @@ def collect_table_data(
     )
 
     def normalise_datetime(dt: datetime) -> datetime:
-        dt.isoformat(timespec="milliseconds")
+        return dt.isoformat(timespec="milliseconds")
 
     data = db_conn.run(query)
     data = [

@@ -52,7 +52,7 @@ def lambda_handler(event, context):
     logger.info("## EVENT")
     logger.info(event)
 
-    tomorrow = datetime.today() + timedelta(days=1)
+    future_date = datetime.today() + timedelta(years=50)
 
     try:
         last_date = get_timestamp(f"{ENVIRONMENT}_loaded_date", ssm_client)
@@ -60,9 +60,9 @@ def lambda_handler(event, context):
         # if no last date exists, assume first run
         last_date = datetime.fromisoformat("2020-01-01")
 
-    if last_date != tomorrow:
-        date_dataframe = create_dim_date(last_date, tomorrow)
-        write_timestamp(tomorrow, f"{ENVIRONMENT}_dim_date", ssm_client)
+    if last_date != future_date:
+        date_dataframe = create_dim_date(last_date, future_date)
+        write_timestamp(future_date, f"{ENVIRONMENT}_dim_date", ssm_client)
         try:
             response = write_table_data_to_warehouse(date_dataframe, "dim_date", db)
         except Exception as e:
