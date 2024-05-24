@@ -55,8 +55,6 @@ def write_table_data_to_warehouse(
     vals_string = ",".join(processed_rows)
     print(vals_string)
 
-
-
     query = (
         f"INSERT INTO {identifier(table_name)} "
         f"({', '.join(data_frame.columns)}) "

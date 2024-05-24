@@ -72,21 +72,34 @@ def lambda_handler(event, context):
     response = ""
     response_data = {}
     total_loaded_rows = 0
+    table_order = [
+        "dim_currency",
+        "dim_design",
+        "dim_location",
+        "dim_date",
+        "dim_staff",
+        "dim_counterparty",
+        "fact_sales_order",
+    ]
 
     payload = event["data"]
-    for table_name, object_key in payload.items():
-        data_frame = retrieve_processed_data(S3_PROCESSED_BUCKET, object_key, s3_client)
-        loaded_rows = len(data_frame.index)
-        total_loaded_rows += loaded_rows
-        try:
-            response = write_table_data_to_warehouse(data_frame, table_name, db)
-        except Exception as e:
-            logger.error(f"Error loading {table_name} data to warehouse: {e}")
-            return {"statusCode": 500, "body": f"Error: {e}"}
-        else:
-            logger.info(
-                f"{table_name} data loaded to warehouse, {loaded_rows} rows ingested"
+    # for table_name, object_key in payload.items():
+    for table_name in table_order:
+        if table_name in payload.keys():
+            data_frame = retrieve_processed_data(
+                S3_PROCESSED_BUCKET, payload[table_name], s3_client
             )
-            response_data[table_name] = loaded_rows
+            loaded_rows = len(data_frame.index)
+            total_loaded_rows += loaded_rows
+            try:
+                response = write_table_data_to_warehouse(data_frame, table_name, db)
+            except Exception as e:
+                logger.error(f"Error loading {table_name} data to warehouse: {e}")
+                return {"statusCode": 500, "body": f"Error: {e}"}
+            else:
+                logger.info(
+                    f"{table_name} data loaded to warehouse, {loaded_rows} rows ingested"
+                )
+                response_data[table_name] = loaded_rows
     logger.info(f"{total_loaded_rows} rows ingested this run")
     return {"statusCode": 200, "data": response_data, "message": response}

@@ -1,4 +1,5 @@
 import boto3
+
 bucket = input("Please input bucket name you would like to delete: ")
 try:
     s3 = boto3.resource("s3")

@@ -60,6 +60,22 @@ def sample_address_dataframe(s3_client):
 
 
 @pytest.fixture(scope="function")
+def sample_dim_location_dataframe(s3_client):
+    with mock_aws():
+        with open(
+            "python/tests/processing_function/sample_jsonl_data/dim_location_table.jsonl",
+            "r",
+            encoding="utf-8",
+        ) as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(
+                Bucket="nc-totesys-ingest", Body=json.dumps(json_data), Key="test-data"
+            )
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
+@pytest.fixture(scope="function")
 def sample_sales_order_dataframe(s3_client):
     with mock_aws():
         with open(
@@ -330,10 +346,10 @@ class TestTransformData:
         assert result["file_name"].iloc[0] == "wooden-20220717-npgz.json"
 
     def test_transform_counterparty(
-        self, sample_counterparty_dataframe, sample_address_dataframe
+        self, sample_counterparty_dataframe, sample_dim_location_dataframe
     ):
         result = transform_counterparty(
-            sample_counterparty_dataframe, sample_address_dataframe
+            sample_counterparty_dataframe, sample_dim_location_dataframe
         )
         expected_columns = [
             "counterparty_id",
