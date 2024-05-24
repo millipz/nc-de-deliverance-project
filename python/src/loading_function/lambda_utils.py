@@ -58,7 +58,7 @@ def write_table_data_to_warehouse(
     query = (
         f"INSERT INTO {identifier(table_name)} "
         f"({', '.join(data_frame.columns)}) "
-        f"VALUES {vals_string}"
+        f"VALUES {vals_string} "
         "ON CONFLICT DO UPDATE;"
     )
 
