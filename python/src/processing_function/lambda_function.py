@@ -55,9 +55,13 @@ def lambda_handler(event, context):
     processed_data_frames = {}
 
     payload = event["data"]
+
     address_key = payload["address"]
     address_data = retrieve_data(S3_INGESTION_BUCKET, address_key, s3_client)
     processed_data_frames["dim_location"] = transform_location(address_data)
+
+    department_key = payload["department"]
+    department_data = retrieve_data(S3_INGESTION_BUCKET, department_key, s3_client)
 
     for table_name, object_key in payload.items():
         data_frame = retrieve_data(S3_INGESTION_BUCKET, object_key, s3_client)
@@ -69,7 +73,7 @@ def lambda_handler(event, context):
                 )
             case "staff":
                 new_table_name = "dim_staff"
-                processed_data_frames[new_table_name] = transform_staff(data_frame)
+                processed_data_frames[new_table_name] = transform_staff(data_frame, department_data)
             case "address":
                 continue
             case "currency":
