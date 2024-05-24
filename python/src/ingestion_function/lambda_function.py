@@ -111,7 +111,9 @@ def lambda_handler(event, context):
                 else:
                     write_timestamp(latest, ENVIRONMENT + "_" + table, ssm_client)
                     write_seq_id(id, ENVIRONMENT + "_" + table, ssm_client)
-                    logger.info(f"{table} data written to S3, {len(data)} rows ingested")
+                    logger.info(
+                        f"{table} data written to S3, {len(data)} rows ingested"
+                    )
                     response_data[table] = key
     logger.info(f"{total_ingested_rows} rows ingested this run")
     return {"statusCode": 200, "data": response_data}

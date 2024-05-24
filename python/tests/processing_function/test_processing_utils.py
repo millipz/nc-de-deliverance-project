@@ -58,6 +58,7 @@ def sample_address_dataframe(s3_client):
             dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
             yield dataframe
 
+
 @pytest.fixture(scope="function")
 def sample_dim_location_dataframe(s3_client):
     with mock_aws():
@@ -72,6 +73,7 @@ def sample_dim_location_dataframe(s3_client):
             )
             dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
             yield dataframe
+
 
 @pytest.fixture(scope="function")
 def sample_sales_order_dataframe(s3_client):
@@ -347,7 +349,7 @@ class TestTransformData:
         self, sample_counterparty_dataframe, sample_dim_location_dataframe
     ):
         result = transform_counterparty(
-            sample_counterparty_dataframe, sample_address_dataframe
+            sample_counterparty_dataframe, sample_dim_location_dataframe
         )
         expected_columns = [
             "counterparty_id",
