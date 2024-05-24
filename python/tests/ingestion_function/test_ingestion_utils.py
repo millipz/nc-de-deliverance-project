@@ -86,15 +86,15 @@ class TestWriteTimestamp:
 class TestFindLatestTimestamp:
     def test_returns_timestamp(self):
         dummy_data = [
-            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123000")},
-            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123000")},
+            {"last_updated": "2024-05-16T10:50:30.123000"},
+            {"last_updated": "2024-05-16T12:50:30.123000"},
         ]
         assert isinstance(find_latest_timestamp(dummy_data), datetime)
 
     def test_returns_latest_date(self):
         dummy_data = [
-            {"last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123000")},
-            {"last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123000")},
+            {"last_updated": "2024-05-16T10:50:30.123000"},
+            {"last_updated": "2024-05-16T12:50:30.123000"},
         ]
         assert (
             find_latest_timestamp(dummy_data).isoformat()
@@ -104,12 +104,12 @@ class TestFindLatestTimestamp:
     def test_allows_passing_custom_columns(self):
         dummy_data = [
             {
-                "last_updated": datetime.fromisoformat("2024-05-16T10:50:30.123000"),
-                "other_column": datetime.fromisoformat("2024-05-20T10:10:10.123000"),
+                "last_updated": "2024-05-16T10:50:30.123000",
+                "other_column": "2024-05-20T10:10:10.123000",
             },
             {
-                "last_updated": datetime.fromisoformat("2024-05-16T12:50:30.123000"),
-                "other_column": datetime.fromisoformat("2024-01-20T10:10:10.123000"),
+                "last_updated": "2024-05-16T12:50:30.123000",
+                "other_column": "2024-01-20T10:10:10.123000",
             },
         ]
         assert (

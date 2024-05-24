@@ -96,8 +96,20 @@ def collect_table_data(
         f"SELECT * FROM {identifier(table_name)} "
         f"WHERE {identifier(column)} > {literal(sql_timestamp)}"
     )
+
+    def normalise_datetime(dt: datetime) -> datetime:
+        return dt.isoformat(timespec="milliseconds")
+
     data = db_conn.run(query)
+    data = [
+        [
+            value if not isinstance(value, datetime) else normalise_datetime(value)
+            for value in row
+        ]
+        for row in data
+    ]
     headings = [column["name"] for column in db_conn.columns]
+    # types = [column["type_oid"] for column in db_conn.columns]
     result = [dict(zip(headings, row)) for row in data]
     return result
 
@@ -125,7 +137,7 @@ def find_latest_timestamp(
     timestamps = []
     for dic in table_data:
         for col in columns:
-            timestamps.append(dic[col])
+            timestamps.append(datetime.fromisoformat(dic[col]))
 
     try:
         return max(timestamps)

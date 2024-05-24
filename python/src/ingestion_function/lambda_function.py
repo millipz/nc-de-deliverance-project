@@ -68,7 +68,7 @@ def lambda_handler(event, context):
     total_ingested_rows = 0
 
     for table in tables:
-        if table == "address" or "department":
+        if table in ["address", "department"]:
             data = collect_table_data(table, datetime.fromisoformat("2000-01-01"), db)
             try:
                 key = write_table_data_to_s3(table, data, S3_BUCKET, 0, s3_client)
@@ -116,4 +116,8 @@ def lambda_handler(event, context):
                     )
                     response_data[table] = key
     logger.info(f"{total_ingested_rows} rows ingested this run")
-    return {"statusCode": 200, "data": response_data}
+    return {
+        "statusCode": 200,
+        "data": response_data,
+        "newData": True if (len(response_data) > 2) else False,
+    }

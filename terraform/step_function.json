@@ -21,8 +21,24 @@
           "BackoffRate": 2
         }
       ],
-      "Next": "Processing Lambda",
+      "Next": "New Data to Process",
       "OutputPath": "$.Payload"
+    },
+    "New Data to Process": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.newData",
+          "BooleanEquals": false,
+          "Next": "Ingestion Pass"
+        }
+      ],
+      "Default": "Processing Lambda"
+    },
+    "Ingestion Pass": {
+      "Type": "Pass",
+      "End": true,
+      "ResultPath": null
     },
     "Processing Lambda": {
       "Type": "Task",
@@ -68,6 +84,26 @@
           "BackoffRate": 2
         }
       ],
+      "Next": "Choice"
+    },
+    "Choice": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Not": {
+            "Variable": "$.statusCode",
+            "NumericEquals": 200
+          },
+          "Next": "Fail"
+        }
+      ],
+      "Default": "Loading Pass"
+    },
+    "Fail": {
+      "Type": "Fail"
+    },
+    "Loading Pass": {
+      "Type": "Pass",
       "End": true
     }
   }

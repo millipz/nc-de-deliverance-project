@@ -126,7 +126,7 @@ destroy-dev-env:
 deploy-test-env: layer
 	cd terraform && terraform init && terraform workspace select -or-create test && terraform apply -var-file="test.tfvars" -var="admin_email=$(ADMIN_EMAIL)" -auto-approve
 
-## Deploy the test infrastructure
+## Deploy the test infrastructure from local machine
 deploy-test-env-from-local: layer
 	cd terraform && terraform init && terraform workspace select -or-create test && terraform apply -var-file="test.tfvars"
 
@@ -141,3 +141,9 @@ deploy-dev-db:
 ## Tear down dev database
 destroy-dev-db:
 	cd dev-db-terraform && terraform workspace select -or-create db && terraform init && terraform destroy
+
+
+## Deploy to Production
+deploy-prod-env: layer
+	cd terraform && terraform init && terraform workspace select -or-create prod && terraform apply -var-file="prod.tfvars" -var="admin_email=$(ADMIN_EMAIL)" -auto-approve
+

@@ -125,8 +125,18 @@ resource "aws_iam_role_policy" "step_function_policy"{
               Effect  = "Allow",
               Action = [
                 "states:StartExecution",
-                "Lambda:InvokeFunction"
-            ],
+                "Lambda:InvokeFunction",
+                "logs:CreateLogDelivery",
+                "logs:CreateLogStream",
+                "logs:GetLogDelivery",
+                "logs:UpdateLogDelivery",
+                "logs:DeleteLogDelivery",
+                "logs:ListLogDeliveries",
+                "logs:PutLogEvents",
+                "logs:PutResourcePolicy",
+                "logs:DescribeResourcePolicies",
+                "logs:DescribeLogGroups"
+                    ],
             Resource = "*"            
         }
     ]
