@@ -103,10 +103,10 @@ def collect_table_data(
     data = db_conn.run(query)
     data = [
         [
-            value if not isinstance(timestamp) else normalise_datetime(value)
-            for value in values
+            value if not isinstance(value, datetime) else normalise_datetime(value)
+            for value in row
         ]
-        for row in rows
+        for row in data
     ]
     headings = [column["name"] for column in db_conn.columns]
     # types = [column["type_oid"] for column in db_conn.columns]

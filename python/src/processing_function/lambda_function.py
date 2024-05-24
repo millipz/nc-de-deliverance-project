@@ -73,7 +73,9 @@ def lambda_handler(event, context):
                 )
             case "staff":
                 new_table_name = "dim_staff"
-                processed_data_frames[new_table_name] = transform_staff(data_frame, department_data)
+                processed_data_frames[new_table_name] = transform_staff(
+                    data_frame, department_data
+                )
             case "address":
                 continue
             case "currency":
