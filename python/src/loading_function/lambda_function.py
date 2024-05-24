@@ -7,6 +7,8 @@ from lambda_utils import (
     retrieve_processed_data,
     write_table_data_to_warehouse,
     create_dim_date,
+    get_timestamp,
+    write_timestamp,
 )
 
 s3_client = boto3.client("s3")
@@ -50,7 +52,7 @@ def lambda_handler(event, context):
     logger.info("## EVENT")
     logger.info(event)
 
-    tomorrow = datetime.today()+timedelta(days=1)
+    tomorrow = datetime.today() + timedelta(days=1)
 
     try:
         last_date = get_timestamp(f"{ENVIRONMENT}_loaded_date", ssm_client)
@@ -62,11 +64,12 @@ def lambda_handler(event, context):
         date_dataframe = create_dim_date(last_date, tomorrow)
         write_timestamp(tomorrow, f"{ENVIRONMENT}_dim_date", ssm_client)
         try:
-            response = write_table_data_to_warehouse(date_dataframe, dim_date, db)
+            response = write_table_data_to_warehouse(date_dataframe, "dim_date", db)
         except Exception as e:
-            logger.error(f"Error loading {table_name} data to warehouse: {e}")
+            logger.error(f"Error loading dim_date data to warehouse: {e}")
             return {"statusCode": 500, "body": f"Error: {e}"}
 
+    response = ""
     response_data = {}
     total_loaded_rows = 0
 
