@@ -55,6 +55,9 @@ def lambda_handler(event, context):
     processed_data_frames = {}
 
     payload = event["data"]
+
+    processed_data_frames["dim_location"] = transform_location(payload["address"])
+
     for table_name, object_key in payload.items():
         data_frame = retrieve_data(S3_INGESTION_BUCKET, object_key, s3_client)
         match table_name:
@@ -67,8 +70,7 @@ def lambda_handler(event, context):
                 new_table_name = "dim_staff"
                 processed_data_frames[new_table_name] = transform_staff(data_frame)
             case "address":
-                new_table_name = "dim_location"
-                processed_data_frames[new_table_name] = transform_location(data_frame)
+                continue
             case "currency":
                 new_table_name = "dim_currency"
                 processed_data_frames[new_table_name] = transform_currency(data_frame)
@@ -79,7 +81,7 @@ def lambda_handler(event, context):
                 new_table_name = "dim_counterparty"
                 processed_data_frames[new_table_name] = transform_counterparty(
                     data_frame,
-                    payload["address"],
+                    processed_data_frames["address"],
                 )
             case _:
                 logger.error(f"Unknown table name: {table_name}")
