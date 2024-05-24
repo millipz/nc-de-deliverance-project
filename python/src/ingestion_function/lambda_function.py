@@ -116,4 +116,8 @@ def lambda_handler(event, context):
                     )
                     response_data[table] = key
     logger.info(f"{total_ingested_rows} rows ingested this run")
-    return {"statusCode": 200, "data": response_data}
+    return {
+        "statusCode": 200,
+        "data": response_data,
+        "newData": True if (len(response_data) > 2) else False,
+    }
