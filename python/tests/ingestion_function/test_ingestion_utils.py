@@ -285,10 +285,10 @@ class TestCollectTableData:
         assert isinstance(result, list)
         assert isinstance(result[0], dict)
 
-    # Not sure how to mock PSQL filter - testing with real test_db credentials
-    @pytest.mark.skipif(
-        (os.getenv("ENVIRONMENT") != "DEV"), reason="Skipping for CI/CD"
-    )
+    # # Not sure how to mock PSQL filter - testing with real test_db credentials
+    # @pytest.mark.skipif(
+    #     (os.getenv("ENVIRONMENT") != "DEV"), reason="Skipping for CI/CD"
+    # )
     def test_results_filtered_by_date(self):
         load_dotenv(".secrets/db_credentials.env")
         db_endpoint = os.getenv("TEST_DB_ENDPOINT")

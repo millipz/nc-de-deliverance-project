@@ -5,7 +5,13 @@ from moto import mock_aws
 from unittest.mock import patch, MagicMock
 from dotenv import load_dotenv
 
-# from python.src.ingestion_function.lambda_function import lambda_handler, tables
+from python.src.ingestion_function.lambda_function import lambda_handler, tables
+
+load_dotenv(".secrets/db_credentials.env")
+db_endpoint = os.getenv("TEST_DB_ENDPOINT")
+db_name = os.getenv("TEST_DB_NAME")
+db_username = os.getenv("TEST_DB_USERNAME")
+db_password = os.getenv("TEST_DB_PASSWORD")
 
 
 # Fixtures for AWS clients
@@ -27,9 +33,13 @@ def s3_client(aws_credentials):
 
 @pytest.fixture(scope="function")
 def secrets_manager_client(aws_credentials):
-    """Create a Secrets Manager client using moto for mocking."""
     with mock_aws():
-        yield boto3.client("secretsmanager", region_name="eu-west-2")
+        client = boto3.client("secretsmanager", region_name="eu-west-2")
+        client.create_secret(Name="totesys_dev_db_username", SecretString=db_username)
+        client.create_secret(Name="totesys_dev_db_password", SecretString=db_password)
+        client.create_secret(Name="totesys_dev_db_endpoint", SecretString=db_endpoint)
+        client.create_secret(Name="totesys_dev_db_name", SecretString=db_name)
+        yield client
 
 
 @pytest.fixture(scope="function")
@@ -108,11 +118,8 @@ def test_lambda_handler(
     """
 
     os.environ["S3_BUCKET"] = "my-bucket"
-    os.environ["ENVIRONMENT"] = "dev"
     os.environ["AWS_LAMBDA_LOG_GROUP_NAME"] = "log-group"
     os.environ["AWS_LAMBDA_LOG_STREAM_NAME"] = "log-stream"
-
-    load_dotenv(".secrets/db_credentials.env")
 
     mock_pg_connection.return_value = MagicMock()
 
@@ -124,16 +131,16 @@ def test_lambda_handler(
     mock_write_table_data_to_s3.return_value = "s3://my-bucket/path/to/data"
     mock_get_seq_id.return_value = 1
 
-    # response = lambda_handler(lambda_event, lambda_context)
+    response = lambda_handler(lambda_event, lambda_context)
 
-    # assert response["statusCode"] == 200
-    # assert "data" in response
-    # for table in tables:
-    #     assert table in response["data"]
+    assert response["statusCode"] == 200
+    assert "data" in response
+    for table in tables:
+        assert table in response["data"]
 
-    # mock_get_timestamp.assert_called()
-    # mock_collect_table_data.assert_called()
-    # mock_find_latest_timestamp.assert_called()
-    # mock_write_table_data_to_s3.assert_called()
-    # mock_write_timestamp.assert_called()
-    # mock_write_seq_id.assert_called()
+    mock_get_timestamp.assert_called()
+    mock_collect_table_data.assert_called()
+    mock_find_latest_timestamp.assert_called()
+    mock_write_table_data_to_s3.assert_called()
+    mock_write_timestamp.assert_called()
+    mock_write_seq_id.assert_called()

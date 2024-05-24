@@ -3,7 +3,7 @@ import boto3
 import logging
 from datetime import datetime
 from pg8000.native import Connection
-from python.src.ingestion_function.lambda_utils import (
+from lambda_utils import (
     get_timestamp,
     write_timestamp,
     collect_table_data,
@@ -25,23 +25,18 @@ logger.setLevel(logging.INFO)
 S3_BUCKET = os.getenv("S3_BUCKET")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
-
-def get_db_credentials():
-    """Fetch database credentials from Secrets Manager."""
-    DB_USERNAME = secrets_manager_client.get_secret_value(
-        SecretId=f"totesys_{ENVIRONMENT}_db_username"
-    )["SecretString"]
-    DB_PASSWORD = secrets_manager_client.get_secret_value(
-        SecretId=f"totesys_{ENVIRONMENT}_db_password"
-    )["SecretString"]
-    DB_HOST, DB_PORT = secrets_manager_client.get_secret_value(
-        SecretId=f"totesys_{ENVIRONMENT}_db_endpoint"
-    )["SecretString"].split(":")
-    DB_NAME = secrets_manager_client.get_secret_value(
-        SecretId=f"totesys_{ENVIRONMENT}_db_name"
-    )["SecretString"]
-    return DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME
-
+DB_USERNAME = secrets_manager_client.get_secret_value(
+    SecretId=f"totesys_{ENVIRONMENT}_db_username"
+)["SecretString"]
+DB_PASSWORD = secrets_manager_client.get_secret_value(
+    SecretId=f"totesys_{ENVIRONMENT}_db_password"
+)["SecretString"]
+DB_HOST, DB_PORT = secrets_manager_client.get_secret_value(
+    SecretId=f"totesys_{ENVIRONMENT}_db_endpoint"
+)["SecretString"].split(":")
+DB_NAME = secrets_manager_client.get_secret_value(
+    SecretId=f"totesys_{ENVIRONMENT}_db_name"
+)["SecretString"]
 
 tables = [
     "address",
@@ -57,6 +52,10 @@ tables = [
     "transaction",
 ]
 
+db = Connection(
+    user=DB_USERNAME, password=DB_PASSWORD, database=DB_NAME, port=DB_PORT, host=DB_HOST
+)
+
 
 def lambda_handler(event, context):
     logger.info("## ENVIRONMENT VARIABLES")
@@ -67,18 +66,6 @@ def lambda_handler(event, context):
 
     response_data = {}
     total_ingested_rows = 0
-
-    # Fetch database credentials
-    DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME = get_db_credentials()
-
-    # Connect to the database
-    db = Connection(
-        user=DB_USERNAME,
-        password=DB_PASSWORD,
-        database=DB_NAME,
-        port=DB_PORT,
-        host=DB_HOST,
-    )
 
     for table in tables:
         try:
