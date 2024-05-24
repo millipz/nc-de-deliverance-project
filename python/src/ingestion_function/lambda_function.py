@@ -68,39 +68,50 @@ def lambda_handler(event, context):
     total_ingested_rows = 0
 
     for table in tables:
-        try:
-            timestamp = get_timestamp(ENVIRONMENT + "_" + table, ssm_client)
-            logger.info(
-                f"On last run the latest data from {table} was dated {timestamp}"
-            )
-        except KeyError:
-            # assume first run, get all data
-            timestamp = datetime.fromisoformat("2000-01-01")
-            logger.error(f"No previous data logged from {table}")
-        data = collect_table_data(table, timestamp, db)
-        total_ingested_rows += len(data)
-        if len(data) == 0:
-            logger.info(f"No new data for {table}")
-        else:
-            logger.info(f"Data ingested for {table}")
-            latest = find_latest_timestamp(data)
+        if table == "address":
+            data = collect_table_data(table, datetime.fromisoformat("2000-01-01"), db)
             try:
-                last_id = get_seq_id(ENVIRONMENT + "_" + table, ssm_client)
-            except KeyError:
-                # assume first run
-                last_id = 0
-                logger.error("No previous runs logged for {table}")
-            id = last_id + 1
-            logger.info(f"this is run {id}")
-            try:
-                key = write_table_data_to_s3(table, data, S3_BUCKET, id, s3_client)
+                key = write_table_data_to_s3(table, data, S3_BUCKET, 0, s3_client)
             except Exception as e:
                 logger.error(f"Error writing {table} data to S3: {e}")
                 return {"statusCode": 500, "body": f"Error: {e}"}
             else:
-                write_timestamp(latest, ENVIRONMENT + "_" + table, ssm_client)
-                write_seq_id(id, ENVIRONMENT + "_" + table, ssm_client)
-                logger.info(f"{table} data written to S3, {len(data)} rows ingested")
+                logger.info(f"{table} data written to S3")
                 response_data[table] = key
+        else:
+            try:
+                timestamp = get_timestamp(ENVIRONMENT + "_" + table, ssm_client)
+                logger.info(
+                    f"On last run the latest data from {table} was dated {timestamp}"
+                )
+            except KeyError:
+                # assume first run, get all data
+                timestamp = datetime.fromisoformat("2000-01-01")
+                logger.error(f"No previous data logged from {table}")
+            data = collect_table_data(table, timestamp, db)
+            total_ingested_rows += len(data)
+            if len(data) == 0:
+                logger.info(f"No new data for {table}")
+            else:
+                logger.info(f"Data ingested for {table}")
+                latest = find_latest_timestamp(data)
+                try:
+                    last_id = get_seq_id(ENVIRONMENT + "_" + table, ssm_client)
+                except KeyError:
+                    # assume first run
+                    last_id = 0
+                    logger.error("No previous runs logged for {table}")
+                id = last_id + 1
+                logger.info(f"this is run {id}")
+                try:
+                    key = write_table_data_to_s3(table, data, S3_BUCKET, id, s3_client)
+                except Exception as e:
+                    logger.error(f"Error writing {table} data to S3: {e}")
+                    return {"statusCode": 500, "body": f"Error: {e}"}
+                else:
+                    write_timestamp(latest, ENVIRONMENT + "_" + table, ssm_client)
+                    write_seq_id(id, ENVIRONMENT + "_" + table, ssm_client)
+                    logger.info(f"{table} data written to S3, {len(data)} rows ingested")
+                    response_data[table] = key
     logger.info(f"{total_ingested_rows} rows ingested this run")
     return {"statusCode": 200, "data": response_data}
