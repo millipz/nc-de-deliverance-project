@@ -84,7 +84,11 @@ def lambda_handler(event, context):
         "dim_date",
         "dim_staff",
         "dim_counterparty",
+        "dim_payment_type",
+        "dim_transaction",
         "fact_sales_order",
+        "fact_payment",
+        "fact_purchase_order",
     ]
 
     payload = event["data"]
