@@ -12,6 +12,10 @@ from python.src.processing_function.lambda_utils import (
     transform_currency,
     transform_design,
     transform_counterparty,
+    transform_purchase_order,
+    transform_payment,
+    transform_payment_type,
+    transform_transaction,
 )
 
 
@@ -171,6 +175,70 @@ def sample_counterparty_dataframe(s3_client):
             yield dataframe
 
 
+@pytest.fixture(scope="function")
+def sample_payment_type_dataframe(s3_client):
+    with mock_aws():
+        with open(
+            "python/tests/processing_function/sample_jsonl_data/payment_type_table.jsonl",
+            "r",
+            encoding="utf-8",
+        ) as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(
+                Bucket="nc-totesys-ingest", Body=json.dumps(json_data), Key="test-data"
+            )
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
+@pytest.fixture(scope="function")
+def sample_transaction_dataframe(s3_client):
+    with mock_aws():
+        with open(
+            "python/tests/processing_function/sample_jsonl_data/transaction_table.jsonl",
+            "r",
+            encoding="utf-8",
+        ) as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(
+                Bucket="nc-totesys-ingest", Body=json.dumps(json_data), Key="test-data"
+            )
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
+@pytest.fixture(scope="function")
+def sample_purchase_order_dataframe(s3_client):
+    with mock_aws():
+        with open(
+            "python/tests/processing_function/sample_jsonl_data/purchase_order_table.jsonl",
+            "r",
+            encoding="utf-8",
+        ) as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(
+                Bucket="nc-totesys-ingest", Body=json.dumps(json_data), Key="test-data"
+            )
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
+@pytest.fixture(scope="function")
+def sample_payment_dataframe(s3_client):
+    with mock_aws():
+        with open(
+            "python/tests/processing_function/sample_jsonl_data/payment_table.jsonl",
+            "r",
+            encoding="utf-8",
+        ) as data_file:
+            json_data = json.load(data_file)
+            s3_client.put_object(
+                Bucket="nc-totesys-ingest", Body=json.dumps(json_data), Key="test-data"
+            )
+            dataframe = retrieve_data("nc-totesys-ingest", "test-data", s3_client)
+            yield dataframe
+
+
 class TestRetrieveData:
 
     def test_if_object_key_does_not_exist(self, s3_client):
@@ -253,36 +321,6 @@ class TestTransformData:
         assert result["created_time"].iloc[0] == "14:20:52.186000"
         assert result["last_updated_date"].iloc[0] == "2022-11-03"
         assert result["last_updated_time"].iloc[0] == "14:20:52.186000"
-
-    # def test_create_dim_date(self):
-    #     start_date = "2023-01-01"
-    #     end_date = "2023-01-10"
-    #     result = create_dim_date(start_date, end_date)
-
-    #     expected_num_rows = 10
-    #     assert len(result) == expected_num_rows
-
-    #     expected_columns = [
-    #         "date_id",
-    #         "year",
-    #         "month",
-    #         "day",
-    #         "day_of_week",
-    #         "day_name",
-    #         "month_name",
-    #         "quarter",
-    #     ]
-    #     assert (list(result.columns)) == expected_columns
-
-    #     first_date = result.iloc[0]
-    #     assert first_date["date_id"] == pd.Timestamp("2023-01-01")
-    #     assert first_date["year"] == 2023
-    #     assert first_date["month"] == 1
-    #     assert first_date["day"] == 1
-    #     assert first_date["day_of_week"] == 6
-    #     assert first_date["day_name"] == "Sunday"
-    #     assert first_date["month_name"] == "January"
-    #     assert first_date["quarter"] == 1
 
     def test_transform_staff(self, sample_staff_dataframe, sample_department_dataframe):
         result = transform_staff(sample_staff_dataframe, sample_department_dataframe)
@@ -379,3 +417,96 @@ class TestTransformData:
             == "Heard Island and McDonald Islands"
         )
         assert result["counterparty_legal_phone_number"].iloc[0] == "9687 937447"
+
+    def test_transform_payment_type(self, sample_payment_type_dataframe):
+        result = transform_payment_type(sample_payment_type_dataframe)
+        expected_columns = ["payment_type_id", "payment_type_name"]
+        assert list(result.columns) == expected_columns
+
+        assert result["payment_type_id"].iloc[0] == 1
+        assert result["payment_type_name"].iloc[0] == "SALES_RECEIPT"
+
+    def test_transform_transaction(self, sample_transaction_dataframe):
+        result = transform_transaction(sample_transaction_dataframe)
+        expected_columns = [
+            "transaction_id",
+            "transaction_type",
+            "sales_order_id",
+            "purchase_order_id",
+        ]
+        assert list(result.columns) == expected_columns
+
+        assert result["transaction_id"].iloc[0] == 1
+        assert result["transaction_type"].iloc[0] == "PURCHASE"
+        assert pd.isna(
+            result["sales_order_id"].iloc[0]
+        )  # "assert is none" does not work as `nan` is not `None``
+        assert result["purchase_order_id"].iloc[0] == 2
+
+    def test_transform_payment(self, sample_payment_dataframe):
+        result = transform_payment(sample_payment_dataframe)
+        expected_columns = [
+            "payment_id",
+            "created_date",
+            "created_time",
+            "last_updated_date",
+            "last_updated_time",
+            "transaction_id",
+            "counterparty_id",
+            "payment_amount",
+            "currency_id",
+            "payment_type_id",
+            "paid",
+            "payment_date",
+        ]
+
+        assert list(result.columns) == expected_columns
+
+        assert result["payment_id"].iloc[0] == 2
+        assert result["created_date"].iloc[0] == "2022-11-03"
+        assert result["created_time"].iloc[0] == "14:20:52.187000"
+        assert result["last_updated_date"].iloc[0] == "2022-11-03"
+        assert result["last_updated_time"].iloc[0] == "14:20:52.187000"
+        assert result["transaction_id"].iloc[0] == 2
+        assert result["counterparty_id"].iloc[0] == 15
+        assert result["payment_amount"].iloc[0] == "552548.62"
+        assert result["currency_id"].iloc[0] == 2
+        assert result["payment_type_id"].iloc[0] == 3
+        assert not result["paid"].iloc[0]
+        assert result["payment_date"].iloc[0] == "2022-11-04"
+
+    def test_transform_purchase_order(self, sample_purchase_order_dataframe):
+        result = transform_purchase_order(sample_purchase_order_dataframe)
+        expected_columns = [
+            "purchase_order_id",
+            "created_date",
+            "created_time",
+            "last_updated_date",
+            "last_updated_time",
+            "staff_id",
+            "counterparty_id",
+            "item_code",
+            "item_quantity",
+            "item_unit_price",
+            "currency_id",
+            "agreed_delivery_date",
+            "agreed_payment_date",
+            "agreed_delivery_location_id",
+        ]
+
+        assert list(result.columns) == expected_columns
+
+        assert result["purchase_order_id"].iloc[0] == 1
+        assert result["staff_id"].iloc[0] == 12
+        assert result["counterparty_id"].iloc[0] == 11
+        assert result["item_code"].iloc[0] == "ZDOI5EA"
+        assert result["item_quantity"].iloc[0] == 371
+        assert result["item_unit_price"].iloc[0] == "361.39"
+        assert result["currency_id"].iloc[0] == 2
+        assert result["agreed_delivery_date"].iloc[0] == "2022-11-09"
+        assert result["agreed_payment_date"].iloc[0] == "2022-11-07"
+        assert result["agreed_delivery_location_id"].iloc[0] == 6
+        assert result["created_date"].iloc[0] == "2022-11-03"
+        assert result["created_time"].iloc[0] == "14:20:52.187000"
+        assert result["last_updated_date"].iloc[0] == "2022-11-03"
+        assert result["last_updated_time"].iloc[0] == "14:20:52.187000"

@@ -10,6 +10,10 @@ from lambda_utils import (
     transform_currency,
     transform_design,
     transform_counterparty,
+    transform_payment,
+    transform_payment_type,
+    transform_purchase_order,
+    transform_transaction,
     write_data_to_s3,
 )
 
@@ -59,6 +63,9 @@ def lambda_handler(event, context):
     address_key = payload["address"]
     address_data = retrieve_data(S3_INGESTION_BUCKET, address_key, s3_client)
     processed_data_frames["dim_location"] = transform_location(address_data)
+    logger.info(
+        f"{len(processed_data_frames['dim_location'].index)} rows processed into dim_location."
+    )
 
     department_key = payload["department"]
     department_data = retrieve_data(S3_INGESTION_BUCKET, department_key, s3_client)
@@ -66,29 +73,79 @@ def lambda_handler(event, context):
     for table_name, object_key in payload.items():
         data_frame = retrieve_data(S3_INGESTION_BUCKET, object_key, s3_client)
         match table_name:
+            case "address":
+                continue
+            case "counterparty":
+                new_table_name = "dim_counterparty"
+                processed_data_frames[new_table_name] = transform_counterparty(
+                    data_frame,
+                    processed_data_frames["dim_location"],
+                )
+                logger.info(
+                    f"{len(processed_data_frames[new_table_name].index)} \
+                    rows processed into {new_table_name}"
+                )
+            case "currency":
+                new_table_name = "dim_currency"
+                processed_data_frames[new_table_name] = transform_currency(data_frame)
+                logger.info(
+                    f"{len(processed_data_frames[new_table_name].index)} \
+                    rows processed into {new_table_name}"
+                )
+            case "design":
+                new_table_name = "dim_design"
+                processed_data_frames[new_table_name] = transform_design(data_frame)
+                logger.info(
+                    f"{len(processed_data_frames[new_table_name].index)} \
+                    rows processed into {new_table_name}"
+                )
+            case "payment":
+                new_table_name = "fact_payment"
+                processed_data_frames[new_table_name] = transform_payment(data_frame)
+                logger.info(
+                    f"{len(processed_data_frames[new_table_name].index)} \
+                    rows processed into {new_table_name}"
+                )
+            case "payment_type":
+                new_table_name = "dim_payment_type"
+                processed_data_frames[new_table_name] = transform_payment_type(
+                    data_frame
+                )
+                logger.info(
+                    f"{len(processed_data_frames[new_table_name].index)} \
+                    rows processed into {new_table_name}"
+                )
+            case "purchase_order":
+                new_table_name = "fact_purchase_order"
+                processed_data_frames[new_table_name] = transform_purchase_order(
+                    data_frame
+                )
             case "sales_order":
                 new_table_name = "fact_sales_order"
                 processed_data_frames[new_table_name] = transform_sales_order(
                     data_frame
+                )
+                logger.info(
+                    f"{len(processed_data_frames[new_table_name].index)} \
+                      rows processed into {new_table_name}"
                 )
             case "staff":
                 new_table_name = "dim_staff"
                 processed_data_frames[new_table_name] = transform_staff(
                     data_frame, department_data
                 )
-            case "address":
-                continue
-            case "currency":
-                new_table_name = "dim_currency"
-                processed_data_frames[new_table_name] = transform_currency(data_frame)
-            case "design":
-                new_table_name = "dim_design"
-                processed_data_frames[new_table_name] = transform_design(data_frame)
-            case "counterparty":
-                new_table_name = "dim_counterparty"
-                processed_data_frames[new_table_name] = transform_counterparty(
-                    data_frame,
-                    processed_data_frames["dim_location"],
+                logger.info(
+                    f"{len(processed_data_frames[new_table_name].index)} \
+                    rows processed into {new_table_name}"
+                )
+            case "transaction":
+                new_table_name = "dim_transaction"
+                processed_data_frames[new_table_name] = transform_transaction(
+                    data_frame
+                )
+                logger.info(
+                    f"{len(processed_data_frames[new_table_name].index)} \
+                    rows processed into {new_table_name}"
                 )
             case _:
                 logger.error(f"Unknown table name: {table_name}")
