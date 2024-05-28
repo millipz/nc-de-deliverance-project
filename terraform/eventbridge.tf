@@ -76,14 +76,15 @@ resource "aws_cloudwatch_metric_alarm" "ingestion_lambda_error_alarm" {
   alarm_name          = "${var.env_name}-ingestion-lambda_error_alarm"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
-  metric_name         = "Errors"
+  metric_name         = "${var.env_name}-ingestion_lambda_warning"
   namespace           = "ingestion_warnings"
   period              = 900
   statistic           = "Sum"
-  threshold           = 2
-  alarm_description   = "Alarm when the Lambda function errors more than 2 times in a minute"
+  threshold           = 1
+  alarm_description   = "Alarm when the Lambda function errors"
   alarm_actions       = [aws_sns_topic.lambda_failure_topic.arn]
 }
+
 
 # Processing
 
@@ -107,12 +108,12 @@ resource "aws_cloudwatch_metric_alarm" "processing_lambda_error_alarm" {
   alarm_name          = "${var.env_name}-processing-lambda_error_alarm"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
-  metric_name         = "Errors"
+  metric_name         = "${var.env_name}-processing_lambda_warning"
   namespace           = "processing_warnings"
   period              = 900
   statistic           = "Sum"
-  threshold           = 2
-  alarm_description   = "Alarm when the Lambda function errors more than 2 times in a minute"
+  threshold           = 1
+  alarm_description   = "Alarm when the Lambda function errors"
   alarm_actions       = [aws_sns_topic.lambda_failure_topic.arn]
 }
 
@@ -138,12 +139,12 @@ resource "aws_cloudwatch_metric_alarm" "loading_lambda_error_alarm" {
   alarm_name          = "${var.env_name}-loading-lambda_error_alarm"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
-  metric_name         = "Errors"
+  metric_name         = "${var.env_name}-loading_lambda_warning"
   namespace           = "loading_warnings"
   period              = 900
   statistic           = "Sum"
-  threshold           = 2
-  alarm_description   = "Alarm when the Lambda function errors more than 2 times in a minute"
+  threshold           = 1
+  alarm_description   = "Alarm when the Lambda function errors"
   alarm_actions       = [aws_sns_topic.lambda_failure_topic.arn]
 }
 

@@ -1,6 +1,7 @@
 import boto3
 import os
 import logging
+import numpy as np
 from pg8000.native import Connection
 from datetime import datetime, timedelta
 from lambda_utils import (
@@ -98,6 +99,7 @@ def lambda_handler(event, context):
             data_frame = retrieve_processed_data(
                 S3_PROCESSED_BUCKET, payload[table_name], s3_client
             )
+            data_frame = data_frame.replace(np.nan, None)
             loaded_rows = len(data_frame.index)
             total_loaded_rows += loaded_rows
             if ENVIRONMENT == "prod":
