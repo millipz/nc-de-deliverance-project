@@ -40,7 +40,7 @@ resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_errors_metric_filt
 resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_rows_ingested_metric_filter" {
   depends_on     = [aws_lambda_function.ingestion_function]
   name           = "${var.env_name}-ingestion_lambda_rows_ingested"
-  pattern        = "[..., num, rows = 'rows', ingested = 'ingested', this = 'this', run = 'run']"
+  pattern        = "[..., num, rows = \"rows\", ingested = \"ingested\", this = \"this\", run = \"run\"]"
   log_group_name = "/aws/lambda/${var.env_name}-ingestion-function"
   metric_transformation {
     name          = "${var.env_name}-ingestion_lambda_rows_ingested"
@@ -53,7 +53,7 @@ resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_rows_ingested_metr
 resource "aws_cloudwatch_log_metric_filter" "processing_lambda_rows_processed_metric_filter" {
   depends_on     = [aws_lambda_function.processing_function]
   name           = "${var.env_name}-processing_lambda_rows_processed"
-  pattern        = "[..., num, total = 'total', rows, processed]"
+  pattern        = "[..., num, total = \"total\", rows, processed]"
   log_group_name = "/aws/lambda/${var.env_name}-processing-function"
   metric_transformation {
     name          = "${var.env_name}-processing_lambda_rows_processed"
@@ -66,7 +66,7 @@ resource "aws_cloudwatch_log_metric_filter" "processing_lambda_rows_processed_me
 resource "aws_cloudwatch_log_metric_filter" "loading_lambda_rows_loaded_metric_filter" {
   depends_on     = [aws_lambda_function.loading_function]
   name           = "${var.env_name}-loading_lambda_rows_loaded"
-  pattern        = "[..., num, rows = 'rows', ingested, this, run]"
+  pattern        = "[..., num, rows = \"rows\", ingested, this, run]"
   log_group_name = "/aws/lambda/${var.env_name}-loading-function"
   metric_transformation {
     name          = "${var.env_name}-loading_lambda_rows_loaded"
