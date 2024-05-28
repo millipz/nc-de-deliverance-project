@@ -1,13 +1,9 @@
 resource "aws_scheduler_schedule" "etl_schedule" {
-  name       = "${var.env_name}-ETL-Schedule"
-  
-
+  name = "${var.env_name}-ETL-Schedule"
   flexible_time_window {
     mode = "OFF"
   }
-
   schedule_expression = "rate(10 minutes)"
-
   target {
     arn      = aws_sfn_state_machine.nc-totesys-deliverance.arn
     role_arn = aws_iam_role.eventbridge_schedule_policy_exec_role.arn
@@ -15,25 +11,64 @@ resource "aws_scheduler_schedule" "etl_schedule" {
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
-    statement_id = "AllowExecutionFromEventBridge"
-    action = "lambda:InvokeFunction"
-    principal = "events.amazonaws.com"
-    function_name = aws_lambda_function.ingestion_function.function_name
+  statement_id  = "AllowExecutionFromEventBridge"
+  action        = "lambda:InvokeFunction"
+  principal     = "events.amazonaws.com"
+  function_name = aws_lambda_function.ingestion_function.function_name
 }
 
 resource "aws_cloudwatch_log_group" "ingestion_lambda_log_group" {
-   name = "/aws/lambda/${var.env_name}-ingestion-function"
+  name = "/aws/lambda/${var.env_name}-ingestion-function"
 }
 
-resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_log_metric_filter" {
-  depends_on = [ aws_lambda_function.ingestion_function ]
-  name = "${var.env_name}-ingestion_lambda_log_metric_filter"
-  pattern = "Error"
+resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_errors_metric_filter" {
+  depends_on     = [aws_lambda_function.ingestion_function]
+  name           = "${var.env_name}-ingestion_lambda_errors_metric_filter"
+  pattern        = "Error"
   log_group_name = "/aws/lambda/${var.env_name}-ingestion-function"
   metric_transformation {
-    name = "${var.env_name}-ingestion_lambda_warning"
+    name      = "${var.env_name}-ingestion_lambda_warning"
     namespace = "ingestion_warnings"
-    value = 1
+    value     = 1
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_rows_ingested_metric_filter" {
+  depends_on     = [aws_lambda_function.ingestion_function]
+  name           = "${var.env_name}-ingestion_lambda_rows_ingested"
+  pattern        = "[..., num, rows = \"rows\", ingested = \"ingested\", this = \"this\", run = \"run\"]"
+  log_group_name = "/aws/lambda/${var.env_name}-ingestion-function"
+  metric_transformation {
+    name          = "${var.env_name}-ingestion_lambda_rows_ingested"
+    namespace     = "ingestion_metrics"
+    value         = "$num"
+    default_value = 0
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "processing_lambda_rows_processed_metric_filter" {
+  depends_on     = [aws_lambda_function.processing_function]
+  name           = "${var.env_name}-processing_lambda_rows_processed"
+  pattern        = "[..., num, total = \"total\", rows, processed]"
+  log_group_name = "/aws/lambda/${var.env_name}-processing-function"
+  metric_transformation {
+    name          = "${var.env_name}-processing_lambda_rows_processed"
+    namespace     = "ingestion_metrics"
+    value         = "$num"
+    default_value = 0
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "loading_lambda_rows_loaded_metric_filter" {
+  depends_on     = [aws_lambda_function.loading_function]
+  name           = "${var.env_name}-loading_lambda_rows_loaded"
+  pattern        = "[..., num, rows = \"rows\", ingested, this, run]"
+  log_group_name = "/aws/lambda/${var.env_name}-loading-function"
+  metric_transformation {
+    name          = "${var.env_name}-loading_lambda_rows_loaded"
+    namespace     = "ingestion_metrics"
+    value         = "$num"
+    default_value = 0
   }
 }
 

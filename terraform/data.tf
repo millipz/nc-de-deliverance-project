@@ -56,3 +56,10 @@ data "template_file" "step-function-template" {
         env = var.env_name
     }
 }
+
+data "template_file" "dashboard-template" {
+    template = file("dashboard.tpl")
+    vars = {
+        env = var.env_name
+    }
+}
