@@ -1,21 +1,30 @@
-resource "aws_cloudwatch_event_rule" "etl_schedule" {
-    name = "${var.env_name}-ETL-Schedule"
-    description = "Eventbridge rule to trigger step function every 10 minutes"
-    schedule_expression = "rate(10 minutes)"
+resource "aws_scheduler_schedule" "etl_schedule" {
+  name       = "${var.env_name}-ETL-Schedule"
+  
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  schedule_expression = "rate(10 minutes)"
+
+  target {
+    arn      = aws_sfn_state_machine.nc-totesys-deliverance.arn
+    role_arn = aws_iam_role.eventbridge_schedule_policy_exec_role.arn
+  }
 }
 
-resource "aws_cloudwatch_event_target" "totesys_step_function_target" {
-    rule = aws_cloudwatch_event_rule.etl_schedule.name
-    target_id = "${var.env_name}-totesys_step_function_target"
-    arn = aws_sfn_state_machine.nc-totesys-deliverance.arn
-    role_arn = aws_iam_role.eventbridge_schedule_policy_exec_role.arn
-}
+
 
 resource "aws_lambda_permission" "allow_eventbridge" {
     statement_id = "AllowExecutionFromEventBridge"
     action = "lambda:InvokeFunction"
     principal = "events.amazonaws.com"
     function_name = aws_lambda_function.ingestion_function.function_name
+}
+
+resource "aws_cloudwatch_log_group" "ingestion_lambda_log_group" {
+   name = "/aws/lambda/${var.env_name}-ingestion-function"
 }
 
 resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_log_metric_filter" {
@@ -30,9 +39,7 @@ resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_log_metric_filter"
   }
 }
 
-# resource "aws_cloudwatch_log_group" "ingestion_lambda_log_group" {
-#   name = "/aws/lambda/${var.env_name}-ingestion-function"
-# }
+
 
 resource "aws_cloudwatch_metric_alarm" "ingestion_lambda_error_alarm" {
   alarm_name          = "${var.env_name}-lambda_error_alarm"

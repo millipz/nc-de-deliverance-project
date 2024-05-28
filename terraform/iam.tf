@@ -87,7 +87,7 @@ resource "aws_iam_role" "eventbridge_schedule_policy_exec_role" {
         Effect = "Allow",
         Sid    = "",
         Principal = {
-          Service = "lambda.amazonaws.com",
+          Service = "scheduler.amazonaws.com",
         },
       },
     ],
