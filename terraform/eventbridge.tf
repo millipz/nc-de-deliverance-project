@@ -38,7 +38,7 @@ resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_log_metric_filter"
 }
 
 resource "aws_cloudwatch_metric_alarm" "ingestion_lambda_error_alarm" {
-  alarm_name          = "${var.env_name}-lambda_error_alarm"
+  alarm_name          = "${var.env_name}-ingestion-lambda_error_alarm"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "Errors"
@@ -69,7 +69,7 @@ resource "aws_cloudwatch_log_metric_filter" "processing_lambda_log_metric_filter
 }
 
 resource "aws_cloudwatch_metric_alarm" "processing_lambda_error_alarm" {
-  alarm_name          = "${var.env_name}-lambda_error_alarm"
+  alarm_name          = "${var.env_name}-processing-lambda_error_alarm"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "Errors"
@@ -100,7 +100,7 @@ resource "aws_cloudwatch_log_metric_filter" "loading_lambda_log_metric_filter" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "loading_lambda_error_alarm" {
-  alarm_name          = "${var.env_name}-lambda_error_alarm"
+  alarm_name          = "${var.env_name}-loading-lambda_error_alarm"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "Errors"
