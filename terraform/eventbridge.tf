@@ -1,13 +1,9 @@
 resource "aws_scheduler_schedule" "etl_schedule" {
   name = "${var.env_name}-ETL-Schedule"
-
-
   flexible_time_window {
     mode = "OFF"
   }
-
   schedule_expression = "rate(10 minutes)"
-
   target {
     arn      = aws_sfn_state_machine.nc-totesys-deliverance.arn
     role_arn = aws_iam_role.eventbridge_schedule_policy_exec_role.arn
