@@ -14,8 +14,6 @@ resource "aws_scheduler_schedule" "etl_schedule" {
   }
 }
 
-
-
 resource "aws_lambda_permission" "allow_eventbridge" {
     statement_id = "AllowExecutionFromEventBridge"
     action = "lambda:InvokeFunction"
@@ -39,14 +37,74 @@ resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_log_metric_filter"
   }
 }
 
-
-
 resource "aws_cloudwatch_metric_alarm" "ingestion_lambda_error_alarm" {
-  alarm_name          = "${var.env_name}-lambda_error_alarm"
+  alarm_name          = "${var.env_name}-ingestion-lambda_error_alarm"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "Errors"
   namespace           = "ingestion_warnings"
+  period              = 900
+  statistic           = "Sum"
+  threshold           = 2
+  alarm_description   = "Alarm when the Lambda function errors more than 2 times in a minute"
+  alarm_actions       = [aws_sns_topic.lambda_failure_topic.arn]
+}
+
+# Processing
+
+resource "aws_cloudwatch_log_group" "processing_lambda_log_group" {
+   name = "/aws/lambda/${var.env_name}-processing-function"
+}
+
+resource "aws_cloudwatch_log_metric_filter" "processing_lambda_log_metric_filter" {
+  depends_on = [ aws_lambda_function.processing_function ]
+  name = "${var.env_name}-processing_lambda_log_metric_filter"
+  pattern = "Error"
+  log_group_name = "/aws/lambda/${var.env_name}-processing-function"
+  metric_transformation {
+    name = "${var.env_name}-processing_lambda_warning"
+    namespace = "processing_warnings"
+    value = 1
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "processing_lambda_error_alarm" {
+  alarm_name          = "${var.env_name}-processing-lambda_error_alarm"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "Errors"
+  namespace           = "processing_warnings"
+  period              = 900
+  statistic           = "Sum"
+  threshold           = 2
+  alarm_description   = "Alarm when the Lambda function errors more than 2 times in a minute"
+  alarm_actions       = [aws_sns_topic.lambda_failure_topic.arn]
+}
+
+# Loading
+
+resource "aws_cloudwatch_log_group" "loading_lambda_log_group" {
+   name = "/aws/lambda/${var.env_name}-loading-function"
+}
+
+resource "aws_cloudwatch_log_metric_filter" "loading_lambda_log_metric_filter" {
+  depends_on = [ aws_lambda_function.loading_function ]
+  name = "${var.env_name}-loading_lambda_log_metric_filter"
+  pattern = "Error"
+  log_group_name = "/aws/lambda/${var.env_name}-loading-function"
+  metric_transformation {
+    name = "${var.env_name}-loading_lambda_warning"
+    namespace = "loading_warnings"
+    value = 1
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "loading_lambda_error_alarm" {
+  alarm_name          = "${var.env_name}-loading-lambda_error_alarm"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "Errors"
+  namespace           = "loading_warnings"
   period              = 900
   statistic           = "Sum"
   threshold           = 2

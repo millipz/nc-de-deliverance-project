@@ -104,6 +104,121 @@ def transform_sales_order(sales_order_df):
     ]
 
 
+def transform_purchase_order(purchase_order_df):
+    """
+    Transform loaded purchase order data into star schema
+        - splits out time and date data into separate columns
+        - removes unwanted columns
+
+    Args:
+        purchase_order_df (pandas dataframe): original data
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
+    fact_purchase_order = purchase_order_df.copy()
+
+    fact_purchase_order["created_at"] = pd.to_datetime(
+        fact_purchase_order["created_at"], errors="coerce"
+    )
+    fact_purchase_order["last_updated"] = pd.to_datetime(
+        fact_purchase_order["last_updated"], errors="coerce"
+    )
+    fact_purchase_order["agreed_delivery_date"] = pd.to_datetime(
+        fact_purchase_order["agreed_delivery_date"], errors="coerce"
+    )
+    fact_purchase_order["agreed_payment_date"] = pd.to_datetime(
+        fact_purchase_order["agreed_payment_date"], errors="coerce"
+    )
+
+    fact_purchase_order["created_date"] = fact_purchase_order[
+        "created_at"
+    ].dt.date.astype(str)
+    fact_purchase_order["created_time"] = fact_purchase_order[
+        "created_at"
+    ].dt.time.astype(str)
+    fact_purchase_order["last_updated_date"] = fact_purchase_order[
+        "last_updated"
+    ].dt.date.astype(str)
+    fact_purchase_order["last_updated_time"] = fact_purchase_order[
+        "last_updated"
+    ].dt.time.astype(str)
+
+    fact_purchase_order["agreed_delivery_date"] = fact_purchase_order[
+        "agreed_delivery_date"
+    ].astype(str)
+    fact_purchase_order["agreed_payment_date"] = fact_purchase_order[
+        "agreed_payment_date"
+    ].astype(str)
+
+    return fact_purchase_order[
+        [
+            "purchase_order_id",
+            "created_date",
+            "created_time",
+            "last_updated_date",
+            "last_updated_time",
+            "staff_id",
+            "counterparty_id",
+            "item_code",
+            "item_quantity",
+            "item_unit_price",
+            "currency_id",
+            "agreed_delivery_date",
+            "agreed_payment_date",
+            "agreed_delivery_location_id",
+        ]
+    ]
+
+
+def transform_payment(payment_df):
+    """
+    Transform loaded payment data into star schema
+        - splits out time and date data into separate columns
+        - renames columns to suit star schema
+
+    Args:
+        payment_df (pandas dataframe): original data
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
+    fact_payment = payment_df.copy()
+
+    fact_payment["created_at"] = pd.to_datetime(
+        fact_payment["created_at"], errors="coerce"
+    )
+    fact_payment["last_updated"] = pd.to_datetime(
+        fact_payment["last_updated"], errors="coerce"
+    )
+    fact_payment["payment_date"] = pd.to_datetime(
+        fact_payment["payment_date"], errors="coerce"
+    )
+
+    fact_payment["created_date"] = fact_payment["created_at"].dt.date.astype(str)
+    fact_payment["created_time"] = fact_payment["created_at"].dt.time.astype(str)
+    fact_payment["last_updated_date"] = fact_payment["last_updated"].dt.date.astype(str)
+    fact_payment["last_updated_time"] = fact_payment["last_updated"].dt.time.astype(str)
+    fact_payment["payment_date"] = fact_payment["payment_date"].astype(str)
+
+    return fact_payment[
+        [
+            "payment_id",
+            "created_date",
+            "created_time",
+            "last_updated_date",
+            "last_updated_time",
+            "transaction_id",
+            "counterparty_id",
+            "payment_amount",
+            "currency_id",
+            "payment_type_id",
+            "paid",
+            "payment_date",
+        ]
+    ]
+
+
 def transform_staff(staff_df, department_df):
     """
     Transform loaded staff order data into star schema
@@ -158,6 +273,34 @@ def transform_location(address_df):
             "country",
             "phone",
         ]
+    ]
+
+
+def transform_payment_type(payment_type_df):
+    """
+    Transform loaded payment type data into star schema
+
+    Args:
+        payment_type_df (pandas dataframe)
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
+    return payment_type_df[["payment_type_id", "payment_type_name"]]
+
+
+def transform_transaction(transaction_df):
+    """
+    Transform loaded transaction data into star schema
+
+    Args:
+        transaction_df (pandas dataframe): original write_data_to_s3
+
+    Returns:
+        data (pandas dataframe): transformed data
+    """
+    return transaction_df[
+        ["transaction_id", "transaction_type", "sales_order_id", "purchase_order_id"]
     ]
 
 

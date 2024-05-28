@@ -1,0 +1,306 @@
+[
+    {
+        "created_at": "2022-11-03 14:20:52.186000",
+        "last_updated": "2022-11-03 14:20:52.186000",
+        "purchase_order_id": 2,
+        "sales_order_id": null,
+        "transaction_id": 1,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-03 14:20:52.187000",
+        "last_updated": "2022-11-03 14:20:52.187000",
+        "purchase_order_id": 3,
+        "sales_order_id": null,
+        "transaction_id": 2,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-03 14:20:52.186000",
+        "last_updated": "2022-11-03 14:20:52.186000",
+        "purchase_order_id": null,
+        "sales_order_id": null,
+        "transaction_id": 3,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-03 14:20:52.187000",
+        "last_updated": "2022-11-03 14:20:52.187000",
+        "purchase_order_id": 1,
+        "sales_order_id": null,
+        "transaction_id": 4,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-03 14:20:52.187000",
+        "last_updated": "2022-11-03 14:20:52.187000",
+        "purchase_order_id": 4,
+        "sales_order_id": null,
+        "transaction_id": 5,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-03 14:20:52.186000",
+        "last_updated": "2022-11-03 14:20:52.186000",
+        "purchase_order_id": null,
+        "sales_order_id": 2,
+        "transaction_id": 6,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-03 14:20:52.188000",
+        "last_updated": "2022-11-03 14:20:52.188000",
+        "purchase_order_id": null,
+        "sales_order_id": 3,
+        "transaction_id": 7,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-03 14:20:52.186000",
+        "last_updated": "2022-11-03 14:20:52.186000",
+        "purchase_order_id": 5,
+        "sales_order_id": null,
+        "transaction_id": 8,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-03 14:20:52.186000",
+        "last_updated": "2022-11-03 14:20:52.186000",
+        "purchase_order_id": null,
+        "sales_order_id": 5,
+        "transaction_id": 9,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-03 14:20:52.188000",
+        "last_updated": "2022-11-03 14:20:52.188000",
+        "purchase_order_id": null,
+        "sales_order_id": 4,
+        "transaction_id": 10,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-04 11:37:10.341000",
+        "last_updated": "2022-11-04 11:37:10.341000",
+        "purchase_order_id": null,
+        "sales_order_id": 6,
+        "transaction_id": 11,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-04 11:59:09.990000",
+        "last_updated": "2022-11-04 11:59:09.990000",
+        "purchase_order_id": 6,
+        "sales_order_id": null,
+        "transaction_id": 12,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-04 12:18:09.885000",
+        "last_updated": "2022-11-04 12:18:09.885000",
+        "purchase_order_id": 7,
+        "sales_order_id": null,
+        "transaction_id": 13,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-04 12:57:09.926000",
+        "last_updated": "2022-11-04 12:57:09.926000",
+        "purchase_order_id": null,
+        "sales_order_id": 7,
+        "transaction_id": 14,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-04 13:45:10.306000",
+        "last_updated": "2022-11-04 13:45:10.306000",
+        "purchase_order_id": null,
+        "sales_order_id": 8,
+        "transaction_id": 15,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-04 18:03:10.233000",
+        "last_updated": "2022-11-04 18:03:10.233000",
+        "purchase_order_id": 8,
+        "sales_order_id": null,
+        "transaction_id": 17,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-07 09:07:10.485000",
+        "last_updated": "2022-11-07 09:07:10.485000",
+        "purchase_order_id": null,
+        "sales_order_id": 10,
+        "transaction_id": 18,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-07 17:06:10.294000",
+        "last_updated": "2022-11-07 17:06:10.294000",
+        "purchase_order_id": 10,
+        "sales_order_id": null,
+        "transaction_id": 21,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-07 17:36:09.898000",
+        "last_updated": "2022-11-07 17:36:09.898000",
+        "purchase_order_id": 11,
+        "sales_order_id": null,
+        "transaction_id": 22,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-08 15:30:10.600000",
+        "last_updated": "2022-11-08 15:30:10.600000",
+        "purchase_order_id": 13,
+        "sales_order_id": null,
+        "transaction_id": 24,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-08 17:34:09.912000",
+        "last_updated": "2022-11-08 17:34:09.912000",
+        "purchase_order_id": 14,
+        "sales_order_id": null,
+        "transaction_id": 25,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-08 18:50:10.306000",
+        "last_updated": "2022-11-08 18:50:10.306000",
+        "purchase_order_id": 15,
+        "sales_order_id": null,
+        "transaction_id": 26,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-09 08:41:10.654000",
+        "last_updated": "2022-11-09 08:41:10.654000",
+        "purchase_order_id": 16,
+        "sales_order_id": null,
+        "transaction_id": 27,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-09 15:16:10.492000",
+        "last_updated": "2022-11-09 15:16:10.492000",
+        "purchase_order_id": null,
+        "sales_order_id": 13,
+        "transaction_id": 29,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-10 13:10:10.329000",
+        "last_updated": "2022-11-10 13:10:10.329000",
+        "purchase_order_id": 17,
+        "sales_order_id": null,
+        "transaction_id": 30,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-10 13:16:09.911000",
+        "last_updated": "2022-11-10 13:16:09.911000",
+        "purchase_order_id": 18,
+        "sales_order_id": null,
+        "transaction_id": 31,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-10 15:49:10.108000",
+        "last_updated": "2022-11-10 15:49:10.108000",
+        "purchase_order_id": 19,
+        "sales_order_id": null,
+        "transaction_id": 33,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-11 11:18:10.421000",
+        "last_updated": "2022-11-11 11:18:10.421000",
+        "purchase_order_id": 20,
+        "sales_order_id": null,
+        "transaction_id": 35,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-11 14:25:10.197000",
+        "last_updated": "2022-11-11 14:25:10.197000",
+        "purchase_order_id": 21,
+        "sales_order_id": null,
+        "transaction_id": 36,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-11 17:40:10.497000",
+        "last_updated": "2022-11-11 17:40:10.497000",
+        "purchase_order_id": 22,
+        "sales_order_id": null,
+        "transaction_id": 37,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-14 08:12:10.313000",
+        "last_updated": "2022-11-14 08:12:10.313000",
+        "purchase_order_id": 23,
+        "sales_order_id": null,
+        "transaction_id": 38,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-14 15:32:10.333000",
+        "last_updated": "2022-11-14 15:32:10.333000",
+        "purchase_order_id": null,
+        "sales_order_id": 16,
+        "transaction_id": 39,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-14 18:25:10.356000",
+        "last_updated": "2022-11-14 18:25:10.356000",
+        "purchase_order_id": 24,
+        "sales_order_id": null,
+        "transaction_id": 40,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-15 08:46:09.873000",
+        "last_updated": "2022-11-15 08:46:09.873000",
+        "purchase_order_id": null,
+        "sales_order_id": 17,
+        "transaction_id": 42,
+        "transaction_type": "SALE"
+    },
+    {
+        "created_at": "2022-11-15 08:46:09.877000",
+        "last_updated": "2022-11-15 08:46:09.877000",
+        "purchase_order_id": 26,
+        "sales_order_id": null,
+        "transaction_id": 43,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-15 15:39:10.617000",
+        "last_updated": "2022-11-15 15:39:10.617000",
+        "purchase_order_id": 27,
+        "sales_order_id": null,
+        "transaction_id": 44,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-15 17:12:10.531000",
+        "last_updated": "2022-11-15 17:12:10.531000",
+        "purchase_order_id": 28,
+        "sales_order_id": null,
+        "transaction_id": 45,
+        "transaction_type": "PURCHASE"
+    },
+    {
+        "created_at": "2022-11-16 08:17:10.016000",
+        "last_updated": "2022-11-16 08:17:10.016000",
+        "purchase_order_id": null,
+        "sales_order_id": 18,
+        "transaction_id": 46,
+        "transaction_type": "SALE"
+    }
+]
