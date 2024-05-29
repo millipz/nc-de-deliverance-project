@@ -159,10 +159,9 @@ def lambda_handler(event, context):
             s3_client,
         )
         response_data[new_table_name] = processed_key
-        logger.info(
-            f"{sum(
-                [len(df.index) for _, df in processed_data_frames.items()]
-            )} total rows processed"
+        processed_row_count = sum(
+            [len(df.index) for _, df in processed_data_frames.items()]
         )
+        logger.info(f"{processed_row_count} total rows processed")
 
     return {"statusCode": 200, "data": response_data}
