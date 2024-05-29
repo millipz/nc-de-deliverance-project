@@ -579,7 +579,7 @@ def write_data_to_s3(
         f"processed_"
         f"{datetime.now().strftime(time_format)}.parquet"
     )
-
+    
     with open(f"/tmp/{table_name}", "wb") as f:
         df.to_parquet(f, engine="fastparquet", index=False)
 
