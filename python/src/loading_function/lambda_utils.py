@@ -26,7 +26,7 @@ def retrieve_processed_data(
     try:
         obj = s3_client.get_object(Bucket=bucket_name, Key=object_key)
         return pd.read_parquet(io.BytesIO(obj["Body"].read()))
-    
+
     except s3_client.exceptions.NoSuchKey:
         raise KeyError(f"The key '{object_key}' does not exist.")
 

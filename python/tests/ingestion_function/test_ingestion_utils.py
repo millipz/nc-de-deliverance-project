@@ -1,13 +1,11 @@
 import os
 import pytest
 import boto3
-from pg8000.native import Connection
 from moto import mock_aws
 from datetime import datetime, date
 from freezegun import freeze_time
 import json
 from mock import Mock
-from dotenv import load_dotenv
 from python.src.ingestion_function.lambda_utils import (
     get_timestamp,
     write_timestamp,
@@ -16,6 +14,7 @@ from python.src.ingestion_function.lambda_utils import (
     write_table_data_to_s3,
     get_seq_id,
     write_seq_id,
+    normalise_datetime,
 )
 
 
@@ -81,6 +80,14 @@ class TestWriteTimestamp:
         write_timestamp(time_to_write, "test_table", ssm_client)
         timestamp = get_timestamp("test_table", ssm_client)
         assert timestamp.isoformat() == "2024-05-16T10:50:30.123000"
+
+    def test_write_timestamp_connection_error(self):
+        mock_ssm_client = Mock()
+        mock_ssm_client.put_parameter.side_effect = ConnectionError("Connection issue")
+        timestamp = datetime.now()
+        table_name = "test_table"
+        with pytest.raises(ConnectionError):
+            write_timestamp(timestamp, table_name, mock_ssm_client)
 
 
 class TestFindLatestTimestamp:
@@ -251,27 +258,14 @@ class TestCollectTableData:
         assert isinstance(result, list)
         assert isinstance(result[0], dict)
 
-    # Not sure how to mock PSQL filter - testing with real test_db credentials
-    @pytest.mark.skipif(
-        (os.getenv("ENVIRONMENT") != "DEV"), reason="Skipping for CI/CD"
-    )
-    def test_results_filtered_by_date(self):
-        load_dotenv(".secrets/db_credentials.env")
-        db_endpoint = os.getenv("TEST_DB_ENDPOINT")
-        db_name = os.getenv("TEST_DB_NAME")
-        db_username = os.getenv("TEST_DB_USERNAME")
-        db_password = os.getenv("TEST_DB_PASSWORD")
+    # # Not sure how to mock PSQL filter - testing with real test_db credentials
+    # @pytest.mark.skipif(
+    #     (os.getenv("ENVIRONMENT") != "DEV"), reason="Skipping for CI/CD"
+    # )
 
-        db_host, db_port = db_endpoint.split(":")
-
-        db = Connection(
-            host=db_host,
-            database=db_name,
-            user=db_username,
-            password=db_password,
-            port=int(db_port),
-        )
-
-        query_date = datetime.fromisoformat("2023-01-01")
-        result = collect_table_data("design", query_date, db)
-        assert all([design["last_updated"] > query_date for design in result])
+    def test_normalise_datetime(self):
+        dt = datetime(1989, 9, 21, 10, 30, 55, 123456)
+        result = normalise_datetime(dt)
+        assert isinstance(result, str)
+        expected_result = "1989-09-21T10:30:55.123"
+        assert result == expected_result

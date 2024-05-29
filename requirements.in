@@ -11,3 +11,4 @@ black
 freezegun
 mock
 pandas
+fastparquet

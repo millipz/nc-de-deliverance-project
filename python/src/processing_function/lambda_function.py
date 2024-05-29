@@ -79,7 +79,6 @@ def lambda_handler(event, context):
 
     department_key = payload["department"]
     department_data = retrieve_data(S3_INGESTION_BUCKET, department_key, s3_client)
-    
 
     for table_name, object_key in payload.items():
         data_frame = retrieve_data(S3_INGESTION_BUCKET, object_key, s3_client)
