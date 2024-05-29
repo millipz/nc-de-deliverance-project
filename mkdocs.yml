@@ -1,0 +1,12 @@
+site_name: Team Deliverance Totesys Documentation
+
+nav:
+  - Home: index.md
+  - Ingestion:
+      - Ingestion Lambda Utils: ingestion/lambda_utils.md
+  - Processing:
+      - Processing Lambda Utils: processing/lambda_utils.md
+  - Loading:
+      - Loading Lambda Utils: loading/lambda_utils.md
+theme:
+  name: material

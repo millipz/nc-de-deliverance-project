@@ -11,3 +11,5 @@ black
 freezegun
 mock
 pandas
+mkdocs
+mkdocs-material
