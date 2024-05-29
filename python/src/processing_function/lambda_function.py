@@ -63,12 +63,23 @@ def lambda_handler(event, context):
     address_key = payload["address"]
     address_data = retrieve_data(S3_INGESTION_BUCKET, address_key, s3_client)
     processed_data_frames["dim_location"] = transform_location(address_data)
+    address_packet_id = int(address_key.split("_")[-2])
+    dim_location_key = write_data_to_s3(
+        processed_data_frames["dim_location"],
+        "dim_location",
+        S3_PROCESSED_BUCKET,
+        address_packet_id,
+        s3_client,
+    )
+    response_data["dim_location"] = dim_location_key
+
     logger.info(
         f"{len(processed_data_frames['dim_location'].index)} rows processed into dim_location."
     )
 
     department_key = payload["department"]
     department_data = retrieve_data(S3_INGESTION_BUCKET, department_key, s3_client)
+    
 
     for table_name, object_key in payload.items():
         data_frame = retrieve_data(S3_INGESTION_BUCKET, object_key, s3_client)
@@ -159,9 +170,9 @@ def lambda_handler(event, context):
             s3_client,
         )
         response_data[new_table_name] = processed_key
-        processed_row_count = sum(
-            [len(df.index) for _, df in processed_data_frames.items()]
-        )
-        logger.info(f"{processed_row_count} total rows processed")
+    processed_row_count = sum(
+        [len(df.index) for _, df in processed_data_frames.items()]
+    )
+    logger.info(f"{processed_row_count} total rows processed")
 
     return {"statusCode": 200, "data": response_data}
