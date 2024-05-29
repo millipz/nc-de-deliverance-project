@@ -1,4 +1,5 @@
 site_name: Team Deliverance Totesys Documentation
+docs_dir: doc_src
 
 nav:
   - Home: index.md
