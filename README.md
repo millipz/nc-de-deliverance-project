@@ -2,6 +2,10 @@
 
 This repository contains the code and infrastructure for the Totesys Data Engineering project, which aims to build a reliable and resilient data pipeline to extract, transform, and load data from an operational database into a data lake and data warehouse hosted on AWS.
 
+## Project Architecture
+
+![image](specifications/Deliverance_ETL_architecture_diagram.svg)
+
 ## Project Overview
 
 The primary objective of this project is to showcase skills and knowledge in Python, SQL, database modeling, AWS, operational practices, and Agile methodologies. The project involves the following key components:
@@ -12,6 +16,12 @@ The primary objective of this project is to showcase skills and knowledge in Pyt
 4. **Monitoring and Alerting**: Comprehensive logging, monitoring, and alerting mechanisms using AWS CloudWatch to track the progress, detect failures, and trigger email notifications.
 5. **Data Visualization**: A QuickSight dashboard that displays useful data from the data warehouse.
 6. **Infrastructure as Code**: Automated deployment of the entire infrastructure using Terraform and a CI/CD pipeline with GitHub Actions. Dev, test and prod environments.
+
+## Step Function Flow
+
+The flow diagram of the step function is shown below.
+
+![image](specifications/stepfunctions_graph.svg)
 
 ## Repository Structure
 
