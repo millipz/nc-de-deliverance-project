@@ -9,7 +9,6 @@ data "aws_iam_policy_document" "step_function_assume_role_policy" {
   }
 }
 
-
 resource "aws_iam_role" "lambda_exec_role" {
   name = "${var.env_name}-lambda_exec_role"
 
@@ -58,20 +57,15 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
         ],
       },
       {
-        "Effect" : "Allow",
-        "Action" : [
-          "secretsmanager:GetSecretValue"
-        ],
-        "Resource" : "*"
+        Effect   = "Allow",
+        Action   = ["secretsmanager:GetSecretValue"],
+        Resource = "*",
       },
       {
-        "Effect" : "Allow",
-        "Action" : [
-          "ssm:GetParameter",
-          "ssm:PutParameter"
-        ],
-        "Resource" : "*"
-      }
+        Effect   = "Allow",
+        Action   = ["ssm:GetParameter", "ssm:PutParameter"],
+        Resource = "*",
+      },
     ],
   })
 }
@@ -79,7 +73,7 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
 resource "aws_iam_role" "eventbridge_schedule_policy_exec_role" {
   name = "${var.env_name}-eventbridge_schedule_policy_exec_role"
 
-   assume_role_policy = jsonencode({
+  assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
@@ -93,21 +87,23 @@ resource "aws_iam_role" "eventbridge_schedule_policy_exec_role" {
     ],
   })
 }
-resource "aws_iam_role_policy" "eventbridge_schedule_policy"{
-    name = "${var.env_name}-eventbridge_schedule_policy"
-    role = aws_iam_role.eventbridge_schedule_policy_exec_role.id
-    policy = jsonencode({
-      Version = "2012-10-17",
-      Statement = [
-        {
-              Effect  = "Allow",
-              Action = [
-                "states:StartExecution"
-            ],
-            Resource = "*"            
-        }
-    ]
-    })
+
+resource "aws_iam_role_policy" "eventbridge_schedule_policy" {
+  name = "${var.env_name}-eventbridge_schedule_policy"
+  role = aws_iam_role.eventbridge_schedule_policy_exec_role.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["states:StartExecution"],
+        Resource = [
+        aws_sfn_state_machine.nc-totesys-deliverance.arn,
+        "${aws_sfn_state_machine.nc-totesys-deliverance.arn}/*",
+        ]
+      },
+    ],
+  })
 }
 
 resource "aws_iam_role" "step_function_policy_exec_role" {
@@ -115,30 +111,37 @@ resource "aws_iam_role" "step_function_policy_exec_role" {
   assume_role_policy = data.aws_iam_policy_document.step_function_assume_role_policy.json
 }
 
-resource "aws_iam_role_policy" "step_function_policy"{
-    name = "${var.env_name}-step_function_policy"
-    role = aws_iam_role.step_function_policy_exec_role.id
-    policy = jsonencode({
-      Version = "2012-10-17",
-      Statement = [
-        {
-              Effect  = "Allow",
-              Action = [
-                "states:StartExecution",
-                "Lambda:InvokeFunction",
-                "logs:CreateLogDelivery",
-                "logs:CreateLogStream",
-                "logs:GetLogDelivery",
-                "logs:UpdateLogDelivery",
-                "logs:DeleteLogDelivery",
-                "logs:ListLogDeliveries",
-                "logs:PutLogEvents",
-                "logs:PutResourcePolicy",
-                "logs:DescribeResourcePolicies",
-                "logs:DescribeLogGroups"
-                    ],
-            Resource = "*"            
-        }
+resource "aws_iam_role_policy" "step_function_policy" {
+  name = "${var.env_name}-step_function_policy"
+  role = aws_iam_role.step_function_policy_exec_role.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "states:StartExecution",
+          "lambda:InvokeFunction",
+          "logs:CreateLogDelivery",
+          "logs:CreateLogStream",
+          "logs:GetLogDelivery",
+          "logs:UpdateLogDelivery",
+          "logs:DeleteLogDelivery",
+          "logs:ListLogDeliveries",
+          "logs:PutLogEvents",
+          "logs:PutResourcePolicy",
+          "logs:DescribeResourcePolicies",
+          "logs:DescribeLogGroups"
+        ],
+        Resource = [
+          "${aws_lambda_function.ingestion_function.arn}",
+          "${aws_lambda_function.ingestion_function.arn}:*",
+          "${aws_lambda_function.processing_function.arn}",
+          "${aws_lambda_function.processing_function.arn}:*",
+          "${aws_lambda_function.loading_function.arn}",
+          "${aws_lambda_function.loading_function.arn}:*"
+        ]
+      }
     ]
-    })
+  })
 }
