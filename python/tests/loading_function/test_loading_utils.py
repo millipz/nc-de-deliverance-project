@@ -1,20 +1,18 @@
 import os
 import pytest
 import boto3
-from pg8000.native import Connection
 from moto import mock_aws
 from datetime import datetime
 import pandas as pd
-from dotenv import load_dotenv
-from unittest.mock import patch
+from unittest.mock import MagicMock
 
 from python.src.processing_function.lambda_utils import write_data_to_s3
 from python.src.loading_function.lambda_utils import (
     retrieve_processed_data,
-    write_table_data_to_warehouse,
     write_timestamp,
     get_timestamp,
     create_dim_date,
+    write_table_data_to_warehouse,
 )
 
 # Was used in TestWriteTableDataToWarehouse below
@@ -54,54 +52,69 @@ def s3_client(aws_creds: None):
         yield conn
 
 
+class TestWriteTableDataToWarehouse:
+
+    def test_writes_successfully(self):
+
+        mock_db = MagicMock()
+        data = {"column1": [1, 2], "column2": ["a", "b"]}
+        df = pd.DataFrame(data)
+        mock_db.run.return_value = {"status": "success"}
+        response = write_table_data_to_warehouse(df, "test_table", mock_db)
+        assert response == {"status": "success"}
+
+
 class TestRetrieveProcessedData:
 
     def test_if_object_key_does_not_exist(self, s3_client):
         with pytest.raises(KeyError) as e:
-            retrieve_processed_data("nc-totesys-processing", 'false-key', s3_client)
+            retrieve_processed_data("nc-totesys-processing", "false-key", s3_client)
 
         assert str(e.value) == "\"The key 'false-key' does not exist.\""
 
-
     def test_function_returns_dataframe(self, s3_client):
-        
-        d = {'col1': [1, 2], 'col2': [3, 4]}
+
+        d = {"col1": [1, 2], "col2": [3, 4]}
         df = pd.DataFrame(data=d)
 
-        key = write_data_to_s3(df, "test-table", "nc-totesys-processing", 000000, s3_client)
+        key = write_data_to_s3(
+            df, "test-table", "nc-totesys-processing", 000000, s3_client
+        )
 
         result = retrieve_processed_data("nc-totesys-processing", key, s3_client)
 
         assert isinstance(result, pd.DataFrame)
-    
 
     def test_successful_retrieval(self, s3_client):
-        
-        d = {'col1': [1, 2], 'col2': [3, 4]}
+
+        d = {"col1": [1, 2], "col2": [3, 4]}
         df = pd.DataFrame(data=d)
 
-        key = write_data_to_s3(df, "test-table", "nc-totesys-processing", 000000, s3_client)
+        key = write_data_to_s3(
+            df, "test-table", "nc-totesys-processing", 000000, s3_client
+        )
 
         result = retrieve_processed_data("nc-totesys-processing", key, s3_client)
 
         assert df.equals(result)
 
+
 # Unable to implement, feel free to attempt
 # class TestWriteTableDataToWarehouse:
-    
+
 #     @patch("pg8000.native.Connection", autospec=True)
 #     def test_writes_successfully(self, mock_pg_connection):
-    
+
 #         data = {
 #             'column1': [1, 2],
 #             'column2': ['a', 'b']
 #         }
 #         df = pd.DataFrame(data)
-        
+
 #         response = write_table_data_to_warehouse(df, "test-table", mock_pg_connection)
 
 #         assert response == 1
-        
+
 
 class TestGetTimestamp:
 

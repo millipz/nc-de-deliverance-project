@@ -1,6 +1,7 @@
 from datetime import datetime, date
 import json
 from pg8000.native import identifier, literal
+import botocore.exceptions
 
 
 def get_timestamp(table_name: str, ssm_client) -> datetime:
@@ -66,8 +67,12 @@ def write_timestamp(timestamp: datetime, table_name: str, ssm_client) -> None:
             Value=timestamp.isoformat(timespec="milliseconds"),
             Overwrite=True,
         )
-    except Exception as e:
-        print(f"The timestamp could not be written: {e}")
+    except botocore.exceptions.ClientError as e:
+        raise ConnectionError(f"The timestamp could not be written: {e}")
+
+
+def normalise_datetime(dt: datetime) -> datetime:
+    return dt.isoformat(timespec="milliseconds")
 
 
 def collect_table_data(
@@ -96,10 +101,6 @@ def collect_table_data(
         f"SELECT * FROM {identifier(table_name)} "
         f"WHERE {identifier(column)} > {literal(sql_timestamp)}"
     )
-
-    def normalise_datetime(dt: datetime) -> datetime:
-        return dt.isoformat(timespec="milliseconds")
-
     data = db_conn.run(query)
     data = [
         [
