@@ -26,15 +26,14 @@ def myfunc(param1: str, param2: int) -> dict[float]:
 #### 1. Create doc_src Folder: Create a folder named doc_src for source documentation.
 
 #### 2. Create docs Folder: Create a folder named docs for generated documentation.
-Then install [mkdocs](https://www.mkdocs.org/) to create documentation from docstrings
+
+#### 3. If mkdocs is not already installed then install [mkdocs](https://www.mkdocs.org/) to create documentation from docstrings
 
 #### 3. Create mkdocs.yml File: Create a file named mkdocs.yml in the root of the project folder.
 
 #### 4. Add the following YAML configuration in mkdocs.yml:
 
 ```
-yaml
-Copy code
 site_name: Team Deliverance Totesys Documentation
 docs_dir: doc_src
 
