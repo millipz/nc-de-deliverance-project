@@ -108,4 +108,4 @@ This project is licensed under the [MIT License](LICENSE).
 - [AWS Documentation](https://docs.aws.amazon.com/) for the comprehensive documentation on AWS services.
 - [Terraform Documentation](https://www.terraform.io/docs/) for the Terraform documentation and examples.
 
-Feel free to modify and expand this README as needed to provide more detailed instructions, troubleshooting tips, and any additional information relevant to your project.
+For more information refer to the [documentation](https://milesjphillips.com/nc-de-deliverance-project/).
