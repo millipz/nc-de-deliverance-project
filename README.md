@@ -4,7 +4,7 @@ This repository contains the code and infrastructure for the Totesys Data Engine
 
 ## Project Architecture
 
-![image](specifications/Deliverance_ETL_architecture_diagram.svg)
+![image](specifications/ETL_diagram_light.svg)
 
 ## Project Overview
 
