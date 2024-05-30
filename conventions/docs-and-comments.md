@@ -29,9 +29,9 @@ def myfunc(param1: str, param2: int) -> dict[float]:
 
 #### 3. If mkdocs is not already installed then install [mkdocs](https://www.mkdocs.org/) to create documentation from docstrings
 
-#### 3. Create mkdocs.yml File: Create a file named mkdocs.yml in the root of the project folder.
+#### 4. Create mkdocs.yml File: Create a file named mkdocs.yml in the root of the project folder.
 
-#### 4. Add the following YAML configuration in mkdocs.yml:
+#### 5. Add the following YAML configuration in mkdocs.yml:
 
 ```
 site_name: Team Deliverance Totesys Documentation
@@ -49,17 +49,17 @@ theme:
   name: material
 ```
 
-#### 5. Extract and Merge Ingestion Docstrings:
+#### 6. Extract and Merge Ingestion Docstrings:
 Run the command `python scripts/extract_and_merge_docstrings.py python/src/ingestion_function/lambda_utils.py doc_src/ingestion/lambda_utils.md`.
 
-#### 6. Extract and Merge Processing Docstrings:
+#### 7. Extract and Merge Processing Docstrings:
 Run the command `python scripts/extract_and_merge_docstrings.py python/src/processing_function/lambda_utils.py doc_src/processing/lambda_utils.md`.
 
-#### 7. Extract and Merge Loading Docstrings:
+#### 8. Extract and Merge Loading Docstrings:
 Run the command `python scripts/extract_and_merge_docstrings.py python/src/loading_function/lambda_utils.py doc_src/loading/lambda_utils.md`.
 
-#### 8. Build HTML Documentation:
+#### 9. Build HTML Documentation:
 Run the command `mkdocs build -d docs` to generate the documentation in HTML format.
 
-#### 9. Preview Documentation Locally:
+#### 10. Preview Documentation Locally:
 Use `mkdocs serve` to preview the documentation locally.
