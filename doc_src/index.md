@@ -1,6 +1,6 @@
 # Deliverance Data Engineering Project
 
-This repository contains the code and infrastructure for the Totesys Data Engineering project, which aims to build a reliable and resilient data pipeline to extract, transform, and load data from an operational database into a data lake and data warehouse hosted on AWS.
+Welcome to the Deliverance Data Engineering Project documentation! This project showcases a scalable data pipeline using AWS services for data extraction, transformation, and loading. Utilizing AWS Lambda, Terraform, and GitHub Actions, we ensure efficient and automated data processing. Explore this documentation to learn about our architecture, implementation, and setup.
 
 ## Project Overview
 
