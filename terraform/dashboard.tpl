@@ -2,7 +2,7 @@
     "widgets": [
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 0,
             "x": 0,
             "type": "metric",
@@ -34,7 +34,7 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 4,
             "x": 0,
             "type": "metric",
@@ -54,7 +54,7 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 8,
             "x": 0,
             "type": "metric",
@@ -73,7 +73,7 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 12,
             "x": 0,
             "type": "metric",
@@ -96,9 +96,9 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 0,
-            "x": 6,
+            "x": 8,
             "type": "metric",
             "properties": {
                 "metrics": [
@@ -128,9 +128,9 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 4,
-            "x": 6,
+            "x": 8,
             "type": "metric",
             "properties": {
                 "metrics": [
@@ -148,9 +148,9 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 8,
-            "x": 6,
+            "x": 8,
             "type": "metric",
             "properties": {
                 "period": 60,
@@ -167,9 +167,9 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 12,
-            "x": 6,
+            "x": 8,
             "type": "metric",
             "properties": {
                 "metrics": [
@@ -190,9 +190,9 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 0,
-            "x": 12,
+            "x": 16,
             "type": "metric",
             "properties": {
                 "metrics": [
@@ -222,9 +222,9 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 4,
-            "x": 12,
+            "x": 16,
             "type": "metric",
             "properties": {
                 "metrics": [
@@ -242,9 +242,9 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 8,
-            "x": 12,
+            "x": 16,
             "type": "metric",
             "properties": {
                 "period": 60,
@@ -261,9 +261,9 @@
         },
         {
             "height": 4,
-            "width": 6,
+            "width": 8,
             "y": 12,
-            "x": 12,
+            "x": 16,
             "type": "metric",
             "properties": {
                 "metrics": [
