@@ -581,7 +581,7 @@
 
 
 <h1 id="deliverance-data-engineering-project">Deliverance Data Engineering Project</h1>
-<p>This repository contains the code and infrastructure for the Totesys Data Engineering project, which aims to build a reliable and resilient data pipeline to extract, transform, and load data from an operational database into a data lake and data warehouse hosted on AWS.</p>
+<p>Welcome to the Deliverance Data Engineering Project documentation! This project showcases a scalable data pipeline using AWS services for data extraction, transformation, and loading. Utilizing AWS Lambda, Terraform, and GitHub Actions, we ensure efficient and automated data processing. Explore this documentation to learn about our architecture, implementation, and setup.</p>
 <h2 id="project-overview">Project Overview</h2>
 <p>The primary objective of this project is to showcase skills and knowledge in Python, SQL, database modeling, AWS, operational practices, and Agile methodologies. The project involves the following key components:</p>
 <ol>
@@ -597,30 +597,30 @@
 <pre><code>.
 ├── Makefile
 ├── README.md
-├── conventions
+├── conventions/
 │   ├── ci-cd.md
 │   ├── code-review.md
 │   ├── docs-and-comments.md
-│   ├── images
 │   ├── pull-request.md
 │   ├── terraform.md
 │   └── testing.md
-├── db
+├── db/
 │   ├── connection.py
-│   ├── data
+│   ├── data/
 │   ├── run_schema.py
 │   ├── run_seed.py
 │   ├── schema.sql
 │   └── seed.py
-├── dev-db-terraform
+├── dev-db-terraform/
 │   ├── dev_db.tf
 │   ├── main.tf
-│   └── ...
-├── python
-│   ├── src
-│   └── tests
-├── requirements.in
-├── specifications
+│   └── variables.tf
+├── python/
+│   ├── src/
+│   └── tests/
+├── scripts/
+│   └── deploy.sh
+├── specifications/
 │   ├── Deliverance_ETL_architecture_diagram.png
 │   ├── Deliverance_ETL_architecture_diagram.svg
 │   ├── S3_Data_Storage_Specification.md
@@ -628,7 +628,7 @@
 │   ├── project_plan.md
 │   ├── specifiction.md
 │   └── processing_lambda_spec.md
-└── terraform
+└── terraform/
     ├── data.tf
     ├── dev.tfvars
     ├── eventbridge.tf
@@ -669,7 +669,6 @@
 <li><a href="https://docs.aws.amazon.com/">AWS Documentation</a> for the comprehensive documentation on AWS services.</li>
 <li><a href="https://www.terraform.io/docs/">Terraform Documentation</a> for the Terraform documentation and examples.</li>
 </ul>
-<p>Feel free to modify and expand this README as needed to provide more detailed instructions, troubleshooting tips, and any additional information relevant to your project.</p>
 
 
 
