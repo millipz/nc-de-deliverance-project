@@ -19,32 +19,33 @@ The repository is organized as follows:
 
 ```
 .
-├── Makefile
-├── README.md
-├── conventions
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+├── conventions/
 │   ├── ci-cd.md
 │   ├── code-review.md
 │   ├── docs-and-comments.md
-│   ├── images
 │   ├── pull-request.md
 │   ├── terraform.md
 │   └── testing.md
-├── db
+├── db/
 │   ├── connection.py
-│   ├── data
+│   ├── data/
 │   ├── run_schema.py
 │   ├── run_seed.py
 │   ├── schema.sql
 │   └── seed.py
-├── dev-db-terraform
+├── dev-db-terraform/
 │   ├── dev_db.tf
 │   ├── main.tf
-│   └── ...
-├── python
-│   ├── src
-│   └── tests
-├── requirements.in
-├── specifications
+│   └── variables.tf
+├── python/
+│   ├── src/
+│   └── tests/
+├── scripts/
+│   └── deploy.sh
+├── specifications/
 │   ├── Deliverance_ETL_architecture_diagram.png
 │   ├── Deliverance_ETL_architecture_diagram.svg
 │   ├── S3_Data_Storage_Specification.md
@@ -52,7 +53,7 @@ The repository is organized as follows:
 │   ├── project_plan.md
 │   ├── specifiction.md
 │   └── processing_lambda_spec.md
-└── terraform
+└── terraform/
     ├── data.tf
     ├── dev.tfvars
     ├── eventbridge.tf
@@ -98,4 +99,3 @@ This project is licensed under the [MIT License](LICENSE).
 - [AWS Documentation](https://docs.aws.amazon.com/) for the comprehensive documentation on AWS services.
 - [Terraform Documentation](https://www.terraform.io/docs/) for the Terraform documentation and examples.
 
-Feel free to modify and expand this README as needed to provide more detailed instructions, troubleshooting tips, and any additional information relevant to your project.
