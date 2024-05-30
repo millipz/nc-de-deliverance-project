@@ -2,6 +2,10 @@
 
 This repository contains the code and infrastructure for the Totesys Data Engineering project, which aims to build a reliable and resilient data pipeline to extract, transform, and load data from an operational database into a data lake and data warehouse hosted on AWS.
 
+## Documentation
+
+Please find the documentation for the project and code [here](http://milesjphillips.com/nc-de-deliverance-project/)
+
 ## Project Architecture
 
 ![image](specifications/ETL_diagram_light.svg)
