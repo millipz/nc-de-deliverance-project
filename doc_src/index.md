@@ -19,9 +19,8 @@ The repository is organized as follows:
 
 ```
 .
-├── .github/
-│   └── workflows/
-│       └── ci-cd.yml
+├── Makefile
+├── README.md
 ├── conventions/
 │   ├── ci-cd.md
 │   ├── code-review.md
